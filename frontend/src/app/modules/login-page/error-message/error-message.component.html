@@ -1,0 +1,14 @@
+<p *ngIf="control?.touched && control?.invalid" class="error-message">
+    <ng-container *ngIf="control?.hasError('required')">
+     {{ fieldName }} es obligatorio
+    </ng-container>
+
+    <ng-container *ngIf="control?.hasError('email')">
+        {{ fieldName }} no es válido.
+      </ng-container>
+  
+    <ng-container *ngIf="control?.hasError('minlength')">
+      {{ fieldName }} debe de tener al menos 6 caracteres
+    </ng-container>
+  </p>
+  

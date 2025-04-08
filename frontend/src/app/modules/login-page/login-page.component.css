@@ -1,0 +1,34 @@
+@keyframes fadein {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  .animate-fadein {
+    animation: fadein 1s ease-in-out;
+  }
+  
+  .animate-fadeinLong {
+    animation: fadein 1.5s ease-in-out;
+  }
+  
+  @keyframes slideright {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+  
+  .animate-slideright {
+    animation: slideright 2s ease-out;
+  }
+
+  #image-colum{
+    background-image: url("../../../../public/pexels-photo-4946772.jpeg");
+  }
+  
