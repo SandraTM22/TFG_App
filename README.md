@@ -5,4 +5,5 @@ En el ámbito de la gestión de expedientes judiciales, es fundamental contar co
 - Actualizar la información de cada expediente y las costas de forma sencilla y ágil.
 - Generar informes personalizados mediante filtros específicos.
 - Mejorar la organización interna del equipo de trabajo y facilitar la toma de decisiones frente a cambios legales o imprevistos.
-- Las tecnologias utilizadas serán:
+
+Las tecnologias utilizadas serán:
