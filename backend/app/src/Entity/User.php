@@ -32,6 +32,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    #[ORM\Column]
+    private ?bool $firstTime = true;
+
+    #[ORM\Column]
+    private ?bool $active = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -106,4 +112,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
     }
+
+    public function getFirsTime(): ?bool
+    {
+        return $this->firstTime;
+    }
+
+    public function setFirsTime(bool $firstTime): static
+    {
+        $this->firstTime = $firstTime;
+
+        return $this;
+    }
+
+    public function getActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): static
+    {
+        $this->active = $active;
+
+        return $this;
+    }
+
 }
