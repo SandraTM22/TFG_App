@@ -7,20 +7,34 @@ import {
   FormBuilder,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ErrorMessageComponent } from "./error-message/error-message.component";
+import { ErrorMessageComponent } from './error-message/error-message.component';
+import { AuthService } from '../../shared/services/auth.service';
+import { Router } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
+  standalone: true,
   selector: 'app-login-page',
-  imports: [FormsModule, ReactiveFormsModule,CommonModule,ErrorMessageComponent],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    CommonModule,
+    ErrorMessageComponent,
+    ],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.css',
-  standalone: true,
+  
 })
 export class LoginPageComponent {
-  
   form: FormGroup = new FormGroup({});
 
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  errorMessage: string = ''
 
   ngOnInit(): void {
     this.buildForm();
@@ -33,12 +47,23 @@ export class LoginPageComponent {
     });
   }
 
-    login(event: Event): void {
+  login(event: Event): void {
     event.preventDefault();
     if (this.form.valid) {
       const value = this.form.value;
-      console.log(`USER: ${value.email} - PASSWORD: ${value.password}`);
-      // Aquí agregar la lógica de autenticación
+      console.log(`datos desde ts login - USER: ${value.email} - PASSWORD: ${value.password}`);
+
+      this.authService.login(value.email, value.password).subscribe(
+        (response) => {
+          this.authService.saveToken(response.token);
+          this.router.navigate(['home']);
+        },
+        (error) => {
+          this.errorMessage = 'Credenciales incorrectas';
+        }
+      );
     }
+    this.form.reset(); // Limpia el formulario después de login
+
   }
 }
