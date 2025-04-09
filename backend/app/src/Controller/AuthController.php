@@ -12,7 +12,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 
-#[Route('/api/Login')]
+#[Route('/api/login')]
 final class AuthController extends AbstractController
 {
     #[Route('', name: 'api_login', methods:['POST'])]    
@@ -22,7 +22,7 @@ final class AuthController extends AbstractController
         $email = $params['email'];
         $password = $params['password'];
 
-        $user = $em->getRepository(User::class)->find($email);
+        $user = $em->getRepository(User::class)->findOneBy(['email' => $email]); // Busca por email
         if (!$user || !$passwordHasher->isPasswordValid($user, $password)) {
             return $this->json(['message' => 'Invalid credentials'], 401);
         }
