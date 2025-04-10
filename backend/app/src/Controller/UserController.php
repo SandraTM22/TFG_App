@@ -29,6 +29,7 @@ final class UserController extends AbstractController
         return $this->json($data);
     }
 
+    //Create User
     #[Route('', name: 'create_user', methods: ['POST'])]
     public function create_user(Request $request, EntityManagerInterface $em): JsonResponse
     {
@@ -52,6 +53,7 @@ final class UserController extends AbstractController
         ]);
     }
 
+    //Delete user
     #[Route('/{id}', name: 'delete_user', methods: ['DELETE'])]
     public function delete_user($id, Request $request, EntityManagerInterface $em): JsonResponse
     {
@@ -65,6 +67,7 @@ final class UserController extends AbstractController
         return $this->json(['message' => 'User deleted']);
     }
 
+    //Update user
     #[Route('/{id}', name: 'update_user', methods: ['PUT'])]
     public function update_user($id, Request $request, EntityManagerInterface $em): JsonResponse
     {
