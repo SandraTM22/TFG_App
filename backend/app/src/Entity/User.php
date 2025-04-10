@@ -113,12 +113,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getFirsTime(): ?bool
+    public function getFirstTime(): ?bool
     {
         return $this->firstTime;
     }
 
-    public function setFirsTime(bool $firstTime): static
+    public function setFirstTime(bool $firstTime): static
     {
         $this->firstTime = $firstTime;
 
