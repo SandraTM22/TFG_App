@@ -7,7 +7,7 @@ import {
   FormBuilder,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ErrorMessageComponent } from './error-message/error-message.component';
+import { ErrorMessageComponent } from '../../shared/components/error-message/error-message.component';
 import { AuthService } from '../../shared/services/auth.service';
 import { Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';

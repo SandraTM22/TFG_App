@@ -3,7 +3,7 @@
      {{ fieldName }} es obligatorio
     </ng-container>
 
-    <ng-container *ngIf="control?.hasError('email')">
+    <ng-container *ngIf="control?.hasError('invalidEmail')">
         {{ fieldName }} no es válido.
       </ng-container>
   

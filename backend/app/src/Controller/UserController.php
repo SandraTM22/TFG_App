@@ -20,6 +20,8 @@ final class UserController extends AbstractController
         $users = $em->getRepository(User::class)->findAll();
 
         $data =  array_map(fn($user)=>[
+            'id' => $user->getId(),
+            'username' => $user->getName(),
             'email' => $user->getEmail(),
             'roles' => $user->getRoles(),
             'firstTime' => $user->getFirstTime(),
@@ -35,6 +37,7 @@ final class UserController extends AbstractController
     {
         $params = json_decode($request->getContent(), true);
         $user = new User();
+        $user->setName($params['username']);
         $user->setEmail($params['email']);
         $user->setPassword($params['password']);
         $user->setRoles($params['roles']);
@@ -45,6 +48,7 @@ final class UserController extends AbstractController
         $em->flush();
         return $this->json([
             'id' => $user->getId(),
+            'username' => $user->getName(),
             'email' => $user->getEmail(),
             'password' => $user->getPassword(),
             'roles' => $user->getRoles(),
@@ -77,6 +81,9 @@ final class UserController extends AbstractController
         }
 
         $params = json_decode($request->getContent(), true);
+        if (isset($params['username'])) {
+            $user->setName($params['username']);
+        }
         if (isset($params['email'])) {
             $user->setEmail($params['email']);
         }
@@ -95,6 +102,7 @@ final class UserController extends AbstractController
         $em->flush();
         return $this->json([
             'id' => $user->getId(),
+            'username' => $user->getName(),
             'email' => $user->getEmail(),
             'password' => $user->getPassword(),
             'roles' => $user->getRoles(),
