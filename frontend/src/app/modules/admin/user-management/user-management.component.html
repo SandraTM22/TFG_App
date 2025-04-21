@@ -203,9 +203,9 @@
 
               <td class="px-6 py-4 min-w-20">
                 <span *ngFor="let role of user.roles">
-                  {{ getRoleDisplayName(role) }}
+                  {{ getRoleDisplayName(role) }}                
                   <ng-container *ngIf="role !== user.roles[user.roles.length - 1]">, </ng-container> <!-- Separador entre roles -->
-                </span>
+                </span>       
               </td>
 
               <td class="px-3 py-4 w-10">
@@ -311,21 +311,21 @@
           <input
             type="checkbox"
             value="ROLE_ADMIN"
-            (change)="onRoleChange('ROLE_ADMIN', $event)"
+            (change)="onEditRoleChange('ROLE_ADMIN', $event)"
             [checked]="userBeingEdited.roles?.includes('ROLE_ADMIN')"
           />
           Administrador <br />
           <input
             type="checkbox"
             value="ROLE_USER"
-            (change)="onRoleChange('ROLE_USER', $event)"
+            (change)="onEditRoleChange('ROLE_USER', $event)"
             [checked]="userBeingEdited.roles?.includes('ROLE_USER')"
           />
           Usuario<br />
           <input
             type="checkbox"
             value="ROLE_USER_LIMITED"
-            (change)="onRoleChange('ROLE_USER_LIMITED', $event)"
+            (change)="onEditRoleChange('ROLE_USER_LIMITED', $event)"
             [checked]="userBeingEdited.roles?.includes('ROLE_USER_LIMITED')"
           />
           Usuario limitado<br />

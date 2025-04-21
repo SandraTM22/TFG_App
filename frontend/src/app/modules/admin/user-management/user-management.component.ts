@@ -15,7 +15,6 @@ import { MailValidator } from '../../../shared/validators/mail.validators';
 import { RolesValidator } from '../../../shared/validators/roles.validators';
 import { ToastComponent } from '../../../shared/toast/toast.component';
 
-
 @Component({
   selector: 'app-user-management',
   imports: [
@@ -23,8 +22,8 @@ import { ToastComponent } from '../../../shared/toast/toast.component';
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    ToastComponent
-],
+    ToastComponent,
+  ],
   templateUrl: './user-management.component.html',
   styleUrl: './user-management.component.css',
 })
@@ -73,7 +72,7 @@ export class UserManagementComponent {
     const isChecked = (event.target as HTMLInputElement).checked;
     const rolesArray = this.formAdd.get('roles') as FormArray;
 
-    if (isChecked) {
+    if (isChecked && !rolesArray.value.includes(role)) {
       // Añadir el rol al FormArray si el checkbox está marcado
       rolesArray.push(this.formBuilder.control(role));
     } else {
@@ -88,6 +87,23 @@ export class UserManagementComponent {
 
     // Verificar el estado del FormArray después de la actualización
     console.log('Roles seleccionados:', rolesArray.value);
+  }
+
+  onEditRoleChange(role: string, event: Event): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    if (!this.userBeingEdited) return;
+    if (isChecked) {
+      if (!this.userBeingEdited.roles.includes(role)) {
+        this.userBeingEdited.roles.push(role);
+      }
+    } else {
+      const index = this.userBeingEdited.roles.indexOf(role);
+      if (index !== -1) {
+        this.userBeingEdited.roles.splice(index, 1);
+      }
+    }
+
+    console.log('Roles editados:', this.userBeingEdited.roles);
   }
 
   getRoleDisplayName(role: string): string {
@@ -122,18 +138,19 @@ export class UserManagementComponent {
     console.log('Enviando usuario desdes user mang:', newUser); // Verifica el objeto que se envía
 
     this.userService.addUser(newUser).subscribe(() => {
-      this.loadUsers();      
+      this.loadUsers();
       this.toast?.toastService.addToast(
         'success',
         'Usuario añadido correctamente',
         3000
       ); // '?' Accede solo si `toast` está disponible
-      
     });
     this.formAdd.reset();
 
-    this.roles.forEach(role => {
-      const checkbox = document.querySelector(`input[type="checkbox"][value="${role}"]`) as HTMLInputElement | null;
+    this.roles.forEach((role) => {
+      const checkbox = document.querySelector(
+        `input[type="checkbox"][value="${role}"]`
+      ) as HTMLInputElement | null;
       if (checkbox) {
         checkbox.checked = false;
       }
@@ -141,10 +158,9 @@ export class UserManagementComponent {
 
     const rolesArray = this.formAdd.get('roles') as FormArray;
     while (rolesArray.length) {
-      rolesArray.removeAt(0);  // Eliminar cada control dentro del FormArray
+      rolesArray.removeAt(0); // Eliminar cada control dentro del FormArray
     }
-  
-  } 
+  }
 
   isFormInvalid(): boolean {
     const rolesArray = this.formAdd.get('roles') as FormArray;
@@ -152,41 +168,34 @@ export class UserManagementComponent {
   }
 
   updateUser(user: User): void {
-    //clonamos el usuarui
-    this.userBeingEdited = { ...user };        
+    //clonamos el usuario
+    this.userBeingEdited = { ...user };
   }
 
   saveEdit() {
-     //si userBeingEdited no tienen ningun valor, entonces sal..
-     if (!this.userBeingEdited) return;
-     const updatedUser = {
-      ...this.userBeingEdited,
-      roles: [...this.userBeingEdited.roles], // ¡esto es clave!
-    };
-    this.userService.updateUser(this.userBeingEdited).subscribe(()=>{
+    //si userBeingEdited no tienen ningun valor, entonces sal..
+    if (!this.userBeingEdited) return;
+
+    this.userService.updateUser(this.userBeingEdited).subscribe(() => {
       this.loadUsers(),
-      this.toast?.toastService.addToast(
-        'info',
-        'Usuario modifcado',
-        3000
-      );
+        this.toast?.toastService.addToast('info', 'Usuario modifcado', 3000);
       this.userBeingEdited = null; // Cerramos el modal
-    })
+    });
   }
 
   cancelEdit(): void {
-    this.toast?.toastService.addToast('warning', 'The edition has been cancelled', 3000);
+    this.toast?.toastService.addToast(
+      'warning',
+      'The edition has been cancelled',
+      3000
+    );
     this.userBeingEdited = null; // Cerramos el modal sin guardar
   }
 
   deleteUser(id: number) {
-    this.userService.deleteUser(id).subscribe(()=>{
+    this.userService.deleteUser(id).subscribe(() => {
       this.loadUsers(),
-      this.toast?.toastService.addToast(
-        'error',
-        'Usuario eliminado',
-        3000
-      );
-    })
+        this.toast?.toastService.addToast('error', 'Usuario eliminado', 3000);
+    });
   }
 }
