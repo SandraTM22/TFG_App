@@ -13,7 +13,7 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(email: string, password: string): Observable<any> {
-    console.log('Enviando datos al back desde auth:', email,password);  // Asegurar que la tarea se está enviando correctamente
+    console.log('Enviando datos al back desde auth:', email,password);  // Asegurar que los datos se está enviando correctamente
     return this.http.post<any>(this.apiUrl, { email, password });
   }
 
