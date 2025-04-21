@@ -304,30 +304,32 @@
         placeholder="Nombre"
       />
 
-      <!-- <div
+      <div
           id="roles"
-
           class="w-full p-2 border border-shadow-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <input
             type="checkbox"
             value="ROLE_ADMIN"
             (change)="onRoleChange('ROLE_ADMIN', $event)"
+            [checked]="userBeingEdited.roles?.includes('ROLE_ADMIN')"
           />
           Administrador <br />
           <input
             type="checkbox"
             value="ROLE_USER"
             (change)="onRoleChange('ROLE_USER', $event)"
+            [checked]="userBeingEdited.roles?.includes('ROLE_USER')"
           />
           Usuario<br />
           <input
             type="checkbox"
             value="ROLE_USER_LIMITED"
             (change)="onRoleChange('ROLE_USER_LIMITED', $event)"
+            [checked]="userBeingEdited.roles?.includes('ROLE_USER_LIMITED')"
           />
           Usuario limitado<br />
-        </div> -->
+        </div>
   
       <div class="flex justify-end gap-2">
         <button

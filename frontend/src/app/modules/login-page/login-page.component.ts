@@ -11,6 +11,7 @@ import { ErrorMessageComponent } from '../../shared/components/error-message/err
 import { AuthService } from '../../shared/services/auth.service';
 import { Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { MailValidator } from '../../shared/validators/mail.validators';
 
 @Component({
   standalone: true,
@@ -42,7 +43,7 @@ export class LoginPageComponent {
 
   private buildForm(): void {
     this.form = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email,MailValidator]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
@@ -62,6 +63,8 @@ export class LoginPageComponent {
           this.errorMessage = 'Credenciales incorrectas';
         }
       );
+    }else{
+      console.log("Credenciales incorrectas")
     }
     this.form.reset(); // Limpia el formulario después de login
 

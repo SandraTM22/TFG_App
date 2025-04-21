@@ -11,7 +11,7 @@ import {
 } from '@angular/forms';
 import { User } from '../../../shared/interfaces/user';
 import { CommonModule } from '@angular/common';
-import { EmailValidator } from '../../../shared/validators/email.validators';
+import { MailValidator } from '../../../shared/validators/mail.validators';
 import { RolesValidator } from '../../../shared/validators/roles.validators';
 import { ToastComponent } from '../../../shared/toast/toast.component';
 
@@ -56,7 +56,7 @@ export class UserManagementComponent {
   private buildForm(): void {
     this.formAdd = this.formBuilder.group({
       name: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email, EmailValidator]],
+      email: ['', [Validators.required, Validators.email, MailValidator]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       //search: [''],
       roles: this.formBuilder.array([], RolesValidator), //Using the FormBuilder to create a FormArray, which allows you to handle multiple elements as if they were a single form control
@@ -159,6 +159,10 @@ export class UserManagementComponent {
   saveEdit() {
      //si userBeingEdited no tienen ningun valor, entonces sal..
      if (!this.userBeingEdited) return;
+     const updatedUser = {
+      ...this.userBeingEdited,
+      roles: [...this.userBeingEdited.roles], // ¡esto es clave!
+    };
     this.userService.updateUser(this.userBeingEdited).subscribe(()=>{
       this.loadUsers(),
       this.toast?.toastService.addToast(

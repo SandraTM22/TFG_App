@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 
@@ -33,13 +34,15 @@ final class UserController extends AbstractController
 
     //Create User
     #[Route('', name: 'create_user', methods: ['POST'])]
-    public function create_user(Request $request, EntityManagerInterface $em): JsonResponse
+    public function create_user(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         $params = json_decode($request->getContent(), true);
         $user = new User();
         $user->setName($params['username']);
         $user->setEmail($params['email']);
-        $user->setPassword($params['password']);
+        // Hashear la contraseña correctamente
+        $hashedPassword = $passwordHasher->hashPassword($user, $params['password']);
+        $user->setPassword($hashedPassword);
         $user->setRoles($params['roles']);
         $user->setFirstTime(true);
         $user->setActive(false);
