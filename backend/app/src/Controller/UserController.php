@@ -18,8 +18,8 @@ final class UserController extends AbstractController
     //List all users
     #[Route('', name: 'list_user', methods: ['GET'])]
     public function list_user(EntityManagerInterface $em): JsonResponse {
-        $users = $em->getRepository(User::class)->findAll();
-
+        //$users = $em->getRepository(User::class)->findAll();
+        $users = $em->getRepository(User::class)->findBy([], ['id'=> 'ASC']);
         $data =  array_map(fn($user)=>[
             'id' => $user->getId(),
             'username' => $user->getName(),
