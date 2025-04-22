@@ -17,6 +17,7 @@ security:
         login:
             pattern: ^/api/login
             stateless: true
+            provider: app_user_provider
             json_login:
                 check_path: /api/login
                 username_path: email
@@ -29,6 +30,13 @@ security:
             stateless: true
             provider: app_user_provider
             jwt: ~
+
+        admin:
+            pattern: ^/admin
+            stateless: true
+            provider: app_user_provider
+            jwt: ~
+            
 
         main:
             lazy: true
@@ -43,8 +51,9 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/home, roles: [ROLE_USER, ROLE_ADMIN,ROLE_USER_LIMITED ]}
 
 when@test:
     security:

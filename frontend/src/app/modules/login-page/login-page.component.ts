@@ -21,10 +21,9 @@ import { MailValidator } from '../../shared/validators/mail.validators';
     ReactiveFormsModule,
     CommonModule,
     ErrorMessageComponent,
-    ],
+  ],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.css',
-  
 })
 export class LoginPageComponent {
   form: FormGroup = new FormGroup({});
@@ -35,15 +34,19 @@ export class LoginPageComponent {
     private router: Router
   ) {}
 
-  errorMessage: string = ''
+  errorMessage: string = '';
 
   ngOnInit(): void {
+    const token = localStorage.getItem('authToken');
+    if (token && !this.authService.isTokenExpired(token)) {
+      this.router.navigate(['home']);
+    }
     this.buildForm();
   }
 
   private buildForm(): void {
     this.form = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email,MailValidator]],
+      email: ['', [Validators.required, Validators.email, MailValidator]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
@@ -52,7 +55,9 @@ export class LoginPageComponent {
     event.preventDefault();
     if (this.form.valid) {
       const value = this.form.value;
-      console.log(`datos desde ts login - USER: ${value.email} - PASSWORD: ${value.password}`);
+      console.log(
+        `datos desde ts login - USER: ${value.email} - PASSWORD: ${value.password}`
+      );
 
       this.authService.login(value.email, value.password).subscribe(
         (response) => {
@@ -63,10 +68,9 @@ export class LoginPageComponent {
           this.errorMessage = 'Credenciales incorrectas';
         }
       );
-    }else{
-      console.log("Credenciales incorrectas")
+    } else {
+      console.log('Credenciales incorrectas');
     }
     this.form.reset(); // Limpia el formulario después de login
-
   }
 }
