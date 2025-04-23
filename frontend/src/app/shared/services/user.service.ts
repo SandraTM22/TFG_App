@@ -20,9 +20,8 @@ export class UserService {
      if (!token) {
        throw new Error('Token no encontrado');
      }
-     // Configurar las cabeceras con el token
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get<User[]>(this.apiUrl, { headers });
+     // Configurar las cabeceras con el token    
+    return this.http.get<User[]>(this.apiUrl);
   }
 
   addUser(user: User): Observable<User[]> {
@@ -30,8 +29,7 @@ export class UserService {
      if (!token) {
        throw new Error('Token no encontrado');
     }
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.post<User[]>(this.apiUrl, user, { headers });
+    return this.http.post<User[]>(this.apiUrl, user);
   }
 
   updateUser(user: User): Observable<User[]> {

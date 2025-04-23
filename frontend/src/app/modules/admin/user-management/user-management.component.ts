@@ -169,7 +169,7 @@ export class UserManagementComponent {
 
   updateUser(user: User): void {
     //clonamos el usuario
-    this.userBeingEdited = { ...user };
+    this.userBeingEdited = { ...user, roles: [...user.roles] };
   }
 
   saveEdit() {

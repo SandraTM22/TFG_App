@@ -8,8 +8,6 @@ bootstrapApplication(AppComponent, {
   ...appConfig,
   providers: [
     ...(appConfig.providers || []), // mantiene los providers existentes
-    provideHttpClient(withInterceptors([
-      authInterceptor,
-    ])),            // agrega HttpClient
-  ]
+    provideHttpClient(withInterceptors([authInterceptor])), // agrega HttpClient
+  ],
 }).catch((err) => console.error(err));
