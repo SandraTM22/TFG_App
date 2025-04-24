@@ -32,7 +32,10 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('authToken');
-    this.router.navigate(['/']);
+    setTimeout(()=>{
+      this.router.navigate(['/'])
+    },1500)
+    ;
   }
 
   //Función para comprobar si el token a expirado

@@ -4,6 +4,8 @@ import { LogoutPageComponent } from './modules/logout-page/logout-page.component
 import { HomePageComponent } from './modules/home-page/home-page.component';
 import { UserManagementComponent } from './modules/admin/user-management/user-management.component';
 import { authGuard } from './shared/guard/auth.guard';
+import { FeeManagementComponent } from './modules/fee-management/fee-management.component';
+import { UnauthorizedComponent } from './modules/unauthorized/unauthorized.component';
 
 export const routes: Routes = [
   { path: '', component: LoginPageComponent },
@@ -15,11 +17,13 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { roles: ['ROLE_ADMIN'] },
   },
-  //cuando tenga ruta para las costas
-  /* {
+  {
     path: 'costas',
-    component: CostasComponent,
+    component: FeeManagementComponent,
     canActivate: [authGuard],
-    data: { roles: ['ROLE_SUPER'] }
-  }, */
+    data: { roles: ['ROLE_SUPER','ROLE_ADMIN'] },
+  },
+  {
+    path: 'unauthorized', component: UnauthorizedComponent
+  }
 ];

@@ -1,8 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
 
-.bg-dg{
+.header-p{
     background-color: #073119;
+    border: hsl(146, 75%, 25%);
+    height: 6rem;
+    
 }
 
 .txt-dg{

@@ -1,141 +1,139 @@
-<div [class.blur-md]="userBeingEdited" class="transition duration-300">
+<div [class.blur-md]="userBeingEdited"  class="transition duration-300">
+  <header class="header-p fixed w-full top-0 left-0">
+    <app-navbar></app-navbar>
+  </header>
 
-<header class="flex items-center font-extrabold bg-dg text-white">
-  <h1 class="h-24 text-3xl p-1 flex-grow text-center content-center">
-    Gestión de usuarios
-  </h1>
-</header>
+  <main class="p-4 min-h-2/4 container m-auto mt-24">
+    <!-- Add User -->
+    <div class="min-w-1/3 max-w-1/2">
+      <h2 class="text-xl font-bold text-green-900 my-5">Crear nuevo usuario</h2>
 
-<main class="p-4 min-h-2/4 container m-auto">
-  <!-- Add User -->
-  <div class="min-w-1/3 max-w-1/2">
-    <h2 class="text-xl font-bold text-green-900 my-5">Crear nuevo usuario</h2>
-
-    <form [formGroup]="formAdd" class="space-y-2 mb-8" (ngSubmit)="addUser()">
-      <!-- name -->
-      <div>
-        <label
-          for="name"
-          class="block text-shadow-slate-700 text-sm font-bold mb-2"
-        >
-          Nombre del usuario
-        </label>
-        <input
-          id="name"
-          type="text"
-          placeholder="Introduce nombre"
-          formControlName="name"
-          class="w-full p-2 border border-shadow-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-        />
-        <!-- Mensajes de validación para el nombre -->
-        <app-error-message
-          [control]="formAdd.controls['name']"
-          fieldName="Nombre"
-        ></app-error-message>
-      </div>
-
-      <!-- Email -->
-      <div>
-        <label
-          for="email"
-          class="block text-shadow-slate-700 text-sm font-bold mb-2"
-        >
-          Email
-        </label>
-        <input
-          id="email"
-          type="email"
-          placeholder="Introduce email"
-          formControlName="email"
-          class="w-full p-2 border border-shadow-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-        />
-        <!-- Mensajes de validación para el email -->
-        <app-error-message
-          [control]="formAdd.controls['email']"
-          fieldName="Email"
-        ></app-error-message>
-      </div>
-
-      <!-- Password -->
-      <div>
-        <label
-          for="password"
-          class="block text-shadow-slate-700 text-sm font-bold mb-2"
-        >
-          Contraseña
-        </label>
-        <input
-          id="password"
-          type="password"
-          placeholder="Introduce contraseña"
-          formControlName="password"
-          class="w-full p-2 border border-shadow-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-        />
-        <!-- Mensaje de validación para el password -->
-        <app-error-message
-          [control]="formAdd.controls['password']"
-          fieldName="Contraseña"
-        ></app-error-message>
-      </div>
-
-      <!-- Roles -->
-      <div>
-        <label
-          for="Roles"
-          class="block text-shadow-slate-700 text-sm font-bold mb-2"
-        >
-          Rol
-        </label>
-        <div
-          id="roles"
-          formArrayName="roles"
-          class="w-full p-2 border border-shadow-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-        >
+      <form [formGroup]="formAdd" class="space-y-2 mb-8" (ngSubmit)="addUser()">
+        <!-- name -->
+        <div>
+          <label
+            for="name"
+            class="block text-shadow-slate-700 text-sm font-bold mb-2"
+          >
+            Nombre del usuario
+          </label>
           <input
-            type="checkbox"
-            value="ROLE_ADMIN"
-            (change)="onRoleChange('ROLE_ADMIN', $event)"
+            id="name"
+            type="text"
+            placeholder="Introduce nombre"
+            formControlName="name"
+            class="w-full p-2 border border-shadow-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
           />
-          Administrador <br />
-          <input
-            type="checkbox"
-            value="ROLE_USER"
-            (change)="onRoleChange('ROLE_USER', $event)"
-          />
-          Usuario<br />
-          <input
-            type="checkbox"
-            value="ROLE_USER_LIMITED"
-            (change)="onRoleChange('ROLE_USER_LIMITED', $event)"
-          />
-          Usuario limitado<br />
+          <!-- Mensajes de validación para el nombre -->
+          <app-error-message
+            [control]="formAdd.controls['name']"
+            fieldName="Nombre"
+          ></app-error-message>
         </div>
 
-        <!-- Mensajes de validación del rol -->
-        <app-error-message
-          [control]="formAdd.controls['roles']"
-          fieldName="Roles"
-        ></app-error-message>
-      </div><br>
+        <!-- Email -->
+        <div>
+          <label
+            for="email"
+            class="block text-shadow-slate-700 text-sm font-bold mb-2"
+          >
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            placeholder="Introduce email"
+            formControlName="email"
+            class="w-full p-2 border border-shadow-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <!-- Mensajes de validación para el email -->
+          <app-error-message
+            [control]="formAdd.controls['email']"
+            fieldName="Email"
+          ></app-error-message>
+        </div>
 
-      <button
-        type="submit"
-        class="px-4 py-2 text-sm font-medium text-white bg-green-800 border border-green-600 rounded-lg hover:bg-green-700 cursor-pointer"       
-        [disabled]="isFormInvalid()"
-        [ngClass]="{
-          'opacity-50 !cursor-not-allowed': isFormInvalid()
-        }"
-      >
-        Añadir usuario
-      </button>
-    </form>
-  </div>
+        <!-- Password -->
+        <div>
+          <label
+            for="password"
+            class="block text-shadow-slate-700 text-sm font-bold mb-2"
+          >
+            Contraseña
+          </label>
+          <input
+            id="password"
+            type="password"
+            placeholder="Introduce contraseña"
+            formControlName="password"
+            class="w-full p-2 border border-shadow-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <!-- Mensaje de validación para el password -->
+          <app-error-message
+            [control]="formAdd.controls['password']"
+            fieldName="Contraseña"
+          ></app-error-message>
+        </div>
 
-  <div>
-    <h2 class="text-xl font-bold text-green-800 my-5">Listado de usuarios</h2>
+        <!-- Roles -->
+        <div>
+          <label
+            for="Roles"
+            class="block text-shadow-slate-700 text-sm font-bold mb-2"
+          >
+            Rol
+          </label>
+          <div
+            id="roles"
+            formArrayName="roles"
+            class="w-full p-2 border border-shadow-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+          >
+            <input
+              type="checkbox"
+              value="ROLE_ADMIN"
+              (change)="onRoleChange('ROLE_ADMIN', $event)"
+            />
+            Administrador <br />
+            <input
+              type="checkbox"
+              value="ROLE_USER"
+              (change)="onRoleChange('ROLE_USER', $event)"
+            />
+            Usuario<br />
+            <input
+              type="checkbox"
+              value="ROLE_USER_LIMITED"
+              (change)="onRoleChange('ROLE_USER_LIMITED', $event)"
+            />
+            Usuario limitado<br />
+          </div>
+
+          <!-- Mensajes de validación del rol -->
+          <app-error-message
+            [control]="formAdd.controls['roles']"
+            fieldName="Roles"
+          ></app-error-message>
+        </div>
+        <br />
+
+        <button
+          type="submit"
+          class="px-4 py-2 text-sm font-medium text-white bg-green-800 border border-green-600 rounded-lg hover:bg-green-700 cursor-pointer"
+          [disabled]="isFormInvalid()"
+          [ngClass]="{
+            '!cursor-not-allowed': isFormInvalid()
+          }"
+        >
+          Añadir usuario
+        </button>
+      </form>
+    </div>
+
     <div>
-      <!-- Filtro para busqueda -->
-      <!-- <form class="max-w-md mx-auto">
+      <h2 class="text-xl font-bold text-green-800 my-5">Listado de usuarios</h2>
+      <div>
+        <!-- Filtro para busqueda -->
+        <!-- <form class="max-w-md mx-auto">
         <label for="default-search" class="mb-2 text-green-800 sr-only"
           >Search</label
         >
@@ -171,182 +169,194 @@
           />
         </div>
       </form> -->
-      <!-------------------------USERS LIST-------------------------------->
+        <!-------------------------USERS LIST-------------------------------->
 
-      <div class="relative overflow-x-auto shadow-md sm:rounded-lg mb-4">
-        <table class="w-full text-sm text-left rtl:text-right">
-          <thead class="text-xs text-white uppercase bg-green-900">
-            <tr>
-              <th scope="col" class="px-6 py-3 whitespace-nowrap">Nombre</th>
-              <th scope="col" class="px-6 py-3">Email</th>
-              <th scope="col" class="px-6 py-3">Roles</th>
-              <th scope="col" class="px-3 py-3 ">Activo</th>
-              <th scope="col" class="px-3 py-3">iniciado</th>
-              <th scope="col" class="px-3 py-3">Acciones</th>
-            </tr>
-          </thead>
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg mb-4 z-20">
+          <table class="w-full text-sm text-left rtl:text-right">
+            <thead class="text-xs text-white uppercase bg-green-900">
+              <tr>
+                <th scope="col" class="px-6 py-3 whitespace-nowrap">Nombre</th>
+                <th scope="col" class="px-6 py-3">Email</th>
+                <th scope="col" class="px-6 py-3">Roles</th>
+                <th scope="col" class="px-3 py-3">Activo</th>
+                <th scope="col" class="px-3 py-3">iniciado</th>
+                <th scope="col" class="px-3 py-3">Acciones</th>
+              </tr>
+            </thead>
 
-          <tbody>
-            <tr
-              *ngFor="let user of filteredUsers"
-              class="bg-slate-200 text-gray-950 border-b border-gray-200 hover:bg-gray-50"
-            >
-              <td
-                scope="row"
-                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+            <tbody>
+              <tr
+                *ngFor="let user of filteredUsers"
+                class="bg-slate-100 bg- text-gray-950 border-b border-gray-200 hover:bg-gray-50"
               >
-                {{ user.username }}
-              </td>
-
-              <td class="px-6 py-4 min-w-40">
-                {{ user.email }}
-              </td>
-
-              <td class="px-6 py-4 min-w-20">
-                <span *ngFor="let role of user.roles">
-                  {{ getRoleDisplayName(role) }}                
-                  <ng-container *ngIf="role !== user.roles[user.roles.length - 1]">, </ng-container> <!-- Separador entre roles -->
-                </span>       
-              </td>
-
-              <td class="px-3 py-4 w-10">
-                <label class="inline-flex items-center cursor-pointer">
-                  <input type="checkbox" value="{{user.active}}" class="sr-only peer" />
-                  <div
-                    class="relative w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-600 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all  peer-checked:bg-green-800 "
-                  ></div>
-                 
-                </label>
-              </td>
-
-              <td class="px-3 py-4 w-10">
-                <label class="inline-flex items-center cursor-pointer">
-                  <input type="checkbox" value="{{user.firstTime}}" class="sr-only peer" />
-                  <div
-                  class="relative w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-600 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all  peer-checked:bg-green-800 "
-                  ></div>
-                 
-                </label>
-              </td>
-
-              <td class="px-3 py-4 w-20 inline-flex">
-                <button class="m-1 cursor-pointer" (click)="updateUser(user)">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="24px"
-                    viewBox="0 -960 960 960"
-                    width="24px"
-                    fill="#000000"
-                  >
-                    <path
-                      d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"
-                    />
-                  </svg>
-                </button>
-
-                <button
-                  class="m-1 cursor-pointer"
-                  (click)="deleteUser(user.id)"
+                <td
+                  scope="row"
+                  class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="24px"
-                    viewBox="0 -960 960 960"
-                    width="24px"
-                    fill="#000000"
-                  >
-                    <path
-                      d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"
+                  {{ user.username }}
+                </td>
+
+                <td class="px-6 py-4 min-w-40">
+                  {{ user.email }}
+                </td>
+
+                <td class="px-6 py-4 min-w-20">
+                  <span *ngFor="let role of user.roles">
+                    {{ getRoleDisplayName(role) }}
+                    <ng-container
+                      *ngIf="role !== user.roles[user.roles.length - 1]"
+                      >,
+                    </ng-container>
+                    <!-- Separador entre roles -->
+                  </span>
+                </td>
+
+                <td class="px-3 py-4 w-10">
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      value="{{ user.active }}"
+                      class="sr-only peer"
                     />
-                  </svg>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                    <div
+                      class="relative w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-600 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-800"
+                    ></div>
+                  </label>
+                </td>
+
+                <td class="px-3 py-4 w-10">
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      value="{{ user.firstTime }}"
+                      class="sr-only peer"
+                    />
+                    <div
+                      class="relative w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-600 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-800"
+                    ></div>
+                  </label>
+                </td>
+
+                <td class="px-3 py-4 w-20 inline-flex">
+                  <button class="m-1 cursor-pointer" (click)="updateUser(user)">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24px"
+                      viewBox="0 -960 960 960"
+                      width="24px"
+                      fill="#000000"
+                    >
+                      <path
+                        d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"
+                      />
+                    </svg>
+                  </button>
+
+                  <button
+                    class="m-1 cursor-pointer"
+                    (click)="deleteUser(user.id)"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24px"
+                      viewBox="0 -960 960 960"
+                      width="24px"
+                      fill="#000000"
+                    >
+                      <path
+                        d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"
+                      />
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- --------------------------------------------------- -->
       </div>
-      <!-- --------------------------------------------------- -->
     </div>
-  </div>
 
-  <ng-template #noUsers>
-    <p class="cursor-default p-2 mt-1 text-xl font-bold bg-green-800 opacity-60">
-      No hay usuarios que mostrar
-    </p>
-  </ng-template>
-</main>
-
+    <ng-template #noUsers>
+      <p
+        class="cursor-default p-2 mt-1 text-xl font-bold bg-green-800 opacity-60"
+      >
+        No hay usuarios que mostrar
+      </p>
+    </ng-template>
+  </main>
 </div>
 
-
 <!-- Modal de edición -->
- <div
-    *ngIf="userBeingEdited"
-    class="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50"
+<div
+  *ngIf="userBeingEdited"
+  class="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50"
+>
+  <div
+    class="max-w-sm w-full p-6 bg-green-800 border border-green-700 rounded-lg shadow-sm mx-auto"
   >
+    <h5 class="mb-2 text-2xl font-bold tracking-tight text-white">
+      Editar Usuario
+    </h5>
+
+    <input
+      [(ngModel)]="userBeingEdited.username"
+      class="mb-3 w-full p-2 border border-green-300 rounded-lg text-shadow-slate-700 bg-green-100 placeholder-slate-500"
+      placeholder="Nombre"
+    />
+
+    <input
+      [(ngModel)]="userBeingEdited.email"
+      class="mb-3 w-full p-2 border border-green-300 rounded-lg text-shadow-slate-700 bg-green-100 placeholder-slate-500"
+      placeholder="Nombre"
+    />
+
     <div
-      class="max-w-sm w-full p-6 bg-green-800 border border-green-700 rounded-lg shadow-sm mx-auto"
+      id="roles"
+      class="w-full p-2 border border-shadow-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500 text-shadow-slate-700 bg-green-100 placeholder-slate-500"
     >
-      <h5
-        class="mb-2 text-2xl font-bold tracking-tight text-white"
-      >
-        Editar Usuario
-      </h5>
-  
       <input
-        [(ngModel)]="userBeingEdited.username"
-        class="mb-3 w-full p-2 border border-green-300 rounded-lg text-shadow-slate-700 bg-green-100  placeholder-slate-500"
-        placeholder="Nombre"
+        class="accent-green-500"
+        type="checkbox"
+        value="ROLE_ADMIN"
+        (change)="onEditRoleChange('ROLE_ADMIN', $event)"
+        [checked]="userBeingEdited.roles.includes('ROLE_ADMIN')"
       />
-  
+      Administrador <br />
       <input
-        [(ngModel)]="userBeingEdited.email"
-        class="mb-3 w-full p-2 border border-green-300 rounded-lg  text-shadow-slate-700 bg-green-100  placeholder-slate-500"
-        placeholder="Nombre"
+        class="accent-green-500"
+        type="checkbox"
+        value="ROLE_USER"
+        (change)="onEditRoleChange('ROLE_USER', $event)"
+        [checked]="userBeingEdited.roles.includes('ROLE_USER')"
       />
-
-      <div
-          id="roles"
-          class="w-full p-2 border border-shadow-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500 text-shadow-slate-700 bg-green-100  placeholder-slate-500"
-        >
-          <input class="accent-green-500 "
-            type="checkbox"
-            value="ROLE_ADMIN"
-            (change)="onEditRoleChange('ROLE_ADMIN', $event)"
-            [checked]="userBeingEdited.roles.includes('ROLE_ADMIN')"
-          />
-          Administrador <br />
-          <input class="accent-green-500"
-            type="checkbox"
-            value="ROLE_USER"
-            (change)="onEditRoleChange('ROLE_USER', $event)"
-            [checked]="userBeingEdited.roles.includes('ROLE_USER')"
-          />
-          Usuario<br />
-          <input class="accent-green-500"
-            type="checkbox"
-            value="ROLE_USER_LIMITED"
-            (change)="onEditRoleChange('ROLE_USER_LIMITED', $event)"
-            [checked]="userBeingEdited.roles.includes('ROLE_USER_LIMITED')"
-          />
-          Usuario limitado<br />
-        </div><br>
-  
-      <div class="flex justify-end gap-2">
-        <button
-          (click)="cancelEdit()"
-          class="px-4 py-2 text-sm font-medium text-white bg-green-700 border border-green-300 rounded-lg hover:bg-green-500"
-        >
-          Cancelar
-        </button>
-        <button
-          (click)="saveEdit()"
-          class="px-4 py-2 text-sm font-medium text-white bg-green-700 border border-green-300 rounded-lg hover:bg-green-500"
-        >
-          Guardar
-        </button>
-      </div>
+      Usuario<br />
+      <input
+        class="accent-green-500"
+        type="checkbox"
+        value="ROLE_USER_LIMITED"
+        (change)="onEditRoleChange('ROLE_USER_LIMITED', $event)"
+        [checked]="userBeingEdited.roles.includes('ROLE_USER_LIMITED')"
+      />
+      Usuario limitado<br />
     </div>
-  </div> 
+    <br />
 
-  <app-toast></app-toast>
+    <div class="flex justify-end gap-2">
+      <button
+        (click)="cancelEdit()"
+        class="px-4 py-2 text-sm font-medium text-white bg-green-700 border border-green-300 rounded-lg hover:bg-green-500"
+      >
+        Cancelar
+      </button>
+      <button
+        (click)="saveEdit()"
+        class="px-4 py-2 text-sm font-medium text-white bg-green-700 border border-green-300 rounded-lg hover:bg-green-500"
+      >
+        Guardar
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-toast></app-toast>

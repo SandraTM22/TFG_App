@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { UserService } from '../../../shared/services/user.service';
 import { ErrorMessageComponent } from '../../../shared/components/error-message/error-message.component';
 import {
@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
 import { MailValidator } from '../../../shared/validators/mail.validators';
 import { RolesValidator } from '../../../shared/validators/roles.validators';
 import { ToastComponent } from '../../../shared/toast/toast.component';
+import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 
 @Component({
   selector: 'app-user-management',
@@ -23,9 +24,11 @@ import { ToastComponent } from '../../../shared/toast/toast.component';
     ReactiveFormsModule,
     CommonModule,
     ToastComponent,
+    NavbarComponent
   ],
   templateUrl: './user-management.component.html',
   styleUrl: './user-management.component.css',
+  encapsulation: ViewEncapsulation.None,
 })
 export class UserManagementComponent {
   // Accede al componente del Toast y se inicializa en indefinido
