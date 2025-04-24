@@ -21,9 +21,11 @@ export const routes: Routes = [
     path: 'costas',
     component: FeeManagementComponent,
     canActivate: [authGuard],
-    data: { roles: ['ROLE_SUPER','ROLE_ADMIN'] },
+    data: { roles: ['ROLE_USER', 'ROLE_ADMIN'] },
   },
   {
-    path: 'unauthorized', component: UnauthorizedComponent
-  }
+    path: 'unauthorized',
+    component: UnauthorizedComponent,
+  },
 ];
+
