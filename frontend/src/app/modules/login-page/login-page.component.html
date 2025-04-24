@@ -9,6 +9,14 @@
         Login
       </h1>
 
+      <!-- Mensaje de credenciales incorrectas -->
+      <div
+        *ngIf="errorMessage"
+        class="mb-3 mx-auto w-fit max-w-md text-center px-6 py-3 rounded-xl bg-red-100 text-red-700 transition-opacity duration-300 animate-fadein shadow-md"
+      >
+        {{ errorMessage }}
+      </div>
+
       <!-- Formulario de Login -->
       <form
         [formGroup]="form"
@@ -32,9 +40,9 @@
           />
           <!-- Mensajes de validación para el email -->
           <app-error-message
-          [control]="form.controls['email']"
-          fieldName="Email"
-        ></app-error-message>          
+            [control]="form.controls['email']"
+            fieldName="Email"
+          ></app-error-message>
         </div>
 
         <!-- Campo Password -->
@@ -54,10 +62,9 @@
           />
           <!-- Mensaje de validación para el password -->
           <app-error-message
-          [control]="form.controls['password']"
-          fieldName="Contraseña"
-        ></app-error-message>      
-          
+            [control]="form.controls['password']"
+            fieldName="Contraseña"
+          ></app-error-message>
         </div>
 
         <!-- Botón de Submit -->
@@ -68,9 +75,12 @@
           Entrar
         </button>
       </form>
-      
+
       <div class="mt-3 text-center">
-        <a routerLink="/forgot-password" class="text-red-500 underline">
+        <a
+          routerLink="/forgot-password"
+          class="text-red-800 underline text-center cursor-pointer"
+        >
           ¿has olvidado tu contraseña?
         </a>
       </div>

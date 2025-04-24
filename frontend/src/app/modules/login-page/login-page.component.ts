@@ -34,7 +34,8 @@ export class LoginPageComponent {
     private router: Router
   ) {}
 
-  errorMessage: string = '';
+  errorMessage: string | null = null;
+ 
 
   ngOnInit(): void {
     const token = localStorage.getItem('authToken');
@@ -65,12 +66,21 @@ export class LoginPageComponent {
           this.router.navigate(['home']);
         },
         (error) => {
-          this.errorMessage = 'Credenciales incorrectas';
+          this.showLoginError('Credenciales incorrectas');
         }
       );
     } else {
-      console.log('Credenciales incorrectas');
+      console.log('Formulario inválido');
+      return
     }
     this.form.reset(); // Limpia el formulario después de login
   }
+
+  showLoginError(message: string) {
+    this.errorMessage = message;
+    setTimeout(() => {
+      this.errorMessage = null;
+    }, 4000);
+  }
+  
 }
