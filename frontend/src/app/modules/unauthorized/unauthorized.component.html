@@ -1,7 +1,29 @@
 <header class="header-p fixed w-full top-0 left-0">
-    <app-navbar></app-navbar>
+  <app-navbar></app-navbar>
 </header>
-<main class="mt-24">
-    <p>NO ESTAS AUTORIZADO</p>
-</main>
+<main
+  class="mt-24 flex flex-col items-center justify-center px-6 py-12 text-center"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="w-24 h-24 text-red-500 mb-6"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M18.364 5.636L5.636 18.364M5.636 5.636l12.728 12.728"
+    />
+  </svg>
+  <h1 class="text-4xl font-bold text-red-600 mb-4">Acceso denegado</h1>
 
+  <a
+    routerLink="/home"
+    class="bg-green-800 text-white px-6 py-2 rounded-lg hover:bg-green-900 transition duration-300 cursor-pointer"
+  >
+    Volver al inicio
+  </a>
+</main>
