@@ -39,7 +39,7 @@ export class UserManagementComponent {
 
   formAdd: FormGroup = new FormGroup({});
 
-  //allowed roles
+  //Roles permitidos
   roles = ['ROLE_ADMIN', 'ROLE_USER', 'ROLE_USER_LIMITED'];
 
   users: User[] = [];
@@ -70,7 +70,7 @@ export class UserManagementComponent {
     return (this.formAdd.get('roles') as FormArray).controls;
   }
 
-  // Agregar un rol seleccionado
+  //Método para agregar un rol seleccionado
   onRoleChange(role: string, event: Event): void {
     const isChecked = (event.target as HTMLInputElement).checked;
     const rolesArray = this.formAdd.get('roles') as FormArray;
@@ -92,6 +92,7 @@ export class UserManagementComponent {
     console.log('Roles seleccionados:', rolesArray.value);
   }
 
+  //Método para modificar los roles
   onEditRoleChange(role: string, event: Event): void {
     const isChecked = (event.target as HTMLInputElement).checked;
     if (!this.userBeingEdited) return;
@@ -109,6 +110,7 @@ export class UserManagementComponent {
     console.log('Roles editados:', this.userBeingEdited.roles);
   }
 
+  //Método para obtener un nombre amigable del rol
   getRoleDisplayName(role: string): string {
     const roleMapping: { [key: string]: string } = {
       ROLE_ADMIN: 'Admin',
@@ -118,6 +120,7 @@ export class UserManagementComponent {
     return roleMapping[role] || role; // Si no hay mapeo, devuelve el valor original del rol
   }
 
+  //Cargar los usuarios
   loadUsers(): void {
     this.userService.getUsers().subscribe(
       (users) => {
@@ -128,6 +131,7 @@ export class UserManagementComponent {
     );
   }
 
+  //Añadir un nuevo usuario
   addUser(): void {
     const newUser: User = {
       id: 0,
