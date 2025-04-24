@@ -6,6 +6,7 @@ import { UserManagementComponent } from './modules/admin/user-management/user-ma
 import { authGuard } from './shared/guard/auth.guard';
 import { FeeManagementComponent } from './modules/fee-management/fee-management.component';
 import { UnauthorizedComponent } from './modules/unauthorized/unauthorized.component';
+import { NotFoundComponent } from './modules/not-found/not-found.component';
 
 export const routes: Routes = [
   { path: '', component: LoginPageComponent },
@@ -27,5 +28,8 @@ export const routes: Routes = [
     path: 'unauthorized',
     component: UnauthorizedComponent,
   },
+  {
+    path: '**',
+    component: NotFoundComponent,
+  },
 ];
-
