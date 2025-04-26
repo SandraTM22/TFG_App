@@ -4,6 +4,5 @@ export interface User {
     email: string;
     roles: Array<string>;
     password :string;
-    firstTime: boolean;
-    active: boolean;
+    firstTime: boolean;    
   }

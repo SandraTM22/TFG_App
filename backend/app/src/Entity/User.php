@@ -38,9 +38,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $firstTime = true;
 
-    #[ORM\Column]
-    private ?bool $active = false;
-
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -133,18 +131,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setFirstTime(bool $firstTime): static
     {
         $this->firstTime = $firstTime;
-
-        return $this;
-    }
-
-    public function getActive(): ?bool
-    {
-        return $this->active;
-    }
-
-    public function setActive(bool $active): static
-    {
-        $this->active = $active;
 
         return $this;
     }
