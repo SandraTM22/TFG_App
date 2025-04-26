@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { RouterLink } from '@angular/router';
+import { ModalLogoutComponent } from './modal-logout/modal-logout.component';
 
 @Component({
   selector: 'app-navbar',
-  imports: [CommonModule,RouterLink],
+  imports: [CommonModule, RouterLink, ModalLogoutComponent],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })
@@ -18,22 +19,12 @@ export class NavbarComponent {
   hasRole(roles: string[]) {
     return this.authService.hasAnyRole(roles);
   }
-
   confirmLogout() {
     this.showLogoutModal = true;
   }
 
-  logout() {    
+  onLogoutConfirmed() {
     this.showLogoutModal = false;
-    this.showGoodbyeMessage = true;
-    return this.authService.logout();
-  }
-  
-  LogoutModal(){
-    if (this.showLogoutModal) {
-      return true
-    }
-    return false
   }
 }
 

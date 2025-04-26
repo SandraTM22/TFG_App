@@ -1,0 +1,34 @@
+<!-- MODAL DE LOGOUT -->
+<div
+  *ngIf="showLogoutModal"
+  class="fixed inset-0 bg-slate-100 bg-opacity-80 flex items-center justify-center z-50 min-h-screen w-full"
+>
+  <div
+    class="bg-white rounded-xl p-6 w-full max-w-sm shadow-lg text-center"
+  >
+    <h2 class="text-lg font-semibold text-gray-800 mb-4">
+      ¿Seguro que deseas cerrar sesión?
+    </h2>
+    <div class="flex justify-center space-x-4">
+      <button
+        (click)="logout()"
+        class="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg cursor-pointer"
+      >
+        Sí, cerrar
+      </button>
+      <button
+        (click)="logoutConfirmed.emit(false)"
+        class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg cursor-pointer"
+      >
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL DE DESPEDIDA -->
+<div *ngIf="showGoodbyeMessage" class="fixed inset-0 bg-white text-green-950 text-2xl flex justify-center items-center z-50">
+  <h1 class="p-4 text-8xl">¡Hasta pronto!</h1>
+</div>
+
