@@ -1,10 +1,8 @@
 import { Component } from '@angular/core';
-import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
-
 
 @Component({
   selector: 'app-fee-management',
-  imports: [NavbarComponent],
+  imports: [],
   templateUrl: './fee-management.component.html',
   styleUrl: './fee-management.component.css'
 })

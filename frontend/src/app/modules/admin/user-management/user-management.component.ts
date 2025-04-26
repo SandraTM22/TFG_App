@@ -14,7 +14,6 @@ import { CommonModule } from '@angular/common';
 import { MailValidator } from '../../../shared/validators/mail.validators';
 import { RolesValidator } from '../../../shared/validators/roles.validators';
 import { ToastComponent } from '../../../shared/toast/toast.component';
-import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 
 @Component({
   selector: 'app-user-management',
@@ -23,8 +22,7 @@ import { NavbarComponent } from '../../../shared/components/navbar/navbar.compon
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    ToastComponent,
-    NavbarComponent
+    ToastComponent,    
   ],
   templateUrl: './user-management.component.html',
   styleUrl: './user-management.component.css',
