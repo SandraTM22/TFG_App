@@ -15,9 +15,10 @@ export class NavbarComponent {
 
   constructor(public authService: AuthService) {}
 
-  hasRole(role: string) {
-    return this.authService.hasAnyRole([role]);
+  hasRole(roles: string[]) {
+    return this.authService.hasAnyRole(roles);
   }
+
   confirmLogout() {
     this.showLogoutModal = true;
   }

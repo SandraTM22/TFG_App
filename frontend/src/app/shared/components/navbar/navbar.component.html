@@ -23,7 +23,7 @@
             >
           </li>
 
-          <li *ngIf="hasRole('ROLE_ADMIN')">
+          <li *ngIf="hasRole(['ROLE_ADMIN'])">
             <a
               routerLink="/admin/users"
               class="block py-2 px-3 text-green-50 hover:underline cursor-pointer"
@@ -31,7 +31,7 @@
             >
           </li>
 
-          <li *ngIf="hasRole('ROLE_USER')">
+          <li *ngIf="hasRole(['ROLE_USER','ROLE_ADMIN'])">
             <a
               routerLink="/costas"
               class="block py-2 px-3 text-green-50 hover:underline cursor-pointer"

@@ -139,8 +139,7 @@ export class UserManagementComponent {
       email: this.formAdd.controls['email'].value!,
       password: this.formAdd.controls['password'].value!,
       roles: this.formAdd.controls['roles'].value!,
-      firstTime: true,
-      active: false,
+      firstTime: true,     
     };
     console.log('Enviando usuario desdes user mang:', newUser); // Verifica el objeto que se envía
 
