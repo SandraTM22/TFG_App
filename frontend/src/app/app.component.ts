@@ -1,11 +1,24 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ModalLogoutComponent } from './shared/components/modal-logout/modal-logout.component';
+import { NavbarComponent } from './shared/components/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, ModalLogoutComponent, NavbarComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
 })
 export class AppComponent {
+  showLogoutModal = false;
+
+  // Recibe el evento desde el navbar
+  onLogoutRequested() {
+    this.showLogoutModal = true;
+  }
+
+  // Recibe el evento desde el modal
+  onLogoutConfirmed(confirmed: boolean) {
+    this.showLogoutModal = false;
+  }
 }

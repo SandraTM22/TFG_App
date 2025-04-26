@@ -1,2 +1,12 @@
-<router-outlet />
+<!-- app.component.html -->
+<app-navbar (logoutRequested)="onLogoutRequested()"></app-navbar>
+
+<!-- modal ya en el nivel raíz -->
+<app-modal-logout
+  [showLogoutModal]="showLogoutModal"
+  (logoutConfirmed)="onLogoutConfirmed($event)">
+</app-modal-logout>
+
+<router-outlet></router-outlet>
+
 

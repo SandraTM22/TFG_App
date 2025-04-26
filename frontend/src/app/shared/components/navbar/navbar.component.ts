@@ -1,16 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, Output,EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { RouterLink } from '@angular/router';
-import { ModalLogoutComponent } from './modal-logout/modal-logout.component';
 
 @Component({
   selector: 'app-navbar',
-  imports: [CommonModule, RouterLink, ModalLogoutComponent],
+  imports: [CommonModule, RouterLink],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })
 export class NavbarComponent {
+  @Output() logoutRequested = new EventEmitter<void>();
   showLogoutModal = false;
   showGoodbyeMessage = false;
 
@@ -20,11 +20,8 @@ export class NavbarComponent {
     return this.authService.hasAnyRole(roles);
   }
   confirmLogout() {
-    this.showLogoutModal = true;
+    this.logoutRequested.emit(); //Emite al padre para que abra el modal
   }
 
-  onLogoutConfirmed() {
-    this.showLogoutModal = false;
-  }
 }
 
