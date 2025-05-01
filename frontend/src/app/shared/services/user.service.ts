@@ -1,9 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { User } from '../interfaces/user';
-import { Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 import { AuthService } from './auth.service';
 import { HttpHeaders } from '@angular/common/http';
+import { tap } from 'rxjs';
+
 
 @Injectable({
   providedIn: 'root',
@@ -13,31 +15,55 @@ export class UserService {
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
+  // el subject interno
+  private usersSubject = new BehaviorSubject<User[]>([]);
+  // el observable público
+  users$ = this.usersSubject.asObservable();
+
+  //Helpers para recargar y emitir la nueva lista
+  private refreshUsers() {
+    this.http.get<User[]>(this.apiUrl)
+      .subscribe(users => this.usersSubject.next(users));
+  }
+
+  // Inicializa la carga 
+  init() {
+    this.refreshUsers();
+  }
+
+
+
   //Observable: emitirá los datos de los usuarios al completarse la solicitud. Esto permite trabajar con los datos de forma asíncrona.
   getUsers(): Observable<User[]> {
-     // Obtener el token del localStorage
-     const token = this.authService.getToken();
-     if (!token) {
-       throw new Error('Token no encontrado');
-     }
-     // Configurar las cabeceras con el token    
-    return this.http.get<User[]>(this.apiUrl);
+    // Obtener el token del localStorage
+    const token = this.authService.getToken();
+    if (!token) {
+      throw new Error('Token no encontrado');
+    }
+    // Configurar las cabeceras con el token
+    return this.users$;
   }
 
   addUser(user: User): Observable<User[]> {
     const token = this.authService.getToken();
-     if (!token) {
-       throw new Error('Token no encontrado');
+    if (!token) {
+      throw new Error('Token no encontrado');
     }
-    return this.http.post<User[]>(this.apiUrl, user);
+    return this.http.post<User[]>(this.apiUrl, user).pipe(
+      tap(() => this.refreshUsers())
+    );
   }
 
   updateUser(user: User): Observable<User[]> {
-    return this.http.put<User[]>(`${this.apiUrl}/${user.id}`, user);
+    return this.http.put<User[]>(`${this.apiUrl}/${user.id}`, user).pipe(
+      tap(() => this.refreshUsers())
+    );
   }
 
   deleteUser(id: number): Observable<User[]> {
-    return this.http.delete<User[]>(`${this.apiUrl}/${id}`);
+    return this.http.delete<User[]>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => this.refreshUsers())
+    );
   }
 
   // Funcion para filtrar segun lo que haya en el termino de busqueda(aun por implantar)

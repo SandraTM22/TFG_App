@@ -12,9 +12,6 @@ import { CommonModule } from '@angular/common';
 export class ToastComponent {
   constructor(public toastService: ToastService) {}
 
-  
-
-
   removeToast(id: number) {
     this.toastService.removeToast(id);
   }
