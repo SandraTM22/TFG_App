@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormGroup,
@@ -23,6 +23,7 @@ import { ToastService } from '../../../shared/services/toast.service';
   styleUrl: './add-user.component.css',
 })
 export class AddUserComponent {
+  @Output() userAdded = new EventEmitter<void>(); //Pasamos el evento al Dashboard
   
   constructor(
     private userService: UserService,
@@ -77,6 +78,7 @@ export class AddUserComponent {
     while (rolesArray.length) {
       rolesArray.removeAt(0); // Eliminar cada control dentro del FormArray
     }
+    this.userAdded.emit();
   }
 
   //Cargar los usuarios
