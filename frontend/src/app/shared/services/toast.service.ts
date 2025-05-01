@@ -19,7 +19,6 @@ export class ToastService {
   ) {
     const id = this.toastId++;
     this.toasts.push({ id, type, message });
-    console.log("toast generado")
 
     // Eliminar el toast después del tiempo especificado
     setTimeout(() => {
