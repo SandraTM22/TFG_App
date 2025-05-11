@@ -6,10 +6,19 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+// Valida unicidad de email antes de flush
+#[UniqueEntity(
+    fields: ['email'],
+    message: 'Ya existe un usuario registrado con este email.'
+)]
+
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -18,27 +27,47 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank(message: 'El nombre de usuario no puede estar vacío')]
+    #[Assert\Length(
+        max: 180,
+        maxMessage: 'El nombre de usuario no puede tener más de {{ limit }} caracteres'
+    )]
     private ?string $name = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank(message: 'El email no puede estar vacío')]
+    #[Assert\Email(message: 'El email "{{ value }}" no es un email válido')]
+    #[Assert\Length(
+        max: 180,
+        maxMessage: 'El email no puede tener más de {{ limit }} caracteres'
+    )]
     private ?string $email = null;
 
     /**
      * @var list<string> The user roles
      */
-    #[ORM\Column]
+    #[ORM\Column(type: 'json', nullable: false)]
     private array $roles = [];
+
+    //Roles permitidos = ['ROLE_ADMIN', 'ROLE_USER', 'ROLE_USER_LIMITED'];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\NotBlank(message: 'La contraseña no puede estar vacía')]
+    #[Assert\Length(
+        min: 8,
+        max: 255,
+        minMessage: 'La contraseña debe tener al menos {{ limit }} caracteres',
+        maxMessage: 'La contraseña no puede exceder {{ limit }} caracteres'
+    )]
     private ?string $password = null;
 
     #[ORM\Column]
     private ?bool $firstTime = true;
 
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -134,5 +163,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
 }

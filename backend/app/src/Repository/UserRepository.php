@@ -34,43 +34,31 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     public function findByRoleAdmin(): ?User
-{
-    $conn = $this->getEntityManager()->getConnection();
+    {
+        $conn = $this->getEntityManager()->getConnection();
 
-    $sql = 'SELECT * FROM "user" WHERE roles::text LIKE :role LIMIT 1';
-    $stmt = $conn->prepare($sql);
-    $stmt->bindValue('role', '%ROLE_ADMIN%');
-    $result = $stmt->executeQuery()->fetchAssociative();
+        $sql = 'SELECT * FROM "user" WHERE roles::text LIKE :role LIMIT 1';
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('role', '%ROLE_ADMIN%');
+        $result = $stmt->executeQuery()->fetchAssociative();
 
-    if (!$result) {
-        return null;
+        if (!$result) {
+            return null;
+        }
+
+        return $this->find($result['id']);
+    }
+    public function save(User $user): void
+    {
+        $em = $this->getEntityManager();
+        $em->persist($user);
+        $em->flush();
     }
 
-    return $this->find($result['id']);
-}
-
-    //    /**
-    //     * @return User[] Returns an array of User objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('u.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?User
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function delete(User $user): void
+    {
+        $em = $this->getEntityManager();
+        $em->remove($user);
+        $em->flush();
+    }
 }

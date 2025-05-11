@@ -48,7 +48,7 @@ export class AddUserComponent {
   addUser(): void {
     const newUser: User = {
       id: 0,
-      username: this.formAdd.controls['name'].value!,
+      name: this.formAdd.controls['name'].value!,
       email: this.formAdd.controls['email'].value!,
       password: this.formAdd.controls['password'].value!,
       roles: this.formAdd.controls['roles'].value!,
