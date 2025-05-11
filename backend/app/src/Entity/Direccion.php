@@ -70,9 +70,16 @@ class Direccion
     #[ORM\OneToMany(mappedBy: 'direccion', targetEntity: Procurador::class)]
     private Collection $procuradores;
 
+    /**
+     * @var Collection<int, Contrario>
+     */
+    #[ORM\OneToMany(targetEntity: Contrario::class, mappedBy: 'direccion')]
+    private Collection $contrarios;
+
     public function __construct()
     {
         $this->procuradores = new ArrayCollection();
+        $this->contrarios = new ArrayCollection();
     }
 
 
@@ -173,6 +180,36 @@ class Direccion
         if ($this->procuradores->removeElement($procurador)) {
             if ($procurador->getDireccion() === $this) {
                 $procurador->setDireccion(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Contrario>
+     */
+    public function getContrarios(): Collection
+    {
+        return $this->contrarios;
+    }
+
+    public function addContrario(Contrario $contrario): static
+    {
+        if (!$this->contrarios->contains($contrario)) {
+            $this->contrarios->add($contrario);
+            $contrario->setDireccion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContrario(Contrario $contrario): static
+    {
+        if ($this->contrarios->removeElement($contrario)) {
+            // set the owning side to null (unless already changed)
+            if ($contrario->getDireccion() === $this) {
+                $contrario->setDireccion(null);
             }
         }
 
