@@ -21,7 +21,7 @@ final class UserController extends AbstractController
         private readonly UserPasswordHasherInterface $passwordHasher
     ) {}
 
-    //List all users
+   
     #[Route('', name: 'list_user', methods: ['GET'])]
     public function list_user(EntityManagerInterface $em): JsonResponse
     {           
@@ -43,26 +43,7 @@ final class UserController extends AbstractController
     public function create_user(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         return $this->handleForm($request, new User());
-        /* $params = json_decode($request->getContent(), true);
-        $user = new User();
-        $user->setName($params['username']);
-        $user->setEmail($params['email']);
-        // Hashear la contraseña correctamente
-        $hashedPassword = $passwordHasher->hashPassword($user, $params['password']);
-        $user->setPassword($hashedPassword);
-        $user->setRoles($params['roles']);
-        $user->setFirstTime(true);
-
-        $em->persist($user);
-        $em->flush();
-        return $this->json([
-            'id' => $user->getId(),
-            'username' => $user->getName(),
-            'email' => $user->getEmail(),
-            'password' => $user->getPassword(),
-            'roles' => $user->getRoles(),
-            'firstTime' => $user->getFirstTime()
-        ]); */
+        
     }
 
     //Delete user

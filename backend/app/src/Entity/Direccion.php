@@ -76,6 +76,9 @@ class Direccion
     #[ORM\OneToMany(targetEntity: Contrario::class, mappedBy: 'direccion')]
     private Collection $contrarios;
 
+    #[ORM\OneToOne(mappedBy: 'direccion', cascade: ['persist', 'remove'])]
+    private ?Juzgado $juzgado = null;
+
     public function __construct()
     {
         $this->procuradores = new ArrayCollection();
@@ -212,6 +215,28 @@ class Direccion
                 $contrario->setDireccion(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getJuzgado(): ?Juzgado
+    {
+        return $this->juzgado;
+    }
+
+    public function setJuzgado(?Juzgado $juzgado): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($juzgado === null && $this->juzgado !== null) {
+            $this->juzgado->setDireccion(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($juzgado !== null && $juzgado->getDireccion() !== $this) {
+            $juzgado->setDireccion($this);
+        }
+
+        $this->juzgado = $juzgado;
 
         return $this;
     }
