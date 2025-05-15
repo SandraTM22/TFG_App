@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\NotasRepository;
+use App\Repository\NotaRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: NotasRepository::class)]
-class Notas
+#[ORM\Entity(repositoryClass: NotaRepository::class)]
+class Nota
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -15,10 +16,26 @@ class Notas
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\Length(
+        max: 1000,
+        maxMessage: "El contenido no puede superar los {{ limit }} caracteres"
+    )]
+    #[Assert\NotBlank(message: "El contenido no puede estar vacío")]
     private ?string $contenido = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotNull(message: "La fecha no puede ser nula")]
     private ?\DateTimeInterface $fecha = null;
+
+    #[ORM\ManyToOne(inversedBy: 'notas')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: "Debe de tener un usuario asociado")]
+    private ?User $usuario = null;
+
+    public function __construct()
+    {
+        $this->fecha = new \DateTime();
+    }
 
     public function getId(): ?int
     {
@@ -45,6 +62,18 @@ class Notas
     public function setFecha(\DateTimeInterface $fecha): static
     {
         $this->fecha = $fecha;
+
+        return $this;
+    }
+
+    public function getUsuario(): ?User
+    {
+        return $this->usuario;
+    }
+
+    public function setUsuario(?User $usuario): static
+    {
+        $this->usuario = $usuario;
 
         return $this;
     }

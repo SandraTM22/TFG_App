@@ -24,7 +24,7 @@ class JuzgadoAssembler
         ];
     }
 
-    public function JuzgadoToArray(Juzgado $juzgado): array
+    public function juzgadoToArray(Juzgado $juzgado): array
     {
         return [
             'id' => $juzgado->getId(),

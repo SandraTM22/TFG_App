@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -66,6 +68,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private ?bool $firstTime = true;
+
+    /**
+     * @var Collection<int, Notas>
+     */
+    #[ORM\OneToMany(targetEntity: Nota::class, mappedBy: 'usuario')]
+    private Collection $notas;
+
+    public function __construct()
+    {
+        $this->notas = new ArrayCollection();
+    }
 
 
     public function getId(): ?int
@@ -160,6 +173,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setFirstTime(bool $firstTime): static
     {
         $this->firstTime = $firstTime;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Notas>
+     */
+    public function getNotas(): Collection
+    {
+        return $this->notas;
+    }
+
+    public function addNota(Nota $nota): static
+    {
+        if (!$this->notas->contains($nota)) {
+            $this->notas->add($nota);
+            $nota->setUsuario($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNota(Nota $nota): static
+    {
+        if ($this->notas->removeElement($nota)) {
+            // set the owning side to null (unless already changed)
+            if ($nota->getUsuario() === $this) {
+                $nota->setUsuario(null);
+            }
+        }
 
         return $this;
     }
