@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\JuzgadoRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -24,6 +26,17 @@ class Juzgado
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $notas = null;
+
+    /**
+     * @var Collection<int, Expediente>
+     */
+    #[ORM\OneToMany(targetEntity: Expediente::class, mappedBy: 'juzgado')]
+    private Collection $expedientes;
+
+    public function __construct()
+    {
+        $this->expedientes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -62,6 +75,36 @@ class Juzgado
     public function setNotas(?string $notas): static
     {
         $this->notas = $notas;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Expediente>
+     */
+    public function getExpedientes(): Collection
+    {
+        return $this->expedientes;
+    }
+
+    public function addExpediente(Expediente $expediente): static
+    {
+        if (!$this->expedientes->contains($expediente)) {
+            $this->expedientes->add($expediente);
+            $expediente->setJuzgado($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExpediente(Expediente $expediente): static
+    {
+        if ($this->expedientes->removeElement($expediente)) {
+            // set the owning side to null (unless already changed)
+            if ($expediente->getJuzgado() === $this) {
+                $expediente->setJuzgado(null);
+            }
+        }
 
         return $this;
     }

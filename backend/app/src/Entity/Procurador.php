@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ProcuradorRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Direccion;
 use Doctrine\ORM\Mapping\UniqueConstraint;
@@ -76,6 +78,17 @@ class Procurador
     #[ORM\ManyToOne(targetEntity: Direccion::class, inversedBy: 'procuradores', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)] // o true para opcional
     private ?Direccion $direccion = null;
+
+    /**
+     * @var Collection<int, Expediente>
+     */
+    #[ORM\OneToMany(targetEntity: Expediente::class, mappedBy: 'procurador')]
+    private Collection $expedientes;
+
+    public function __construct()
+    {
+        $this->expedientes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -150,6 +163,36 @@ class Procurador
     public function setDireccion(?Direccion $direccion): static
     {
         $this->direccion = $direccion;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Expediente>
+     */
+    public function getExpedientes(): Collection
+    {
+        return $this->expedientes;
+    }
+
+    public function addExpediente(Expediente $expediente): static
+    {
+        if (!$this->expedientes->contains($expediente)) {
+            $this->expedientes->add($expediente);
+            $expediente->setProcurador($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExpediente(Expediente $expediente): static
+    {
+        if ($this->expedientes->removeElement($expediente)) {
+            // set the owning side to null (unless already changed)
+            if ($expediente->getProcurador() === $this) {
+                $expediente->setProcurador(null);
+            }
+        }
 
         return $this;
     }
