@@ -48,6 +48,9 @@ class Costas
     )]
     private EstadoCobro $estadoCobro;
 
+    #[ORM\ManyToOne(inversedBy: 'costas')]
+    private ?Expediente $expediente = null;
+
     public function __construct() {
         $this->estado = EstadoCostas::SIN_TASAR;
         $this->estadoCobro = EstadoCobro::NO_COBRADAS;
@@ -138,6 +141,18 @@ class Costas
     public function setEstadoCobro(EstadoCobro $estadoCobro): static
     {
         $this->estadoCobro = $estadoCobro;
+
+        return $this;
+    }
+
+    public function getExpediente(): ?Expediente
+    {
+        return $this->expediente;
+    }
+
+    public function setExpediente(?Expediente $expediente): static
+    {
+        $this->expediente = $expediente;
 
         return $this;
     }

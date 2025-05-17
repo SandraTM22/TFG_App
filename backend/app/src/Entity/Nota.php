@@ -35,6 +35,12 @@ class Nota
     #[ORM\ManyToOne(inversedBy: 'notas')]
     private ?Cliente $cliente = null;
 
+    #[ORM\ManyToOne(inversedBy: 'notasJ')]
+    private ?Juzgado $juzgado = null;
+
+    #[ORM\ManyToOne(inversedBy: 'notas')]
+    private ?Expediente $expediente = null;
+
     public function __construct()
     {
         $this->fecha = new \DateTime();
@@ -89,6 +95,30 @@ class Nota
     public function setCliente(?Cliente $cliente): static
     {
         $this->cliente = $cliente;
+
+        return $this;
+    }
+
+    public function getJuzgado(): ?Juzgado
+    {
+        return $this->juzgado;
+    }
+
+    public function setJuzgado(?Juzgado $juzgado): static
+    {
+        $this->juzgado = $juzgado;
+
+        return $this;
+    }
+
+    public function getExpediente(): ?Expediente
+    {
+        return $this->expediente;
+    }
+
+    public function setExpediente(?Expediente $expediente): static
+    {
+        $this->expediente = $expediente;
 
         return $this;
     }

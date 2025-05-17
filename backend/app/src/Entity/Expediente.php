@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ExpedienteRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -68,9 +70,30 @@ class Expediente
     #[ORM\JoinColumn(nullable: false)]
     private ?Cliente $cliente = null;
 
+    /**
+     * @var Collection<int, Nota>
+     */
+    #[ORM\OneToMany(targetEntity: Nota::class, mappedBy: 'expediente')]
+    private Collection $notas;
+
+    /**
+     * @var Collection<int, Documento>
+     */
+    #[ORM\OneToMany(targetEntity: Documento::class, mappedBy: 'expediente')]
+    private Collection $documentos;
+
+    /**
+     * @var Collection<int, Costas>
+     */
+    #[ORM\OneToMany(targetEntity: Costas::class, mappedBy: 'expediente')]
+    private Collection $costas;
+
     public function __construct()
     {
         $this->fechaCreacion = new \DateTime();
+        $this->notas = new ArrayCollection();
+        $this->documentos = new ArrayCollection();
+        $this->costas = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -186,6 +209,96 @@ class Expediente
     public function setCliente(?Cliente $cliente): static
     {
         $this->cliente = $cliente;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Nota>
+     */
+    public function getNotas(): Collection
+    {
+        return $this->notas;
+    }
+
+    public function addNota(Nota $nota): static
+    {
+        if (!$this->notas->contains($nota)) {
+            $this->notas->add($nota);
+            $nota->setExpediente($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNota(Nota $nota): static
+    {
+        if ($this->notas->removeElement($nota)) {
+            // set the owning side to null (unless already changed)
+            if ($nota->getExpediente() === $this) {
+                $nota->setExpediente(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Documento>
+     */
+    public function getDocumentos(): Collection
+    {
+        return $this->documentos;
+    }
+
+    public function addDocumento(Documento $documento): static
+    {
+        if (!$this->documentos->contains($documento)) {
+            $this->documentos->add($documento);
+            $documento->setExpediente($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDocumento(Documento $documento): static
+    {
+        if ($this->documentos->removeElement($documento)) {
+            // set the owning side to null (unless already changed)
+            if ($documento->getExpediente() === $this) {
+                $documento->setExpediente(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Costas>
+     */
+    public function getCostas(): Collection
+    {
+        return $this->costas;
+    }
+
+    public function addCosta(Costas $costa): static
+    {
+        if (!$this->costas->contains($costa)) {
+            $this->costas->add($costa);
+            $costa->setExpediente($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCosta(Costas $costa): static
+    {
+        if ($this->costas->removeElement($costa)) {
+            // set the owning side to null (unless already changed)
+            if ($costa->getExpediente() === $this) {
+                $costa->setExpediente(null);
+            }
+        }
 
         return $this;
     }

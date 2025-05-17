@@ -29,7 +29,7 @@ class Contrario
     )]
     private ?string $nombre = null;
 
-    #[ORM\Column(length: 20, nullable: true)]
+    #[ORM\Column(length: 20, nullable: true, unique: true)]
     #[Assert\Length(
         max: 20,
         maxMessage: 'El valor no puede tener más de {{ limit }} caracteres'

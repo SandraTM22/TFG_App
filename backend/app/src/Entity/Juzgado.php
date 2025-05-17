@@ -6,7 +6,6 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\JuzgadoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: JuzgadoRepository::class)]
@@ -22,10 +21,7 @@ class Juzgado
     private ?string $nombre = null;
 
     #[ORM\OneToOne(inversedBy: 'juzgado', cascade: ['persist', 'remove'])]
-    private ?Direccion $direccion = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $notas = null;
+    private ?Direccion $direccion = null;    
 
     /**
      * @var Collection<int, Expediente>
@@ -33,9 +29,16 @@ class Juzgado
     #[ORM\OneToMany(targetEntity: Expediente::class, mappedBy: 'juzgado')]
     private Collection $expedientes;
 
+    /**
+     * @var Collection<int, Nota>
+     */
+    #[ORM\OneToMany(targetEntity: Nota::class, mappedBy: 'juzgado')]
+    private Collection $notas;
+
     public function __construct()
     {
         $this->expedientes = new ArrayCollection();
+        $this->notas = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -65,19 +68,7 @@ class Juzgado
         $this->direccion = $direccion;
 
         return $this;
-    }
-
-    public function getNotas(): ?string
-    {
-        return $this->notas;
-    }
-
-    public function setNotas(?string $notas): static
-    {
-        $this->notas = $notas;
-
-        return $this;
-    }
+    }   
 
     /**
      * @return Collection<int, Expediente>
@@ -103,6 +94,36 @@ class Juzgado
             // set the owning side to null (unless already changed)
             if ($expediente->getJuzgado() === $this) {
                 $expediente->setJuzgado(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Nota>
+     */
+    public function getNotas(): Collection
+    {
+        return $this->notas;
+    }
+
+    public function addNotas(Nota $notas): static
+    {
+        if (!$this->notas->contains($notas)) {
+            $this->notas->add($notas);
+            $notas->setJuzgado($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotas(Nota $notas): static
+    {
+        if ($this->notas->removeElement($notas)) {
+            // set the owning side to null (unless already changed)
+            if ($notas->getJuzgado() === $this) {
+                $notas->setJuzgado(null);
             }
         }
 

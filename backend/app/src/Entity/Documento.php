@@ -44,6 +44,9 @@ class Documento
     )]
     private ?\DateTimeInterface $fechaSubida = null;
 
+    #[ORM\ManyToOne(inversedBy: 'documentos')]
+    private ?Expediente $expediente = null;
+
     public function __construct()
     {
         $this->fechaSubida = new \DateTime();
@@ -99,6 +102,18 @@ class Documento
     public function setFechaSubida(\DateTimeInterface $fechaSubida): static
     {
         $this->fechaSubida = $fechaSubida;
+
+        return $this;
+    }
+
+    public function getExpediente(): ?Expediente
+    {
+        return $this->expediente;
+    }
+
+    public function setExpediente(?Expediente $expediente): static
+    {
+        $this->expediente = $expediente;
 
         return $this;
     }

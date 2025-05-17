@@ -8,8 +8,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ClienteRepository::class)]
+#[UniqueEntity(fields: ['dni'], message: 'Ya existe un cliente con este DNI.')]
 class Cliente
 {
     #[ORM\Id]
@@ -41,7 +43,7 @@ class Cliente
     )]
     private ?string $apellido2 = null;
 
-    #[ORM\Column(length: 15, nullable: true)]
+    #[ORM\Column(length: 15, nullable: true, unique: true)]    
     #[Assert\Regex(
         pattern: '/^(?:[0-9]{8}|[XYZxyz][0-9]{7})[A-Za-z]$/',
         message: 'El DNI/NIE debe tener 8 dígitos y una letra, o empezar por X/Y/Z seguido de 7 dígitos y una letra.'
