@@ -22,6 +22,7 @@ class ClienteType extends AbstractType
             ->add('direccion', EntityType::class, [
                 'class' => Direccion::class,
                 'choice_label' => 'id',
+                'required' => false,
             ])
         ;
     }
