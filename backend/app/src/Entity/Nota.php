@@ -32,6 +32,9 @@ class Nota
     #[Assert\NotNull(message: "Debe de tener un usuario asociado")]
     private ?User $usuario = null;
 
+    #[ORM\ManyToOne(inversedBy: 'notas')]
+    private ?Cliente $cliente = null;
+
     public function __construct()
     {
         $this->fecha = new \DateTime();
@@ -74,6 +77,18 @@ class Nota
     public function setUsuario(?User $usuario): static
     {
         $this->usuario = $usuario;
+
+        return $this;
+    }
+
+    public function getCliente(): ?Cliente
+    {
+        return $this->cliente;
+    }
+
+    public function setCliente(?Cliente $cliente): static
+    {
+        $this->cliente = $cliente;
 
         return $this;
     }

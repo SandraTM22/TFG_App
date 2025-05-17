@@ -79,10 +79,17 @@ class Direccion
     #[ORM\OneToOne(mappedBy: 'direccion', cascade: ['persist', 'remove'])]
     private ?Juzgado $juzgado = null;
 
+    /**
+     * @var Collection<int, Cliente>
+     */
+    #[ORM\OneToMany(targetEntity: Cliente::class, mappedBy: 'direccion')]
+    private Collection $clientes;
+
     public function __construct()
     {
         $this->procuradores = new ArrayCollection();
         $this->contrarios = new ArrayCollection();
+        $this->clientes = new ArrayCollection();
     }
 
 
@@ -237,6 +244,36 @@ class Direccion
         }
 
         $this->juzgado = $juzgado;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Cliente>
+     */
+    public function getClientes(): Collection
+    {
+        return $this->clientes;
+    }
+
+    public function addCliente(Cliente $cliente): static
+    {
+        if (!$this->clientes->contains($cliente)) {
+            $this->clientes->add($cliente);
+            $cliente->setDireccion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCliente(Cliente $cliente): static
+    {
+        if ($this->clientes->removeElement($cliente)) {
+            // set the owning side to null (unless already changed)
+            if ($cliente->getDireccion() === $this) {
+                $cliente->setDireccion(null);
+            }
+        }
 
         return $this;
     }

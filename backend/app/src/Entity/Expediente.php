@@ -64,6 +64,10 @@ class Expediente
     )]
     private ?string $descripcion = null;
 
+    #[ORM\ManyToOne(inversedBy: 'expedientes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Cliente $cliente = null;
+
     public function __construct()
     {
         $this->fechaCreacion = new \DateTime();
@@ -170,6 +174,18 @@ class Expediente
     public function setDescripcion(string $descripcion): static
     {
         $this->descripcion = $descripcion;
+
+        return $this;
+    }
+
+    public function getCliente(): ?Cliente
+    {
+        return $this->cliente;
+    }
+
+    public function setCliente(?Cliente $cliente): static
+    {
+        $this->cliente = $cliente;
 
         return $this;
     }
