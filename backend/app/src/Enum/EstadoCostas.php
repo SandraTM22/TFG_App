@@ -4,14 +4,14 @@ namespace App\Enum;
 
 enum EstadoCostas: string
 {
-    case SIN_TASAR           = 'sinTasar';
+    case SIN_TASAR           = 'Sin Tasar';
     case SOLICITADAS         = 'solicitadas';
-    case NO_FIRMES           = 'noFirmes';
-    case FIRMES              = 'firmes';
-    case IMPUGNADAS          = 'impugnadas';
-    case ALEGA_IMP           = 'AlegaImp';
-    case PENDIENTE_INFORME   = 'pendienteInforme';
-    case PENDIENTE_DECRETO   = 'pendienteDecreto';
-    case RECURSO_REVISION    = 'recursoRevision';
-    case EJECUCION           = 'ejecución';
+    case NO_FIRMES           = 'No Firmes';
+    case FIRMES              = 'Firmes';
+    case IMPUGNADAS          = 'Impugnadas';
+    case ALEGA_IMP           = 'Alega Impugnacion';
+    case PENDIENTE_INFORME   = 'Pendiente Informe';
+    case PENDIENTE_DECRETO   = 'Pendiente Decreto';
+    case RECURSO_REVISION    = 'Recurso Revision';
+    case EJECUCION           = 'Ejecución';
 }
