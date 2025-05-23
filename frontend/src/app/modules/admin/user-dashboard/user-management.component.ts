@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { UserService } from '../../../shared/services/user.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { User } from '../../../shared/interfaces/user';
@@ -7,6 +7,7 @@ import { ModalEditComponent } from '../modal-edit/modal-edit.component';
 import { AddUserComponent } from '../add-user/add-user.component';
 import { ToastService } from '../../../shared/services/toast.service';
 import { BtnComponent } from '../../../shared/components/btn/btn.component';
+import { ModalWrapperComponent } from '../../../shared/components/modal-wrapper/modal-wrapper/modal-wrapper.component';
 
 @Component({
   selector: 'app-user-management',
@@ -17,8 +18,9 @@ import { BtnComponent } from '../../../shared/components/btn/btn.component';
     ModalEditComponent,
     AddUserComponent,
     BtnComponent,
+    ModalWrapperComponent,
   ],
-  templateUrl: './user-management.component.html',  
+  templateUrl: './user-management.component.html',
 })
 export class UserManagementComponent {
   // Lista total de usuarios obtenida del backend
@@ -32,6 +34,9 @@ export class UserManagementComponent {
 
   // Flag para mostrar/ocultar el formulario de añadir usuario
   showAddUser = false;
+
+  //Con este decorador el padre accede a una instancia del componente hijo
+  @ViewChild(AddUserComponent) addUserComponent!: AddUserComponent;
 
   constructor(
     private userService: UserService,
@@ -79,6 +84,10 @@ export class UserManagementComponent {
    */
   toggleAddUser(): void {
     this.showAddUser = !this.showAddUser;
+    if (!this.showAddUser) {
+      // Si se cierra el modal, reseteamos el formulario llamando a método del hijo
+      this.addUserComponent.resetForm();
+    }
   }
 
   /**

@@ -1,20 +1,21 @@
 <div class="transition duration-300">
   <main class="p-4 min-h-2/4 container m-auto mt-10">
-
     <!-- -----------------------FIRST CONTAINER------------------------------ -->
     <div class="flex justify-between my-4 text-xl tracking-wide items-center">
       <h2 class="font-extrabold uppercase text-[#052C13] drop-shadow-md">
         Usuarios
       </h2>
-      <app-btn (click)="toggleAddUser()">{{
-        showAddUser ? "Cancelar alta" : "Alta usuario"
-      }}</app-btn>
+      <app-btn (click)="toggleAddUser()"> Alta usuario </app-btn>
     </div>
 
     <!-- -----------------------ADD MODAL------------------------------ -->
-    <div *ngIf="showAddUser" class="w-full max-w-full p-4">
-      <app-add-user (userAdded)="onUserAdded()"></app-add-user>
-    </div>
+    <app-modal-wrapper
+      [visible]="showAddUser"
+      title="Crear nuevo usuario"
+      (close)="toggleAddUser()"
+    >
+      <app-add-user #addUser (userAdded)="onUserAdded()"></app-add-user>
+    </app-modal-wrapper>
 
     <div>
       <!-- Filtro para busqueda -->
@@ -59,7 +60,7 @@
     <!-- -----------------------USERS LIST------------------------------ -->
     <div class="relative overflow-x-auto shadow-lg rounded-2xl mb-4 z-20">
       <table class="w-full text-left rtl:text-right">
-        <thead class=" text-white uppercase bg-dg tracking-wide">
+        <thead class="text-white uppercase bg-dg tracking-wide">
           <tr>
             <th class="px-6 py-3">Nombre</th>
             <th class="px-6 py-3">Email</th>
@@ -153,6 +154,5 @@
         </tbody>
       </table>
     </div>
-
   </main>
 </div>

@@ -1,7 +1,5 @@
 <!-- Add User -->
 <div>
-  <h2 class="text-xl font-bold text-green-900 my-2">Crear nuevo usuario</h2>
-
   <form [formGroup]="formAdd" class="space-y-2 mb-8" (ngSubmit)="addUser()">
     <!-- name -->
     <div>
@@ -112,13 +110,13 @@
 
     <app-btn
       type="submit"
-      [disabled]="isFormInvalid()"      
+      [disabled]="isFormInvalid()"
+      (click)="addUser()"
       [ngClass]="{
         '!cursor-not-allowed': isFormInvalid()
       }"
     >
       Añadir usuario
     </app-btn>
-   
   </form>
 </div>

@@ -151,4 +151,8 @@ export class AddUserComponent {
     const rolesArray = this.formAdd.get('roles') as FormArray;
     return this.formAdd.invalid || rolesArray.length === 0;
   }
+
+  resetForm() {
+    this.formAdd.reset();
+  }
 }
