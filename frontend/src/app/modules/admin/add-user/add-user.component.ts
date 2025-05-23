@@ -10,78 +10,93 @@ import {
 } from '@angular/forms';
 import { User } from '../../../shared/interfaces/user';
 import { UserService } from '../../../shared/services/user.service';
-import { ToastComponent } from '../../../shared/toast/toast.component';
 import { MailValidator } from '../../../shared/validators/mail.validators';
 import { RolesValidator } from '../../../shared/validators/roles.validators';
 import { ErrorMessageComponent } from '../../../shared/components/error-message/error-message.component';
 import { ToastService } from '../../../shared/services/toast.service';
+import { BtnComponent } from '../../../shared/components/btn/btn.component';
 
 @Component({
   selector: 'app-add-user',
-  imports: [FormsModule, ReactiveFormsModule, ErrorMessageComponent, CommonModule],
-  templateUrl: './add-user.component.html',
-  styleUrl: './add-user.component.css',
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    ErrorMessageComponent,
+    CommonModule,
+    BtnComponent,
+  ],
+  templateUrl: './add-user.component.html', 
 })
 export class AddUserComponent {
-  @Output() userAdded = new EventEmitter<void>(); //Pasamos el evento al Dashboard
-  
+  /**
+   * Evento que avisa al componente padre que se ha añadido un usuario.
+   * Se emite tras completar con éxito la creación.
+   */
+  @Output() userAdded = new EventEmitter<void>();
+
+  /** FormGroup que agrupa todos los controles del formulario de alta */
+  formAdd: FormGroup = new FormGroup({});
+  /** Listado completo de usuarios (se carga para poder refrescar la vista) */
+  users: User[] = [];
+  /** Copia de `users` usada para vistas filtradas si fuese necesario */
+  filteredUsers: User[] = [];
+
+  /** Roles disponibles para asignar al crear un usuario */
+  roles = ['ROLE_ADMIN', 'ROLE_USER', 'ROLE_USER_LIMITED'];
+
   constructor(
     private userService: UserService,
     private formBuilder: FormBuilder,
-    private toastService : ToastService
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
+    // Construye el formulario y carga usuarios al iniciar
     this.buildForm();
     this.loadUsers();
   }
 
-  formAdd: FormGroup = new FormGroup({});
-
-  users: User[] = [];
-  filteredUsers: User[] = [];
-
-  //Roles permitidos
-  roles = ['ROLE_ADMIN', 'ROLE_USER', 'ROLE_USER_LIMITED'];
-
-  //Añadir un nuevo usuario
+  /**
+   * Crea un nuevo usuario usando el servicio.
+   * - Recoge los valores del formulario.
+   * - Llama a `userService.addUser()`.
+   * - Al éxito: recarga la lista, muestra toast, resetea form y notifica al padre.
+   * - Al error: muestra un toast de error.
+   */
   addUser(): void {
     const newUser: User = {
-      id: 0,
       name: this.formAdd.controls['name'].value!,
       email: this.formAdd.controls['email'].value!,
       password: this.formAdd.controls['password'].value!,
       roles: this.formAdd.controls['roles'].value!,
-      firstTime: true,
     };
 
-    this.userService.addUser(newUser).subscribe(() => {
-      this.loadUsers();
-      this.toastService.addToast(
-        'success',
-        'Usuario añadido correctamente',
-        3000
-      ); // '?' Accede solo si `toast` está disponible
+    this.userService.addUser(newUser).subscribe({
+      next: () => {
+        // Recargamos datos y avisamos
+        this.loadUsers();
+        this.toastService.addToast(
+          'success',
+          'Usuario añadido correctamente',
+          3000
+        );
+        // limpiar el formulario
+        this.formAdd.reset();
+        // emitir al padre
+        this.userAdded.emit();
+      },
+      error: (err) => {
+        console.error('Error al crear usuario:', err);
+        this.toastService.addToast('error', 'Error al añadir usuario', 3000);
+      },
     });
-    this.formAdd.reset();
-
-    this.roles.forEach((role) => {
-      const checkbox = document.querySelector(
-        `input[type="checkbox"][value="${role}"]`
-      ) as HTMLInputElement | null;
-      if (checkbox) {
-        checkbox.checked = false;
-      }
-    });
-
-    const rolesArray = this.formAdd.get('roles') as FormArray;
-    while (rolesArray.length) {
-      rolesArray.removeAt(0); // Eliminar cada control dentro del FormArray
-    }
-    this.userAdded.emit();
   }
 
-  //Cargar los usuarios
+  /**
+   * Obtiene la lista de usuarios desde el backend.
+   * Se suscribe a `userService.getUsers()` y actualiza `users` y `filteredUsers`.
+   */
   loadUsers(): void {
     this.userService.getUsers().subscribe(
       (users) => {
@@ -92,6 +107,9 @@ export class AddUserComponent {
     );
   }
 
+  /**
+   * Construye el formulario de alta con sus validadores
+   */
   private buildForm(): void {
     this.formAdd = this.formBuilder.group({
       name: ['', [Validators.required]],
@@ -102,7 +120,11 @@ export class AddUserComponent {
     });
   }
 
-  //Método para agregar un rol seleccionado
+  /**
+   * Manejador para los checkboxes de rol:
+   * - Si se marca, añade un FormControl con el rol al FormArray.
+   * - Si se desmarca, busca y elimina ese FormControl.
+   */
   onRoleChange(role: string, event: Event): void {
     const isChecked = (event.target as HTMLInputElement).checked;
     const rolesArray = this.formAdd.get('roles') as FormArray;
@@ -119,10 +141,12 @@ export class AddUserComponent {
         rolesArray.removeAt(index);
       }
     }
-    // Verificar el estado del FormArray después de la actualización
-    console.log('Roles seleccionados:', rolesArray.value);
   }
 
+  /**
+   * Comprueba si el formulario es inválido o no se ha marcado ningún rol.
+   * Para deshabilitar el botón de submit.
+   */
   isFormInvalid(): boolean {
     const rolesArray = this.formAdd.get('roles') as FormArray;
     return this.formAdd.invalid || rolesArray.length === 0;

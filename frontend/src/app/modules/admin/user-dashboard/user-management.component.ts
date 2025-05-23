@@ -1,12 +1,12 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { UserService } from '../../../shared/services/user.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { User } from '../../../shared/interfaces/user';
 import { CommonModule } from '@angular/common';
-import { ToastComponent } from '../../../shared/toast/toast.component';
 import { ModalEditComponent } from '../modal-edit/modal-edit.component';
 import { AddUserComponent } from '../add-user/add-user.component';
 import { ToastService } from '../../../shared/services/toast.service';
+import { BtnComponent } from '../../../shared/components/btn/btn.component';
 
 @Component({
   selector: 'app-user-management',
@@ -16,53 +16,42 @@ import { ToastService } from '../../../shared/services/toast.service';
     CommonModule,
     ModalEditComponent,
     AddUserComponent,
+    BtnComponent,
   ],
-  templateUrl: './user-management.component.html',
-  styleUrl: './user-management.component.css',
+  templateUrl: './user-management.component.html',  
 })
 export class UserManagementComponent {
-  // Accede al componente del Toast y se inicializa en indefinido
-  //@ViewChild(ToastComponent) toast: ToastComponent | undefined;
+  // Lista total de usuarios obtenida del backend
+  users: User[] = [];
+  // Lista filtrada
+  filteredUsers: User[] = [];
+  // índice de la fila en edición (o null)
+  currentEditRow: number | null = null;
+  // referencia al usuario que estamos editando
+  editingUser: User | null = null;
 
-  //Declaramos user para el modal, para editar, que puede ser un usuario o null. Se inicia en null
-  userBeingEdited: User | null = null;
+  // Flag para mostrar/ocultar el formulario de añadir usuario
   showAddUser = false;
 
-  users: User[] = [];
-  filteredUsers: User[] = [];
-
-  constructor(private userService: UserService, private toastService:ToastService) {}
+  constructor(
+    private userService: UserService,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
     // inicializa la carga del subjet "User"
     this.userService.init();
 
-    // subscripción al observable
+    // subscripción al observable para mantener actualizada la lista de usuarios
     this.userService.users$.subscribe((list) => {
       this.users = list;
       this.filteredUsers = list;
     });
   }
 
-  //Método para modificar los roles
-  onEditRoleChange(role: string, event: Event): void {
-    const isChecked = (event.target as HTMLInputElement).checked;
-    if (!this.userBeingEdited) return;
-    if (isChecked) {
-      if (!this.userBeingEdited.roles.includes(role)) {
-        this.userBeingEdited.roles.push(role);
-      }
-    } else {
-      const index = this.userBeingEdited.roles.indexOf(role);
-      if (index !== -1) {
-        this.userBeingEdited.roles.splice(index, 1);
-      }
-    }
-
-    console.log('Roles editados:', this.userBeingEdited.roles);
-  }
-
-  //Método para obtener un nombre amigable del rol
+  /**
+   * Convierte un nombre de rol técnico (como ROLE_ADMIN) en algo más legible
+   */
   getRoleDisplayName(role: string): string {
     const roleMapping: { [key: string]: string } = {
       ROLE_ADMIN: 'Admin',
@@ -72,7 +61,9 @@ export class UserManagementComponent {
     return roleMapping[role] || role; // Si no hay mapeo, devuelve el valor original del rol
   }
 
-  //Cargar los usuarios
+  /**
+   * Carga todos los usuarios desde el backend
+   */
   loadUsers(): void {
     this.userService.getUsers().subscribe(
       (users) => {
@@ -83,45 +74,85 @@ export class UserManagementComponent {
     );
   }
 
-  updateUser(user: User): void {
-    //clonamos el usuario
-    this.userBeingEdited = { ...user, roles: [...user.roles] };
-  }
-
-  saveEdit() {
-    //si userBeingEdited no tienen ningun valor, entonces sal..
-    if (!this.userBeingEdited) return;
-
-    this.userService.updateUser(this.userBeingEdited).subscribe(() => {
-      this.loadUsers(),
-        this.toastService.addToast('info', 'Usuario modifcado', 3000);
-      this.userBeingEdited = null; // Cerramos el modal
-    });
-  }
-
-  cancelEdit(): void {
-    this.toastService.addToast(
-      'warning',
-      'The edition has been cancelled',
-      3000
-    );
-    this.userBeingEdited = null; // Cerramos el modal sin guardar
-  }
-
-  deleteUser(id: number) {
-    this.userService.deleteUser(id).subscribe(() => {
-      this.loadUsers(),
-        this.toastService.addToast('error', 'Usuario eliminado', 3000);
-    });
-  }
-
+  /**
+   * Alterna la visibilidad del formulario para añadir usuarios
+   */
   toggleAddUser(): void {
     this.showAddUser = !this.showAddUser;
   }
 
-  // cuando el hijo emite userAdded, ocultamos el formulario
+  /**
+   * Cuando el hijo emite userAdded, ocultamos el formulario
+   */
   onUserAdded(): void {
-    this.loadUsers();
     this.showAddUser = false;
+  }
+
+  /* **************************************** EDICION ************************************* */
+  /**
+   * Activa/desactiva la edición de una fila específica
+   */
+  toggleEdit(index: number, user: User): void {
+    if (this.currentEditRow === index) {
+      this.cancelEdit();
+    } else {
+      this.openEdit(index, user);
+    }
+  }
+
+  /**
+   * Activa la edición para una fila concreta, clonando los datos para evitar mutaciones
+   */
+  openEdit(index: number, user: User) {
+    this.currentEditRow = index;
+    // clonamos para no mutar directamente hasta guardar
+    this.editingUser = { ...user, roles: [...user.roles] };
+  }
+
+  /**
+   * Guarda los cambios en un usuario editado
+   */
+  saveEdit(updated: User) {
+    if (!updated) return;
+    this.userService.updateUser(updated).subscribe({
+      next: () => {
+        // Refrescar la lista de usuarios, notificar al usuario y cerrar el modal
+        this.reload();
+        this.toastService.addToast('info', 'Usuario modificado', 3000);
+        this.cancelEdit();
+      },
+      error: (err) => {
+        console.error('Error al modificar usuario:', err);
+        this.toastService.addToast('error', 'Error al modificar usuario', 3000);
+      },
+    });
+  }
+
+  /**
+   * Cancela la edición actual
+   */
+  cancelEdit() {
+    this.currentEditRow = null;
+    this.editingUser = null;
+  }
+
+  /* **************************************** BORRADO DE USUARIO ************************************* */
+  /**
+   * Elimina un usuario por ID
+   */
+  deleteUser(id: number) {
+    this.userService.deleteUser(id).subscribe(() => {
+      this.reload();
+      this.toastService.addToast('error', 'Usuario eliminado', 3000);
+    });
+  }
+
+  /**
+   * Vuelve a cargar los usuarios desde el backend
+   */
+  private reload() {
+    this.userService.getUsers().subscribe((list) => {
+      this.filteredUsers = [...list];
+    });
   }
 }

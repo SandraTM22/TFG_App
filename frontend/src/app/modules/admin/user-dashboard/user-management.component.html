@@ -1,25 +1,25 @@
 <div class="transition duration-300">
-  <main class="p-4 min-h-2/4 container m-auto mt-24">
-    <div class="flex justify-between my-4">
-      <h2 class="text-xl font-bold text-green-800">Usuarios</h2>
-      <button
-        class="p-2 rounded-xl bg-green-900 hover:bg-green-700 text-white cursor-pointer "
-        (click)="toggleAddUser()"
-      >
-        {{ showAddUser ? "Cancelar alta" : "Alta usuario" }}
-      </button>
+  <main class="p-4 min-h-2/4 container m-auto mt-10">
+
+    <!-- -----------------------FIRST CONTAINER------------------------------ -->
+    <div class="flex justify-between my-4 text-xl tracking-wide items-center">
+      <h2 class="font-extrabold uppercase text-[#052C13] drop-shadow-md">
+        Usuarios
+      </h2>
+      <app-btn (click)="toggleAddUser()">{{
+        showAddUser ? "Cancelar alta" : "Alta usuario"
+      }}</app-btn>
     </div>
-    <div
-      *ngIf="showAddUser"
-      class="w-full max-w-full p-4"
-    >
+
+    <!-- -----------------------ADD MODAL------------------------------ -->
+    <div *ngIf="showAddUser" class="w-full max-w-full p-4">
       <app-add-user (userAdded)="onUserAdded()"></app-add-user>
     </div>
 
     <div>
       <!-- Filtro para busqueda -->
       <!-- <form class="max-w-md mx-auto">
-        <label for="default-search" class="mb-2 text-green-800 sr-only"
+        <label for="default-search" class="mb-2 text-green-900 sr-only"
           >Search</label
         >
 
@@ -54,63 +54,47 @@
           />
         </div>
       </form> -->
+    </div>
 
-
-      <!-------------------------USERS LIST-------------------------------->
-      <div class="relative overflow-x-auto shadow-lg rounded-2xl overflow-hidden mb-4 z-20">
-        <table class="w-full text-sm text-left rtl:text-right">
-          <thead class="text-xs text-white uppercase bg-green-800 tracking-wide">
-            <tr>
-              <th scope="col" class="px-6 py-3 whitespace-nowrap">Nombre</th>
-              <th scope="col" class="px-6 py-3">Email</th>
-              <th scope="col" class="px-6 py-3">Roles</th>
-              <th scope="col" class="px-3 py-3">iniciado</th>
-              <th scope="col" class="px-3 py-3">Acciones</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr
-              *ngFor="let user of filteredUsers"
-              class="bg-slate-100 bg- text-gray-950 border-b border-gray-200 hover:bg-gray-50 "
-            >
-              <td
-                scope="row"
-                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-              >
-                {{ user.name }}
-              </td>
-
-              <td class="px-6 py-4 min-w-40">
-                {{ user.email }}
-              </td>
-
-              <td class="px-6 py-4 min-w-20">
-                <span *ngFor="let role of user.roles">
-                  {{ getRoleDisplayName(role) }}
-                  <ng-container
-                    *ngIf="role !== user.roles[user.roles.length - 1]"
-                    >,
-                  </ng-container>
-                  <!-- Separador entre roles -->
+    <!-- -----------------------USERS LIST------------------------------ -->
+    <div class="relative overflow-x-auto shadow-lg rounded-2xl mb-4 z-20">
+      <table class="w-full text-left rtl:text-right">
+        <thead class=" text-white uppercase bg-dg tracking-wide">
+          <tr>
+            <th class="px-6 py-3">Nombre</th>
+            <th class="px-6 py-3">Email</th>
+            <th class="px-6 py-3">Roles</th>
+            <th class="px-3 py-3">Iniciado</th>
+            <th class="px-3 py-3">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Recorremos con índice -->
+          <ng-container *ngFor="let user of filteredUsers; let i = index">
+            <!-- Fila de datos -->
+            <tr class="bg-slate-50 hover:bg-gray-50 border-b border-gray-200">
+              <td class="px-6 py-4">{{ user.name }}</td>
+              <td class="px-6 py-4">{{ user.email }}</td>
+              <td class="px-6 py-4">
+                <span *ngFor="let role of user.roles; let last = last">
+                  {{ getRoleDisplayName(role) }}<span *ngIf="!last">, </span>
                 </span>
               </td>
-
-              <td class="px-3 py-4 w-10">
-                <label class="inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    [checked]="!user.firstTime"
-                    class="sr-only peer"
-                  />
-                  <div
-                    class="relative w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-800 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-800"
-                  ></div>
-                </label>
+              <td class="px-3 py-4">
+                <input
+                  type="checkbox"
+                  [checked]="!user.firstTime"
+                  class="sr-only peer"
+                />
+                <div
+                  class="relative w-11 h-6 bg-gray-700 rounded-full peer-checked:bg-green-900 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all"
+                ></div>
               </td>
-
-              <td class="px-3 py-4 w-20 inline-flex ">
-                <button class="m-1 cursor-pointer p-2 rounded-lg hover:bg-green-100 transition" (click)="updateUser(user)">
+              <td class="px-3 py-4 w-20 inline-flex">
+                <button
+                  class="m-1 cursor-pointer p-2 rounded-lg hover:bg-green-100 transition"
+                  (click)="toggleEdit(i, user)"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     height="24px"
@@ -126,7 +110,7 @@
 
                 <button
                   class="m-1 cursor-pointer p-2 rounded-lg hover:bg-green-100 transition"
-                  (click)="deleteUser(user.id)"
+                  (click)="deleteUser(user.id!)"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -142,27 +126,33 @@
                 </button>
               </td>
             </tr>
-          </tbody>
-        </table>
-      </div>
-      <!-- --------------------------------------------------- -->
+
+            <!-- Fila con modal: solo si currentEditRow === i -->
+            <tr *ngIf="currentEditRow === i">
+              <td colspan="5" class="p-0 bg-transparent">
+                <div class="p-4 bg-slate-100 rounded-b-2xl shadow-inner">
+                  <app-modal-edit
+                    [user]="editingUser!"
+                    (save)="saveEdit($event)"
+                    (cancel)="cancelEdit()"
+                  ></app-modal-edit>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+
+          <!-- Mensaje si no hay usuarios -->
+          <tr *ngIf="filteredUsers.length === 0">
+            <td
+              colspan="5"
+              class="p-4 text-center text-xl font-bold text-green-900"
+            >
+              No hay usuarios que mostrar
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <ng-template #noUsers>
-      <p
-        class="cursor-default p-2 mt-1 text-xl font-bold bg-green-800 opacity-60"
-      >
-        No hay usuarios que mostrar
-      </p>
-    </ng-template>
   </main>
 </div>
-
-<!-- Modal de edición -->
-<app-modal-edit
-  *ngIf="userBeingEdited"
-  [user]="userBeingEdited"
-  (cancel)="cancelEdit()"
-  (save)="saveEdit()"
->
-</app-modal-edit>
