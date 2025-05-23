@@ -1,8 +1,8 @@
 export interface User {
-    id: number;
+    id?: number;
     name: string;
     email: string;
     roles: Array<string>;
     password :string;
-    firstTime: boolean;    
+    firstTime?: boolean;    
   }
