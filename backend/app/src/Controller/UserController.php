@@ -70,8 +70,8 @@ final class UserController extends AbstractController
         }
 
         $params = json_decode($request->getContent(), true);
-        if (isset($params['username'])) {
-            $user->setName($params['username']);
+        if (isset($params['name'])) {
+            $user->setName($params['name']);
         }
         if (isset($params['email'])) {
             $user->setEmail($params['email']);
@@ -89,7 +89,7 @@ final class UserController extends AbstractController
         $em->flush();
         return $this->json([
             'id' => $user->getId(),
-            'username' => $user->getName(),
+            'name' => $user->getName(),
             'email' => $user->getEmail(),
             'password' => $user->getPassword(),
             'roles' => $user->getRoles(),

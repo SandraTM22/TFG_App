@@ -27,7 +27,6 @@ class UserType extends AbstractType
                 'invalid_message' => 'Formato incorrecto para roles',
             ])
             ->add('password', PasswordType::class)
-            ->add('firstTime')
         ;
     }
 
@@ -35,7 +34,7 @@ class UserType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
-            
+            'csrf_protection' => false,
         ]);
     }
 }
