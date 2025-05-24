@@ -110,8 +110,7 @@
 
     <app-btn
       type="submit"
-      [disabled]="isFormInvalid()"
-      (click)="addUser()"
+      [disabled]="isFormInvalid()"      
       [ngClass]="{
         '!cursor-not-allowed': isFormInvalid()
       }"

@@ -32,7 +32,7 @@ final class UserController extends AbstractController
             'name' => $user->getName(),
             'email' => $user->getEmail(),
             'roles' => $user->getRoles(),
-            'active' => $user->getactive()
+            'active' => $user->getActive()
         ], $users);
 
         return $this->json($data);

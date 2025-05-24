@@ -35,7 +35,6 @@ export class LoginPageComponent {
   ) {}
 
   errorMessage: string | null = null;
- 
 
   ngOnInit(): void {
     const token = localStorage.getItem('authToken');
@@ -54,25 +53,24 @@ export class LoginPageComponent {
 
   login(event: Event): void {
     event.preventDefault();
-    if (this.form.valid) {
-      const value = this.form.value;
-      console.log(
-        `datos desde ts login - USER: ${value.email} - PASSWORD: ${value.password}`
-      );
+    if (!this.form.valid) return;
+    const value = this.form.value;
 
-      this.authService.login(value.email, value.password).subscribe(
-        (response) => {
-          this.authService.saveToken(response.token);
-          this.router.navigate(['home']);
-        },
-        (error) => {
+    this.authService.login(value.email, value.password).subscribe({
+      next: (response) => {
+        this.authService.saveToken(response.token);
+        this.router.navigate(['home']);
+      },
+      error: (error) => {
+        console.error(error);
+        const backendMsg = error.error?.message;
+        if (backendMsg) {
+          this.showLoginError(backendMsg);
+        } else {
           this.showLoginError('Credenciales incorrectas');
         }
-      );
-    } else {
-      console.log('Formulario inválido');
-      return
-    }
+      },
+    });
     this.form.reset(); // Limpia el formulario después de login
   }
 
@@ -82,5 +80,4 @@ export class LoginPageComponent {
       this.errorMessage = null;
     }, 4000);
   }
-  
 }
