@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, NgModule, ViewChild } from '@angular/core';
 import { UserService } from '../../../shared/services/user.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { User } from '../../../shared/interfaces/user';
@@ -19,6 +19,7 @@ import { ModalWrapperComponent } from '../../../shared/components/modal-wrapper/
     AddUserComponent,
     BtnComponent,
     ModalWrapperComponent,
+    FormsModule
   ],
   templateUrl: './user-management.component.html',
 })
@@ -144,6 +145,14 @@ export class UserManagementComponent {
     this.currentEditRow = null;
     this.editingUser = null;
   }
+
+  /* *
+  * Cambia el valor del bool "active" y lo guarda en la bbdd
+  */
+ toggleUserActive(user:User){
+  const updatedUser: User = { ...user, active: !user.active };
+  this.saveEdit(updatedUser);
+ }
 
   /* **************************************** BORRADO DE USUARIO ************************************* */
   /**

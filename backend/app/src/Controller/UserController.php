@@ -32,7 +32,7 @@ final class UserController extends AbstractController
             'name' => $user->getName(),
             'email' => $user->getEmail(),
             'roles' => $user->getRoles(),
-            'firstTime' => $user->getFirstTime()
+            'active' => $user->getactive()
         ], $users);
 
         return $this->json($data);
@@ -82,8 +82,8 @@ final class UserController extends AbstractController
         if (isset($params['roles'])) {
             $user->setRoles($params['roles']);
         }
-        if (isset($params['firstTime'])) {
-            $user->setFirstTime($params['firstTime']);
+        if (isset($params['active'])) {
+            $user->setActive($params['active']);
         }
 
         $em->flush();
@@ -93,7 +93,7 @@ final class UserController extends AbstractController
             'email' => $user->getEmail(),
             'password' => $user->getPassword(),
             'roles' => $user->getRoles(),
-            'firstTime' => $user->getFirstTime()
+            'active' => $user->getActive()
         ]);
     }
 
@@ -143,7 +143,7 @@ final class UserController extends AbstractController
             'name' => $user->getName(),
             'email' => $user->getEmail(),
             'roles' => $user->getRoles(),
-            'firstTime' => $user->getFirstTime(),
+            'active' => $user->getActive(),
         ];
 
         return $this->json($data);

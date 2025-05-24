@@ -67,7 +67,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column]
-    private ?bool $firstTime = true;
+    private ?bool $active = true;
 
     /**
      * @var Collection<int, Notas>
@@ -165,14 +165,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getFirstTime(): ?bool
+    public function getactive(): ?bool
     {
-        return $this->firstTime;
+        return $this->active;
     }
 
-    public function setFirstTime(bool $firstTime): static
+    public function setactive(bool $active): static
     {
-        $this->firstTime = $firstTime;
+        $this->active = $active;
 
         return $this;
     }

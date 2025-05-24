@@ -65,7 +65,7 @@
             <th class="px-6 py-3">Nombre</th>
             <th class="px-6 py-3">Email</th>
             <th class="px-6 py-3">Roles</th>
-            <th class="px-3 py-3">Iniciado</th>
+            <th class="px-3 py-3">Activo</th>
             <th class="px-3 py-3">Acciones</th>
           </tr>
         </thead>
@@ -81,16 +81,21 @@
                   {{ getRoleDisplayName(role) }}<span *ngIf="!last">, </span>
                 </span>
               </td>
+
               <td class="px-3 py-4">
-                <input
-                  type="checkbox"
-                  [checked]="!user.firstTime"
-                  class="sr-only peer"
-                />
-                <div
-                  class="relative w-11 h-6 bg-gray-700 rounded-full peer-checked:bg-green-900 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all"
-                ></div>
+                <label class="inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    class="sr-only peer"
+                    [checked]="user.active"
+                    (change)="toggleUserActive(user)"
+                  />
+                  <div
+                    class="relative w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-500 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-800 "                    
+                  ></div>
+                </label>
               </td>
+
               <td class="px-3 py-4 w-20 inline-flex">
                 <button
                   class="m-1 cursor-pointer p-2 rounded-lg hover:bg-green-100 transition"
