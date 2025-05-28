@@ -3,6 +3,10 @@ import { appConfig } from './app/app.config';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { AppComponent } from './app/app.component';
 import { authInterceptor } from './app/shared/helpers/auth.interceptor';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+
+registerLocaleData(localeEs, 'es-ES');
 
 bootstrapApplication(AppComponent, {
   ...appConfig,

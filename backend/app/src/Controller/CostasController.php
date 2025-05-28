@@ -8,15 +8,12 @@ use App\Enum\EstadoCostas;
 use App\Form\CostasType;
 use App\Repository\CostasRepository;
 use App\Service\CostasAssembler;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonJsonResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\VarDumper\Cloner\Data;
 
-#[Route('/costas')]
+#[Route('/api/costas')]
 final class CostasController extends AbstractController
 {
     public function __construct(
@@ -24,15 +21,24 @@ final class CostasController extends AbstractController
         public readonly CostasAssembler $assembler,
 
     ) {}
-    #[Route(name: 'costas_index', methods: ['GET'])]
-    public function index(): JsonResponse
+
+    #[Route('/custom', name: 'index_custom', methods: ['GET'])]
+
+    public function indexCustome(): JsonResponse
     {
-        $costas = $this->repo->findAll();
+        
+        $costas = $this->repo->findAllExpCli();             
         $data = array_map(
             fn($costa) => $this->assembler->costasToArray($costa),
             $costas
         );
         return $this->json($data);
+    }
+
+    #[Route('', name: 'costas_index', methods: ['GET'])]
+    public function index()
+    {        
+        $costas = $this->repo->findAll();       
     }
 
     #[Route('', name: 'costas_new', methods: ['POST'])]

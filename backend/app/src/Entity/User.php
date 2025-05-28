@@ -60,7 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     #[Assert\NotBlank(message: 'La contraseña no puede estar vacía')]
     #[Assert\Length(
-        min: 8,
+        min: 6,
         max: 255,
         minMessage: 'La contraseña debe tener al menos {{ limit }} caracteres',
         maxMessage: 'La contraseña no puede exceder {{ limit }} caracteres'

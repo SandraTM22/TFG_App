@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/expediente')]
+#[Route('api/expedientes')]
 final class ExpedienteController extends AbstractController
 {
     public function __construct(
@@ -23,11 +23,13 @@ final class ExpedienteController extends AbstractController
     public function index(): JsonResponse
     {
         $expedientes = $this->repo->findAll();
-        $data = array_map(
+        /* $data = array_map(
             fn($expediente) => $this->assembler->expedienteToArray($expediente),
             $expedientes
         );
-        return $this->json($data);
+        return $this->json($data); */
+
+        return $this->json($expedientes,200,[],['groups'=> 'expediente:read']);
     }
 
     #[Route('', name: 'expediente_new', methods: ['POST'])]

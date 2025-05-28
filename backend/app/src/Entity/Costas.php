@@ -2,12 +2,19 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Enum\EstadoCobro;
 use App\Enum\EstadoCostas;
 use App\Repository\CostasRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+
+/* #[ApiResource(
+    normalizationContext: ['groups' => ['costas:read']],
+    denormalizationContext: ['groups' => ['costas:write']]
+)] */
 
 #[ORM\Entity(repositoryClass: CostasRepository::class)]
 class Costas
@@ -22,22 +29,28 @@ class Costas
         callback: [EstadoCostas::class, 'cases'],
         message: 'Estado inválido'
     )]
+    #[Groups(['costas:read', 'costas:write'])]
     private EstadoCostas $estado;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Groups(['costas:read', 'costas:write'])]
     private ?\DateTimeInterface $fechaTC = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Groups(['costas:read', 'costas:write'])]
     private ?\DateTimeInterface $fecha15TC = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Groups(['costas:read', 'costas:write'])]
     private ?\DateTimeInterface $fechaDecreto = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Groups(['costas:read', 'costas:write'])]
     private ?\DateTimeInterface $fecha20Decreto = null;
 
     #[ORM\Column(nullable: true)]
     #[Assert\PositiveOrZero(message: "El importe debe ser un número positivo o cero.")]
+    #[Groups(['costas:read', 'costas:write'])]
     private ?float $importe = null;
 
    
@@ -46,9 +59,11 @@ class Costas
         callback: [EstadoCobro::class, 'cases'],
         message: 'Estado inválido'
     )]
+    #[Groups(['costas:read', 'costas:write'])]
     private EstadoCobro $estadoCobro;
 
     #[ORM\ManyToOne(inversedBy: 'costas')]
+    #[Groups(['costas:read', 'costas:write'])]
     private ?Expediente $expediente = null;
 
     public function __construct() {

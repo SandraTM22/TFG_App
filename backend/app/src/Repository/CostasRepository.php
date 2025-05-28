@@ -15,17 +15,28 @@ class CostasRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Costas::class);
     }
- public function save(Costas $costas): void
+    public function save(Costas $costas): void
     {
         $em = $this->getEntityManager();
         $em->persist($costas);
-        $em->flush();       
+        $em->flush();
     }
 
     public function delete(Costas $costas): void
     {
         $em = $this->getEntityManager();
         $em->remove($costas);
-        $em->flush(); 
+        $em->flush();
+    }
+
+    public function findAllExpCli(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.expediente', 'e')
+            ->addSelect('e')
+            ->leftJoin('e.cliente', 'cl')
+            ->addSelect('cl')
+            ->getQuery()
+            ->getResult();
     }
 }

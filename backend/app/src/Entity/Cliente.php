@@ -9,6 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ClienteRepository::class)]
 #[UniqueEntity(fields: ['dni'], message: 'Ya existe un cliente con este DNI.')]
@@ -25,6 +26,7 @@ class Cliente
         max: 255,
         maxMessage: 'El nombre no puede exceder {{ limit }} caracteres.'
     )]
+    #[Groups(['expediente:read'])]
     private ?string $nombre = null;
 
     #[ORM\Column(length: 255)]
@@ -33,6 +35,7 @@ class Cliente
         max: 255,
         maxMessage: 'El nombre no puede exceder {{ limit }} caracteres.'
     )]
+    #[Groups(['expediente:read'])]
     private ?string $apellido1 = null;
 
     #[ORM\Column(length: 255)]
@@ -41,6 +44,7 @@ class Cliente
         max: 255,
         maxMessage: 'El nombre no puede exceder {{ limit }} caracteres.'
     )]
+    #[Groups(['expediente:read'])]
     private ?string $apellido2 = null;
 
     #[ORM\Column(length: 15, nullable: true, unique: true)]    

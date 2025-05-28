@@ -7,6 +7,7 @@ use App\Repository\JuzgadoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: JuzgadoRepository::class)]
 #[ApiResource]
@@ -18,6 +19,7 @@ class Juzgado
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['expediente:read'])]
     private ?string $nombre = null;
 
     #[ORM\OneToOne(inversedBy: 'juzgado', cascade: ['persist', 'remove'])]

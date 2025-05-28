@@ -1,6 +1,6 @@
 <div class="transition duration-300">
-  <main class="p-4 min-h-2/4  w-full  m-auto mt-10">
-    <div class="flex justify-between my-4 text-xl tracking-wide items-center">
+  <main class="p-4 min-h-2/4 w-full m-auto mt-10">
+    <div class="flex justify-between my-4 text-xl tracking-wide costas-center">
       <h2 class="font-extrabold uppercase text-[#052C13] drop-shadow-md">
         Costas
       </h2>
@@ -12,43 +12,60 @@
         <thead class="text-white uppercase bg-dg tracking-wide">
           <tr>
             <th class="px-6 py-3">Estado</th>
-            <th class="px-6 py-3">Cliente</th>
+            <th class="px-6 py-3  w-30 truncate">Cliente</th>
             <th class="px-6 py-3">Autos</th>
             <th class="px-6 py-3">Juzgado</th>
-            <th class="px-6 py-3">Procurador</th>
+            <th class="px-6 py-3  w-30 truncate">Procurador</th>
             <th class="px-6 py-3">Tasación</th>
             <th class="px-6 py-3">+15 días</th>
             <th class="px-6 py-3">Decreto</th>
             <th class="px-6 py-3">+20 días</th>
             <th class="px-6 py-3">Procedimiento</th>
-            <th class="px-6 py-3">Comentarios</th>
+            <!-- <th class="px-6 py-3">Comentarios</th> -->
             <th class="px-6 py-3">Contrario</th>
             <th class="px-6 py-3">Importe</th>
             <th class="px-3 py-3 w-20">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <ng-container *ngFor="let item of filteredCostas; let i = index">
+          <ng-container *ngFor="let costa of costas; let i = index">
             <tr class="bg-slate-50 hover:bg-gray-50 border-b border-gray-200">
-             <!--  <td class="px-6 py-4">{{ item.estado }}</td>
-              <td class="px-6 py-4">{{ item.cliente }}</td>
-              <td class="px-6 py-4">{{ item.autos }}</td>
-              <td class="px-6 py-4">{{ item.juzgado }}</td>
-              <td class="px-6 py-4">{{ item.procurador }}</td>
-              <td class="px-6 py-4">{{ item.fechaTasacion | date }}</td>
-              <td class="px-6 py-4">{{ item.mas15Dias | date }}</td>
-              <td class="px-6 py-4">{{ item.fechaDecreto | date }}</td>
-              <td class="px-6 py-4">{{ item.mas20Dias | date }}</td>
-              <td class="px-6 py-4">{{ item.tipoProcedimiento }}</td>
-              <td class="px-6 py-4">{{ item.comentarios }}</td>
-              <td class="px-6 py-4">{{ item.contrario }}</td>
-              <td class="px-6 py-4">{{ item.importe | currency:'EUR' }}</td>
- -->
+              <td class="px-6 py-4">{{ costa.estado }}</td>
+              <td class="px-6 py-4 w-30 whitespace-nowrap overflow-hidden text-ellipsis" >
+                {{
+                  costa.expediente?.cliente?.nombre +
+                    " " +
+                    costa.expediente?.cliente?.apellido1 +
+                    " " +
+                    costa.expediente?.cliente?.apellido2
+                }}
+              </td>
+              <td class="px-6 py-4">{{ costa.expediente?.autos }}</td>
+              <td class="px-6 py-4 w-30 whitespace-nowrap overflow-hidden text-ellipsis">{{ costa.expediente?.juzgado }}</td>
+              <td class="px-6 py-4">{{ costa.expediente?.procurador?.nombre + " " + costa.expediente?.procurador?.apellido1 }}</td>
+              <td class="px-6 py-4">
+                {{ costa.fechaTC | date : "dd/MM/yyyy" }}
+              </td>
+              <td class="px-6 py-4">
+                {{ costa.fecha15TC | date : "dd/MM/yyyy" }}
+              </td>
+              <td class="px-6 py-4">
+                {{ costa.fechaDecreto | date : "dd/MM/yyyy" }}
+              </td>
+              <td class="px-6 py-4">
+                {{ costa.fecha20Decreto | date : "dd/MM/yyyy" }}
+              </td>
+              <td class="px-6 py-4">
+                {{ costa.expediente?.tipoProcedimiento }}
+              </td>
+              <!-- <td class="px-6 py-4">{{ costa.notas }}</td> -->
+              <td class="px-6 py-4">{{ costa.expediente?.contrario }}</td>
+              <td class="px-6 py-4">{{ costa.importe | currency:'EUR':'symbol':'1.2-2':'es-ES' }}</td>
+
               <!-- Acciones -->
               <td class="px-3 py-4 inline-flex">
                 <button
                   class="m-1 cursor-pointer p-2 rounded-lg hover:bg-green-100 transition"
-                  
                   title="Editar"
                 >
                   <svg
@@ -66,7 +83,6 @@
 
                 <button
                   class="m-1 cursor-pointer p-2 rounded-lg hover:bg-green-100 transition"
-                  
                   title="Eliminar"
                 >
                   <svg
@@ -85,8 +101,11 @@
             </tr>
           </ng-container>
 
-          <tr *ngIf="costasList.length === 0">
-            <td colspan="14" class="p-4 text-center text-xl font-bold text-green-900">
+          <tr *ngIf="(costas?.length ?? 0) === 0">
+            <td
+              colspan="14"
+              class="p-4 text-center text-xl font-bold text-green-900"
+            >
               No hay costas que mostrar
             </td>
           </tr>
