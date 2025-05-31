@@ -20,7 +20,7 @@ final class ClienteController extends AbstractController
         private readonly ClienteAssembler $assembler,
     ) {}
 
-    #[Route(name: 'cliente_index', methods: ['GET'])]
+    #[Route('', name: 'cliente_index', methods: ['GET'])]
     public function index(): JsonResponse
     {
         $clientes = $this->repo->findAll();
@@ -37,20 +37,20 @@ final class ClienteController extends AbstractController
         return $this->handleForm($request, new Cliente);
     }
 
-    #[Route('/{id}', name: 'cliente_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'cliente_show', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function show(Cliente $cliente): JsonResponse
     {
         $clienteFind = $this->assembler->clienteToArray($cliente);
         return $this->json($clienteFind);
     }
 
-    #[Route('/{id}', name: 'cliente_edit', methods: ['PUT'])]
+    #[Route('/{id}', name: 'cliente_edit', methods: ['PUT'], requirements: ['id' => '\d+'])]
     public function edit(Request $request, Cliente $cliente): JsonResponse
     {
         return $this->handleForm($request, $cliente);
     }
 
-    #[Route('/{id}', name: 'cliente_delete', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'cliente_delete', methods: ['DELETE'], requirements: ['id' => '\d+'])]
     public function delete(Cliente $cliente): JsonResponse
     {
         $this->repo->delete($cliente);
@@ -86,5 +86,18 @@ final class ClienteController extends AbstractController
 
         $this->repo->save($cliente);
         return $this->json($this->assembler->clienteToArray($cliente));
+    }
+
+    #[Route('/find', name: 'buscar_clientes', methods: ['GET'])]
+    public function buscarClientes(Request $request, ClienteRepository $repo): JsonResponse
+    {
+        $search = $request->query->get('search', '');
+        $clientes = $repo->findByNombreOrDni($search);
+         $data = array_map(
+        fn($cliente) => $this->assembler->clienteToArray($cliente),
+        $clientes
+    );
+
+        return $this->json($data, 200, []);
     }
 }

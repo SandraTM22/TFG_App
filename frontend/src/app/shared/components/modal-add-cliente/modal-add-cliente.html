@@ -1,0 +1,98 @@
+<div class="modal p-6 bg-gray-50 rounded-2xl shadow-xl max-w-3xl mx-auto">
+  <form [formGroup]="form" (ngSubmit)="guardar()">
+    <!-- GRID DE CAMPOS PRINCIPALES -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Nombre -->
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="nombre" placeholder="Nombre" />
+      </mat-form-field>
+
+      <!-- Primer Apellido -->
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Primer apellido</mat-label>
+        <input matInput formControlName="apellido1" placeholder="Apellido 1" />
+      </mat-form-field>
+
+      <!-- Segundo Apellido -->
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Segundo apellido</mat-label>
+        <input matInput formControlName="apellido2" placeholder="Apellido 2" />
+      </mat-form-field>
+
+      <!-- DNI -->
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>DNI</mat-label>
+        <input matInput formControlName="dni" placeholder="DNI" />
+      </mat-form-field>
+
+      <!-- Referencia -->
+      <mat-form-field appearance="fill" class="w-full md:col-span-2">
+        <mat-label>Referencia</mat-label>
+        <input matInput formControlName="referencia" placeholder="Referencia" />
+      </mat-form-field>
+    </div>
+
+    <!-- SECCIÓN DE DIRECCIÓN -->
+    <fieldset formGroupName="direccion" class="mt-6 border border-gray-200 rounded-lg p-4">
+      <legend class="px-2 text-lg font-semibold text-[#052C13]">Dirección</legend>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+        <!-- Calle -->
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Calle</mat-label>
+          <input matInput formControlName="calle" placeholder="Calle" />
+        </mat-form-field>
+
+        <!-- Número -->
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Número</mat-label>
+          <input matInput type="number" formControlName="numero" placeholder="Número" />
+        </mat-form-field>
+
+        <!-- Código Postal -->
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>CP</mat-label>
+          <input matInput type="number" formControlName="cp" placeholder="Código Postal" />
+        </mat-form-field>
+
+        <!-- Localidad -->
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Localidad</mat-label>
+          <input matInput formControlName="localidad" placeholder="Localidad" />
+        </mat-form-field>
+
+        <!-- Provincia -->
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Provincia</mat-label>
+          <input matInput formControlName="provincia" placeholder="Provincia" />
+        </mat-form-field>
+
+        <!-- País -->
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>País</mat-label>
+          <input matInput formControlName="pais" placeholder="País" />
+        </mat-form-field>
+      </div>
+    </fieldset>
+
+    <!-- BOTONES -->
+    <div class="mt-6 flex justify-center gap-4">
+      <app-btn
+        mat-raised-app-btn
+        color="primary"
+        type="submit">
+        
+        Guardar
+      </app-btn>
+
+      <app-btn
+        mat-raised-app-btn
+        color="accent"
+        type="app-btn"
+        (click)="cancelarFormulario()"
+        >
+        Cancelar
+      </app-btn>
+    </div>
+  </form>
+</div>

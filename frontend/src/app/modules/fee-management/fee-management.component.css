@@ -1,0 +1,6 @@
+:host ::ng-deep thead th {
+  color: white;
+  font-weight: bold;
+  background-color: #052c13 !important;
+}
+

@@ -7,7 +7,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExpedienteRepository::class)]
@@ -19,15 +18,12 @@ class Expediente
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'expedientes')]
-    #[Groups(['expediente:read','costas:read'])]
     private ?Contrario $contrario = null;
 
     #[ORM\ManyToOne(inversedBy: 'expedientes')]
-    #[Groups(['expediente:read','costas:read'])]
     private ?Juzgado $juzgado = null;
 
     #[ORM\ManyToOne(inversedBy: 'expedientes')]
-    #[Groups(['expediente:read','costas:read'])]
     private ?Procurador $procurador = null;
 
     #[ORM\Column(length: 20, nullable: true)]
@@ -35,7 +31,6 @@ class Expediente
         max: 20,
         maxMessage: 'El campo autos no puede tener más de {{ limit }} caracteres.'
     )]
-    #[Groups(['expediente:read','costas:read'])]
     private ?string $autos = null;
 
     #[ORM\Column(length: 50, nullable: true)]
@@ -43,7 +38,6 @@ class Expediente
         max: 50,
         maxMessage: 'El valor no puede tener más de {{ limit }} caracteres'
     )]
-    #[Groups(['expediente:read'])]
     private ?string $estado = null;
 
     #[ORM\Column(length: 50, nullable: true)]
@@ -51,7 +45,6 @@ class Expediente
         max: 50,
         maxMessage: 'El valor no puede tener más de {{ limit }} caracteres'
     )]
-    #[Groups(['expediente:read','costas:read'])]
     private ?string $tipoProcedimiento = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -59,12 +52,10 @@ class Expediente
         max: 255,
         maxMessage: 'El valor no puede tener más de {{ limit }} caracteres'
     )]
-    #[Groups(['expediente:read'])]
     private ?string $restitucionEconomica = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Assert\NotNull(message: "La fecha no puede ser nula")]
-    #[Groups(['expediente:read'])]
     private \DateTimeInterface $fechaCreacion;
 
     #[ORM\Column(length: 150)]
@@ -73,26 +64,22 @@ class Expediente
         max: 150,
         maxMessage: 'El valor no puede tener más de {{ limit }} caracteres'
     )]
-    #[Groups(['expediente:read'])]
     private ?string $descripcion = null;
 
     #[ORM\ManyToOne(inversedBy: 'expedientes')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['expediente:read','costas:read'])]
     private ?Cliente $cliente = null;
 
     /**
      * @var Collection<int, Nota>
      */
     #[ORM\OneToMany(targetEntity: Nota::class, mappedBy: 'expediente')]
-    #[Groups(['expediente:read'])]
     private Collection $notas;
 
     /**
      * @var Collection<int, Documento>
      */
     #[ORM\OneToMany(targetEntity: Documento::class, mappedBy: 'expediente')]
-    #[Groups(['expediente:read'])]
     private Collection $documentos;
 
     /**

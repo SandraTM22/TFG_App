@@ -1,81 +1,98 @@
-import { Component } from '@angular/core';
-import { BtnComponent } from '../../shared/components/btn/btn.component';
-import { CommonModule, NgIf } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { CostaService } from '../../shared/services/costa.service';
 import { Costa } from '../../shared/interfaces/costa';
-import { ExpedienteService } from '../../shared/services/expediente.service';
-import { Expediente } from '../../shared/interfaces/expediente';
+import { PageEvent, MatPaginatorModule } from '@angular/material/paginator';
+import { BtnComponent } from '../../shared/components/btn/btn.component';
+import { CommonModule, NgIf } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { ModalWrapperComponent } from '../../shared/components/modal-wrapper/modal-wrapper/modal-wrapper.component';
+import { AddModalComponent } from './add-modal/add-modal.component';
 
 @Component({
   selector: 'app-fee-management',
-  imports: [BtnComponent, NgIf, CommonModule],
+  standalone: true,
+  imports: [
+    BtnComponent,
+    NgIf,
+    CommonModule,
+    MatPaginatorModule,
+    MatIconModule,
+    ModalWrapperComponent,
+    AddModalComponent,
+  ],
   templateUrl: './fee-management.component.html',
   styleUrl: './fee-management.component.css',
 })
-export class FeeManagementComponent {
-  // Lista total de costas obtenida del backend
+export class FeeManagementComponent implements OnInit {
   costas: Costa[] = [];
-  // Lista filtrada
-  filteredCostas: Costa[] = [];
-  // Lista total de expedientes obtenida del backend
-  exps: Expediente[] = [];
-  // Lista filtrada
-  filteredExps: Expediente[] = [];
 
-  constructor(
-    private costasService: CostaService,
-    private expService: ExpedienteService
-  ) {}
+  // Para la fila expandida
+  expandedElement: Costa | null = null;
 
- 
+  // Columnas (para colspan)
+  displayedColumns: string[] = [
+    'estado',
+    'cliente',
+    'autos',
+    'juzgado',
+    'procurador',
+    'tasacion',
+    'plus15',
+    'decreto',
+    'plus20',
+    'procedimiento',
+    'contrario',
+    'importe',
+    'acciones',
+  ];
+
+  // Paginación manual
+  pageSize = 7;
+  pageIndex = 0;
+  pagedCostas: Costa[] = [];
+
+  //AddModal
+  showModal = false;
+
+  constructor(private costasService: CostaService) {}
+
   ngOnInit(): void {
-    // inicializa la carga del subjet expedientes
-    this.expService.init();
-
-    // subscripción al observable para mantener actualizada la lista de expedientes
-    this.expService.getExp().subscribe({
-      next: (exps) => {
-        this.exps = exps;
+    this.costasService.init();
+    this.costasService.costas$.subscribe({
+      next: (list) => {
+        this.costas = list;
+        this.updatePaged();
+        console.log(list);
       },
-      error: (err) => console.error('Error al suscribirse a expedientes', err),
-    });
-
-    // Esto carga las costas desde el backend
-    this.costasService.init(); 
-/* 
-    this.costasService.getCostas().subscribe((resp) => {
-      this.costas = resp;
-    }); */
-
-    this.costasService.costas$.subscribe((list) => {
-      this.costas = list;
-      this.filteredCostas = list;
+      error: (err) => console.error('Error fetching costas:', err),
     });
   }
 
-  /**
-   * Carga todos las costas desde el backend
-   */
-  loadCostas(): void {
-    this.costasService.getCostas().subscribe(
-      (costas) => {
-        this.costas = costas;
-        this.filteredCostas = costas; // Para que se actualice cuando se añade una nueva costa
-      },
-      (error) => console.error('Error fetching fees:', error)
-    );
+  onPage(event: PageEvent) {
+    this.pageSize = event.pageSize;
+    this.pageIndex = event.pageIndex;
+    this.updatePaged();
   }
 
-  /**
-   * Carga todos los expedientes desde el backend
-   */
-  loadExps(): void {
-    this.expService.getExp().subscribe(
-      (exps) => {
-        this.exps = exps;
-        this.filteredExps = exps; // Para que se actualice cuando se añade un nuevo exp
-      },
-      (error) => console.error('Error fetching fees:', error)
-    );
+  private updatePaged() {
+    const start = this.pageIndex * this.pageSize;
+    this.pagedCostas = this.costas.slice(start, start + this.pageSize);
+  }
+
+
+  /*******************MODAL AÑADIR************************/ 
+  openModal() {
+    this.showModal = true;
+  }
+
+  closeModal() {
+    this.showModal = false;
+
+  }
+
+  onSaveCosta(nuevaCosta: Costa) {
+    this.costas.unshift(nuevaCosta); // Agrega al principio
+    this.updatePaged();
+    this.closeModal();
   }
 }

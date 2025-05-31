@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Serializer\Annotation\Groups;
+
 
 #[ORM\Entity(repositoryClass: ContrarioRepository::class)]
 #[ApiResource]
@@ -28,7 +28,6 @@ class Contrario
         max: 255,
         maxMessage: 'El valor no puede tener más de {{ limit }} caracteres'
     )]
-    #[Groups(['expediente:read'])]
     private ?string $nombre = null;
 
     #[ORM\Column(length: 20, nullable: true, unique: true)]

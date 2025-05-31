@@ -6,15 +6,12 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Enum\EstadoCobro;
 use App\Enum\EstadoCostas;
 use App\Repository\CostasRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-
-/* #[ApiResource(
-    normalizationContext: ['groups' => ['costas:read']],
-    denormalizationContext: ['groups' => ['costas:write']]
-)] */
 
 #[ORM\Entity(repositoryClass: CostasRepository::class)]
 class Costas
@@ -53,7 +50,7 @@ class Costas
     #[Groups(['costas:read', 'costas:write'])]
     private ?float $importe = null;
 
-   
+
     #[ORM\Column(enumType: EstadoCobro::class)]
     #[Assert\Choice(
         callback: [EstadoCobro::class, 'cases'],
@@ -66,9 +63,23 @@ class Costas
     #[Groups(['costas:read', 'costas:write'])]
     private ?Expediente $expediente = null;
 
-    public function __construct() {
+    /**
+     * @var Collection<int, Nota>
+     */
+    #[ORM\OneToMany(
+        mappedBy: 'costa',
+        targetEntity: Nota::class,
+        cascade: ['persist', 'remove'],
+        orphanRemoval: true
+    )]
+    #[Groups(['costas:read'])]
+    private Collection $notas;
+
+    public function __construct()
+    {
         $this->estado = EstadoCostas::SIN_TASAR;
         $this->estadoCobro = EstadoCobro::NO_COBRADAS;
+        $this->notas = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -169,6 +180,34 @@ class Costas
     {
         $this->expediente = $expediente;
 
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Nota>
+     */
+    public function getNotas(): Collection
+    {
+        return $this->notas;
+    }
+
+    public function addNota(Nota $nota): self
+    {
+        if (!$this->notas->contains($nota)) {
+            $this->notas->add($nota);
+            $nota->setCosta($this);
+        }
+        return $this;
+    }
+
+    public function removeNota(Nota $nota): self
+    {
+        if ($this->notas->removeElement($nota)) {
+            // desvincula la nota
+            if ($nota->getCosta() === $this) {
+                $nota->setCosta(null);
+            }
+        }
         return $this;
     }
 }

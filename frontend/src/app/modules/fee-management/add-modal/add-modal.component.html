@@ -1,0 +1,66 @@
+<form [formGroup]="costaForm" (ngSubmit)="onSubmit()" class="grid gap-4">
+  <label class="block mb-4">
+    Estado:
+    <select formControlName="estado" class="input mt-1 block w-full">
+      <option *ngFor="let estado of estadosList" [ngValue]="estado.value">
+        {{ estado.value }}
+      </option>
+    </select>
+  </label>
+
+  <!-------------------CLIENTE-------------------->
+  <mat-form-field appearance="fill">
+    <mat-label>Cliente</mat-label>
+    <input
+      matInput
+      type="text"
+      matInput
+      [formControl]="clienteControl"
+      [matAutocomplete]="auto"
+    />
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+      <mat-option *ngFor="let cliente of filteredClientes" [value]="cliente">
+        {{ cliente.nombre }} {{ cliente.apellido1 }} {{ cliente.apellido2 }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <app-btn
+    *ngIf="!mostrarFormularioNuevo"
+    type="button"
+    class="mx-auto"
+    (click)="abrirFormularioCliente()"
+  >
+    Nuevo Cliente
+  </app-btn>
+
+  <!-- Modal de Alta de Cliente -->
+  <app-add-cliente
+    *ngIf="mostrarFormularioNuevo"
+    (clienteCreado)="clienteCreado($event)"
+    (cancelar)="mostrarFormularioNuevo = false"
+  >
+  </app-add-cliente>
+
+  <label class="block">
+    Autos:
+    <input type="text" formControlName="autos" class="input" />
+  </label>
+
+  <label class="block">
+    Juzgado:
+    <input type="text" formControlName="juzgado" class="input" />
+  </label>
+
+  <label class="block">
+    Procurador:
+    <input type="text" formControlName="procurador" class="input" />
+  </label>
+
+  <label class="block">
+    Importe:
+    <input type="number" formControlName="importe" class="input" />
+  </label>
+
+  <app-btn type="submit" class="btn mx-auto text-white mt-4">Guardar</app-btn>
+</form>

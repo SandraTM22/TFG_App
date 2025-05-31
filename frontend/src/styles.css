@@ -20,6 +20,14 @@
 .txt-sb {
   color: #512f15;
 }
-* {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+
+
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+

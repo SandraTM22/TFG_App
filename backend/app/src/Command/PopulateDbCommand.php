@@ -221,8 +221,21 @@ class PopulateDbCommand extends Command
                         ->setImporte($faker->randomFloat(2, 0, 5000))
                         ->setExpediente($e);
                     $this->em->persist($c);
+                    $costas[] = $c;
                 }
             }
+            
+            $output->writeln('<info>Creando notas de costas...</info>');
+            for ($i = 0; $i < 15; $i++) {
+                $n = new Nota();
+                $n->setContenido($faker->text(100))
+                    ->setFecha($faker->dateTimeBetween('-1 years'))
+                    ->setUsuario($faker->randomElement($users))
+                    // elegimos una costa aleatoria
+                    ->setCosta($faker->randomElement($costas));
+                $this->em->persist($n);
+            }
+
 
             $this->em->flush();
             $this->em->commit();

@@ -1,4 +1,5 @@
 import { Direccion } from "./direccion";
+import { Nota } from "./nota";
 
 export interface Cliente {
   id?: number;
@@ -9,5 +10,5 @@ export interface Cliente {
   direccion?: Direccion | null;
   referencia?: string | null;
   fechaCreacion: Date;
-  // notas, expedientes omitidos para simplificar (puedes añadir si quieres)
+  notas: Nota[];
 }

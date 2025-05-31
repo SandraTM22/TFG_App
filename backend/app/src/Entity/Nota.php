@@ -41,6 +41,11 @@ class Nota
     #[ORM\ManyToOne(inversedBy: 'notas')]
     private ?Expediente $expediente = null;
 
+    #[ORM\ManyToOne(targetEntity: Costas::class, inversedBy: 'notas')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Costas $costa = null;
+
+
     public function __construct()
     {
         $this->fecha = new \DateTime();
@@ -120,6 +125,17 @@ class Nota
     {
         $this->expediente = $expediente;
 
+        return $this;
+    }
+
+    public function getCosta(): ?Costas
+    {
+        return $this->costa;
+    }
+
+    public function setCosta(?Costas $costa): self
+    {
+        $this->costa = $costa;
         return $this;
     }
 }

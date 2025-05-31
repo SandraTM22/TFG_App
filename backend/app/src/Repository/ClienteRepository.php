@@ -20,38 +20,23 @@ class ClienteRepository extends ServiceEntityRepository
     {
         $em = $this->getEntityManager();
         $em->persist($cliente);
-        $em->flush();       
+        $em->flush();
     }
 
     public function delete(Cliente $cliente): void
     {
         $em = $this->getEntityManager();
         $em->remove($cliente);
-        $em->flush(); 
+        $em->flush();
     }
 
-    //    /**
-    //     * @return Cliente[] Returns an array of Cliente objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Cliente
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findByNombreOrDni(string $term): array
+    {
+        return $this->createQueryBuilder('c')
+            ->where('LOWER(c.nombre) LIKE :term OR LOWER(c.apellido1) LIKE :term OR LOWER(c.apellido2) LIKE :term OR c.dni LIKE :term')
+            ->setParameter('term', '%' . strtolower($term) . '%')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
 }
