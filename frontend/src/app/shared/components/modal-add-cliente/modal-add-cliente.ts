@@ -55,7 +55,7 @@ export class FormularioClienteComponent {
     });
   }
 
-  guardar() {
+  save() {
     if (this.form.valid) {
       this.clienteService.add(this.form.value).subscribe((cliente) => {
         this.clienteCreado.emit(cliente);
@@ -66,7 +66,7 @@ export class FormularioClienteComponent {
     }
   }
 
-  cancelarFormulario() {
+  cancelForm() {
     this.cancelar.emit();
   }
 }

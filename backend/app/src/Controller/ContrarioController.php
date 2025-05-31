@@ -34,18 +34,18 @@ final class ContrarioController extends AbstractController
         return $this->handleForm($request, new Contrario);
     }
 
-    #[Route('/{id}', name: 'contrario_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'contrario_show', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function show(Contrario $contrario): JsonResponse {
         $contrarioFind = $this->assembler->contrarioToArray($contrario);
         return $this->json($contrarioFind);
     }
 
-    #[Route('/{id}', name: 'contrario_edit', methods: ['PUT'])]
+    #[Route('/{id}', name: 'contrario_edit', methods: ['PUT'], requirements: ['id' => '\d+'])]
     public function edit(Request $request, Contrario $contrario, ): JsonResponse {
         return $this->handleForm($request, $contrario);
     }
 
-    #[Route('/{id}', name: 'contrario_delete', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'contrario_delete', methods: ['DELETE'], requirements: ['id' => '\d+'])]
     public function delete(Request $request, Contrario $contrario, ): JsonResponse {
         $this->repo->delete($contrario);
         return $this->json(['message' => 'Contrario eliminado']);
@@ -83,5 +83,18 @@ final class ContrarioController extends AbstractController
 
         $this->repo->save($contrario);
         return $this->json($this->assembler->contrarioToArray($contrario));
+    }
+
+    #[Route('/find', name: 'buscar_contrario', methods: ['GET'])]
+    public function buscarContrario(Request $request): JsonResponse
+    {
+        $search = $request->query->get('search', '');
+        $contrarios = $this->repo->findByNombre($search);
+         $data = array_map(
+        fn($contrario) => $this->assembler->contrarioToArray($contrario),
+        $contrarios
+    );
+
+        return $this->json($data, 200, []);
     }
 }

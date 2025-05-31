@@ -14,13 +14,17 @@ import { EstadoCostas } from '../../../shared/interfaces/enum/estado-costas.enum
 import { Cliente } from '../../../shared/interfaces/cliente';
 import { ClienteService } from '../../../shared/services/cliente.service';
 import { debounceTime, switchMap } from 'rxjs';
+import { Contrario } from '../../../shared/interfaces/contrario';
+import { ContrarioService } from '../../../shared/services/contrario.service';
+import { FormularioClienteComponent } from '../../../shared/components/modal-add-cliente/modal-add-cliente';
 
 //Angular Material
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { FormularioClienteComponent } from '../../../shared/components/modal-add-cliente/modal-add-cliente';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+import { FormularioContrarioComponent } from '../../../shared/components/modal-add-contrario/modal-add-contrario';
 
 @Component({
   selector: 'app-add-modal',
@@ -34,6 +38,8 @@ import { MatSelectModule } from '@angular/material/select';
     FormularioClienteComponent,
     MatInputModule,
     MatSelectModule,
+    MatIconModule,
+    FormularioContrarioComponent,
   ],
   templateUrl: './add-modal.component.html',
   styleUrl: './add-modal.component.css',
@@ -50,9 +56,21 @@ export class AddModalComponent implements OnInit {
   /*******Cliente*****/
   clienteControl = new FormControl<Cliente | null>(null, Validators.required);
   filteredClientes: Cliente[] = [];
-  mostrarFormularioNuevo = false;
+  mostrarFormularioNuevoCliente = false;
 
-  constructor(private fb: FormBuilder, private clienteService: ClienteService) {
+  /*******Contrario*****/
+  contrarioControl = new FormControl<Contrario | null>(
+    null,
+    Validators.required
+  );
+  filteredContrarios: Contrario[] = [];
+  mostrarFormularioNuevoContrario = false;
+
+  constructor(
+    private fb: FormBuilder,
+    private clienteService: ClienteService,
+    private contrarioService: ContrarioService
+  ) {
     this.costaForm = this.fb.group({
       estado: [EstadoCostas.NO_FIRMES, Validators.required],
       cliente: ['', Validators.required],
@@ -64,6 +82,7 @@ export class AddModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Búsqueda clientes
     this.clienteControl.valueChanges
       .pipe(
         debounceTime(300),
@@ -74,6 +93,16 @@ export class AddModalComponent implements OnInit {
       .subscribe((clientes) => {
         this.filteredClientes = clientes;
       });
+
+    // Búsqueda contrarios
+    this.contrarioControl.valueChanges
+      .pipe(
+        debounceTime(300),
+        switchMap((term) =>
+          typeof term === 'string' ? this.contrarioService.find(term) : []
+        )
+      )
+      .subscribe((contrarios) => (this.filteredContrarios = contrarios));
   }
 
   onSubmit() {
@@ -91,11 +120,25 @@ export class AddModalComponent implements OnInit {
   }
 
   abrirFormularioCliente() {
-    this.mostrarFormularioNuevo = true;
+    this.mostrarFormularioNuevoCliente = true;
   }
 
   clienteCreado(cliente: Cliente) {
     this.clienteControl.setValue(cliente);
-    this.mostrarFormularioNuevo = false;
+    this.mostrarFormularioNuevoCliente = false;
+  }
+
+  /**********************Contrario***************/
+  displayFnContrario(contrario: Contrario): string {
+    return contrario ? `${contrario.nombre}` : '';
+  }
+
+  abrirFormularioContrario() {
+    this.mostrarFormularioNuevoContrario = true;
+  }
+
+  contrarioCreado(contrario: Contrario) {
+    this.contrarioControl.setValue(contrario);
+    this.mostrarFormularioNuevoContrario = false;
   }
 }

@@ -15,29 +15,30 @@
       type="text"
       matInput
       [formControl]="clienteControl"
-      [matAutocomplete]="auto"
+      [matAutocomplete]="autoCliente"
     />
-    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+    <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayFn">
       <mat-option *ngFor="let cliente of filteredClientes" [value]="cliente">
         {{ cliente.nombre }} {{ cliente.apellido1 }} {{ cliente.apellido2 }}
       </mat-option>
     </mat-autocomplete>
+    <button
+      mat-icon-button
+      matSuffix
+      type="button"
+      aria-label="Crear cliente"
+      (click)="abrirFormularioCliente()"
+      class="cursor-pointer mx-2"
+    > 
+      Crear nuevo
+    </button>
   </mat-form-field>
-
-  <app-btn
-    *ngIf="!mostrarFormularioNuevo"
-    type="button"
-    class="mx-auto"
-    (click)="abrirFormularioCliente()"
-  >
-    Nuevo Cliente
-  </app-btn>
 
   <!-- Modal de Alta de Cliente -->
   <app-add-cliente
-    *ngIf="mostrarFormularioNuevo"
+    *ngIf="mostrarFormularioNuevoCliente"
     (clienteCreado)="clienteCreado($event)"
-    (cancelar)="mostrarFormularioNuevo = false"
+    (cancelar)="mostrarFormularioNuevoCliente = false"
   >
   </app-add-cliente>
 
@@ -55,6 +56,47 @@
     Procurador:
     <input type="text" formControlName="procurador" class="input" />
   </label>
+  <label class="block">
+    Tipo de procedimiento:
+    <input type="text" formControlName="procurador" class="input" />
+  </label>
+
+   <!-------------------CONTRARIO-------------------->
+  <mat-form-field appearance="fill" class="w-full">
+  <mat-label>Contrario</mat-label>
+  <input
+    matInput
+    [formControl]="contrarioControl"
+    [matAutocomplete]="autoContrario"
+    [placeholder]="'Buscar contrario...'"
+  />
+  <button
+    *ngIf="!mostrarFormularioNuevoContrario"
+    mat-icon-button
+    matSuffix
+    type="button"
+    aria-label="Crear contrario"
+    (click)="abrirFormularioContrario()"
+    class="cursor-pointer mx-2"
+  >
+    Crear nuevo
+  </button>
+
+  <mat-autocomplete #autoContrario="matAutocomplete" [displayWith]="displayFnContrario">
+    <mat-option *ngFor="let contrario of filteredContrarios" [value]="contrario">
+      {{ contrario.nombre }}      
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>
+
+<!-- Modal de Alta de Contrario -->
+  <app-add-contrario
+    *ngIf="mostrarFormularioNuevoContrario"
+    (contrarioCreado)="contrarioCreado($event)"
+    (cancelar)="mostrarFormularioNuevoContrario = false"
+  >
+  </app-add-contrario>
+
 
   <label class="block">
     Importe:

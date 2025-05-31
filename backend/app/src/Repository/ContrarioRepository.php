@@ -29,28 +29,13 @@ class ContrarioRepository extends ServiceEntityRepository
         $em->flush(); 
     }
 
-    //    /**
-    //     * @return Contrario[] Returns an array of Contrario objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Contrario
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findByNombre(string $term): array
+    {
+        return $this->createQueryBuilder('c')
+            ->where('LOWER(c.nombre) LIKE :term')
+            ->setParameter('term', '%' . strtolower($term) . '%')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
 }

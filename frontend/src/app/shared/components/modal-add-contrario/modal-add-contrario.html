@@ -1,0 +1,68 @@
+<div class="modal p-6 bg-gray-50 rounded-2xl shadow-xl max-w-3xl mx-auto">
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <!-- CAMPOS PRINCIPALES -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Nombre -->
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="nombre" placeholder="Nombre" />
+        <app-error-message [control]="form.get('nombre')" fieldName="Nombre" />
+      </mat-form-field>
+
+      <!-- NIF -->
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>NIF</mat-label>
+        <input matInput formControlName="nif" placeholder="NIF" />
+        <app-error-message [control]="form.get('nif')" fieldName="NIF" />
+      </mat-form-field>
+    </div>
+
+    <!-- DIRECCIÓN -->
+    <fieldset formGroupName="direccion" class="mt-6 border border-gray-200 rounded-lg p-4">
+      <legend class="px-2 text-lg font-semibold text-[#052C13]">Dirección</legend>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Calle</mat-label>
+          <input matInput formControlName="calle" placeholder="Calle" />
+          <app-error-message [control]="form.get('direccion.calle')" fieldName="Calle" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Número</mat-label>
+          <input matInput type="number" formControlName="numero" placeholder="Número" />
+          <app-error-message [control]="form.get('direccion.numero')" fieldName="Número" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Código Postal</mat-label>
+          <input matInput type="number" formControlName="cp" placeholder="CP" />
+          <app-error-message [control]="form.get('direccion.cp')" fieldName="Código Postal" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Localidad</mat-label>
+          <input matInput formControlName="localidad" placeholder="Localidad" />
+          <app-error-message [control]="form.get('direccion.localidad')" fieldName="Localidad" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Provincia</mat-label>
+          <input matInput formControlName="provincia" placeholder="Provincia" />
+          <app-error-message [control]="form.get('direccion.provincia')" fieldName="Provincia" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>País</mat-label>
+          <input matInput formControlName="pais" placeholder="País" />
+          <app-error-message [control]="form.get('direccion.pais')" fieldName="País" />
+        </mat-form-field>
+      </div>
+    </fieldset>
+
+    <!-- BOTONES -->
+    <div class="mt-6 flex justify-center gap-4">
+      <app-btn mat-raised-app-btn color="primary" type="submit">Guardar</app-btn>
+      <app-btn mat-raised-app-btn color="accent" type="button" (click)="cancelForm()">Cancelar</app-btn>
+    </div>
+  </form>
+</div>

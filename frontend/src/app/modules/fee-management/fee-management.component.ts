@@ -61,8 +61,7 @@ export class FeeManagementComponent implements OnInit {
     this.costasService.costas$.subscribe({
       next: (list) => {
         this.costas = list;
-        this.updatePaged();
-        console.log(list);
+        this.updatePaged();        
       },
       error: (err) => console.error('Error fetching costas:', err),
     });

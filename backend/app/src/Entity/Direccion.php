@@ -70,11 +70,8 @@ class Direccion
     #[ORM\OneToMany(mappedBy: 'direccion', targetEntity: Procurador::class)]
     private Collection $procuradores;
 
-    /**
-     * @var Collection<int, Contrario>
-     */
-    #[ORM\OneToMany(targetEntity: Contrario::class, mappedBy: 'direccion')]
-    private Collection $contrarios;
+    #[ORM\OneToOne(mappedBy: 'direccion', targetEntity: Contrario::class)]
+    private ?Contrario $contrario = null;
 
     #[ORM\OneToOne(mappedBy: 'direccion', cascade: ['persist', 'remove'])]
     private ?Juzgado $juzgado = null;
@@ -92,7 +89,6 @@ class Direccion
     public function __construct()
     {
         $this->procuradores = new ArrayCollection();
-        $this->contrarios = new ArrayCollection();
     }
 
 
@@ -199,32 +195,14 @@ class Direccion
         return $this;
     }
 
-    /**
-     * @return Collection<int, Contrario>
-     */
-    public function getContrarios(): Collection
+    public function getContrario(): ?Contrario
     {
-        return $this->contrarios;
+        return $this->contrario;
     }
 
-    public function addContrario(Contrario $contrario): static
+    public function setContrario(?Contrario $contrario): static
     {
-        if (!$this->contrarios->contains($contrario)) {
-            $this->contrarios->add($contrario);
-            $contrario->setDireccion($this);
-        }
-
-        return $this;
-    }
-
-    public function removeContrario(Contrario $contrario): static
-    {
-        if ($this->contrarios->removeElement($contrario)) {
-            // set the owning side to null (unless already changed)
-            if ($contrario->getDireccion() === $this) {
-                $contrario->setDireccion(null);
-            }
-        }
+        $this->contrario = $contrario;
 
         return $this;
     }

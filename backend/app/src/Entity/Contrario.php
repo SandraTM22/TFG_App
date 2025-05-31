@@ -37,7 +37,7 @@ class Contrario
     )]
     private ?string $nif = null;
 
-    #[ORM\ManyToOne(targetEntity: Direccion::class, inversedBy: 'contrarios',cascade: ['persist'])]
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: true)]
     private ?Direccion $direccion = null;
 
