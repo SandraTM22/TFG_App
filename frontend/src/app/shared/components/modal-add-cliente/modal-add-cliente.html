@@ -24,6 +24,7 @@
       <mat-form-field appearance="fill" class="w-full">
         <mat-label>DNI</mat-label>
         <input matInput formControlName="dni" placeholder="DNI" />
+        <app-error-message [control]="form.get('dni')" fieldName="DNI"></app-error-message>
       </mat-form-field>
 
       <!-- Referencia -->
@@ -80,8 +81,7 @@
       <app-btn
         mat-raised-app-btn
         color="primary"
-        type="submit">
-        
+        type="submit">        
         Guardar
       </app-btn>
 

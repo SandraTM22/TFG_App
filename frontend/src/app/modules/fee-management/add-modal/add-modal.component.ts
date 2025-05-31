@@ -20,6 +20,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { FormularioClienteComponent } from '../../../shared/components/modal-add-cliente/modal-add-cliente';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-add-modal',
@@ -32,6 +33,7 @@ import { MatInputModule } from '@angular/material/input';
     MatFormFieldModule,
     FormularioClienteComponent,
     MatInputModule,
+    MatSelectModule,
   ],
   templateUrl: './add-modal.component.html',
   styleUrl: './add-modal.component.css',

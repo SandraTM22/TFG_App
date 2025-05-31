@@ -1,14 +1,27 @@
 <p *ngIf="control?.touched && control?.invalid" class="error-message">
-    <ng-container *ngIf="control?.hasError('required')">
-     {{ fieldName }} es obligatorio
+  <ng-container *ngIf="control?.errors">
+    <ng-container *ngIf="control.errors['required']">
+      {{ fieldName }} es obligatorio.
     </ng-container>
 
-    <ng-container *ngIf="control?.hasError('invalidEmail')">
-        {{ fieldName }} no es válido.
-      </ng-container>
-  
-    <ng-container *ngIf="control?.hasError('minlength')">
-      {{ fieldName }} debe de tener al menos 6 caracteres
+    <ng-container *ngIf="control.errors['email'] || control.errors['invalidEmail']">
+      {{ fieldName }} no es válido.
     </ng-container>
-  </p>
-  
+
+    <ng-container *ngIf="control.errors['minlength']">
+      {{ fieldName }} debe tener al menos {{ control.errors['minlength'].requiredLength }} caracteres.
+    </ng-container>
+
+    <ng-container *ngIf="control.errors['maxlength']">
+      {{ fieldName }} no puede tener más de {{ control.errors['maxlength'].requiredLength }} caracteres.
+    </ng-container>
+
+    <ng-container *ngIf="control.errors['pattern']">
+      El formato de {{ fieldName }} no es válido.
+    </ng-container>
+
+    <ng-container *ngIf="control.errors['unique']">
+      Ya existe un {{ fieldName }} con ese valor.
+    </ng-container>
+  </ng-container>
+</p>

@@ -11,6 +11,7 @@ import { BtnComponent } from '../btn/btn.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { ErrorMessageComponent } from '../error-message/error-message.component';
 
 @Component({
   selector: 'app-add-cliente',
@@ -20,6 +21,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    ErrorMessageComponent,
   ],
   templateUrl: './modal-add-cliente.html',
 })

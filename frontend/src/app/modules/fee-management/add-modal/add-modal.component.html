@@ -1,13 +1,12 @@
 <form [formGroup]="costaForm" (ngSubmit)="onSubmit()" class="grid gap-4">
-  <label class="block mb-4">
-    Estado:
-    <select formControlName="estado" class="input mt-1 block w-full">
-      <option *ngFor="let estado of estadosList" [ngValue]="estado.value">
-        {{ estado.value }}
-      </option>
-    </select>
-  </label>
-
+  <mat-form-field appearance="fill" class="w-full mb-4">
+  <mat-label>Estado</mat-label>
+  <mat-select formControlName="estado">
+    <mat-option *ngFor="let estado of estadosList" [value]="estado.value">
+      {{ estado.value }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
   <!-------------------CLIENTE-------------------->
   <mat-form-field appearance="fill">
     <mat-label>Cliente</mat-label>
