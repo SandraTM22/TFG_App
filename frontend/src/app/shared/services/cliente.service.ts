@@ -6,7 +6,7 @@ import { Cliente } from '../interfaces/cliente';
 
 @Injectable({ providedIn: 'root' })
 export class ClienteService {
-  private apiUrl = 'http://localhost:8000/cliente';
+  private apiUrl = 'http://localhost:8000/api/cliente';
 
   constructor(private http: HttpClient) {}
 

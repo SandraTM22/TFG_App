@@ -23,7 +23,6 @@ final class CostasController extends AbstractController
     ) {}
 
     #[Route('/custom', name: 'index_custom', methods: ['GET'])]
-
     public function indexCustome(): JsonResponse
     {
         

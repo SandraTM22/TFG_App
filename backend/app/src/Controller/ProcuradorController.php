@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/procurador')]
+#[Route('/api/procurador')]
 final class ProcuradorController extends AbstractController
 {
     public function __construct(

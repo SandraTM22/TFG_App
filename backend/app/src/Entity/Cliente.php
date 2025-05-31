@@ -44,14 +44,23 @@ class Cliente
     )]
     private ?string $apellido2 = null;
 
-    #[ORM\Column(length: 15, nullable: true, unique: true)]    
+    #[ORM\Column(length: 15, nullable: true, unique: true)]
     #[Assert\Regex(
         pattern: '/^(?:[0-9]{8}|[XYZxyz][0-9]{7})[A-Za-z]$/',
         message: 'El DNI/NIE debe tener 8 dígitos y una letra, o empezar por X/Y/Z seguido de 7 dígitos y una letra.'
     )]
     private ?string $dni = null;
 
-    #[ORM\ManyToOne(inversedBy: 'clientes')]
+    /**
+     * Cada Cliente tiene una Direccion,
+     * y al guardar el Cliente, persiste (y elimina) también la Direccion.
+     */
+    #[ORM\OneToOne(
+        inversedBy: 'cliente',
+        targetEntity: Direccion::class,
+        cascade: ['persist', 'remove']
+    )]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Direccion $direccion = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -144,7 +153,18 @@ class Cliente
 
     public function setDireccion(?Direccion $direccion): static
     {
+        // Si ya había una dirección asociada, la “desenlazamos”:
+        if ($this->direccion !== null && $direccion === null) {
+            $this->direccion->setCliente(null);
+        }
+
+        // Asignamos la nueva dirección al Cliente
         $this->direccion = $direccion;
+
+        // Y nos aseguramos de que la Dirección apunte a este Cliente
+        if ($direccion !== null && $direccion->getCliente() !== $this) {
+            $direccion->setCliente($this);
+        }
 
         return $this;
     }
@@ -190,7 +210,7 @@ class Cliente
 
         return $this;
     }
-    
+
     public function getFechaCreacion(): \DateTimeInterface
     {
         return $this->fechaCreacion;

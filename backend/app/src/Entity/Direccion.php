@@ -80,16 +80,19 @@ class Direccion
     private ?Juzgado $juzgado = null;
 
     /**
-     * @var Collection<int, Cliente>
+     * Nuevo campo: “propiedad inversa” que sabe a qué Cliente pertenece.
      */
-    #[ORM\OneToMany(targetEntity: Cliente::class, mappedBy: 'direccion')]
-    private Collection $clientes;
+    #[ORM\OneToOne(
+        mappedBy: 'direccion',
+        targetEntity: Cliente::class
+    )]
+    private ?Cliente $cliente = null;
+
 
     public function __construct()
     {
         $this->procuradores = new ArrayCollection();
         $this->contrarios = new ArrayCollection();
-        $this->clientes = new ArrayCollection();
     }
 
 
@@ -248,31 +251,23 @@ class Direccion
         return $this;
     }
 
-    /**
-     * @return Collection<int, Cliente>
-     */
-    public function getClientes(): Collection
+    public function getCliente(): ?Cliente
     {
-        return $this->clientes;
+        return $this->cliente;
     }
 
-    public function addCliente(Cliente $cliente): static
+    public function setCliente(?Cliente $cliente): static
     {
-        if (!$this->clientes->contains($cliente)) {
-            $this->clientes->add($cliente);
-            $cliente->setDireccion($this);
+        // Rompemos la referencia anterior si hace falta
+        if ($this->cliente !== null && $cliente === null) {
+            $this->cliente->setDireccion(null);
         }
 
-        return $this;
-    }
+        $this->cliente = $cliente;
 
-    public function removeCliente(Cliente $cliente): static
-    {
-        if ($this->clientes->removeElement($cliente)) {
-            // set the owning side to null (unless already changed)
-            if ($cliente->getDireccion() === $this) {
-                $cliente->setDireccion(null);
-            }
+        // Aseguramos bidireccionalidad: si estamos asociando a un Cliente
+        if ($cliente !== null && $cliente->getDireccion() !== $this) {
+            $cliente->setDireccion($this);
         }
 
         return $this;

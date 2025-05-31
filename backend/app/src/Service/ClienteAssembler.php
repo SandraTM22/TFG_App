@@ -55,11 +55,11 @@ class ClienteAssembler
             'apellido1' => $cliente->getApellido1(),
             'apellido2' => $cliente->getApellido2(),
             'dni' => $cliente->getDni(),
-            'direccion' => $this->direccionToArray($cliente->getDireccion()),
+            'direccion'     => $this->direccionToArray($cliente->getDireccion()),
             'referencia' => $cliente->getReferencia(),
-            'notas'         => $notasArray,      
+            'notas'         => $notasArray,
             'expedientes'   => $expedientesArray,
-            'fechaCreacion' => $cliente->getFechaCreacion(),       
+            'fechaCreacion' => $fechaCreacionStr,
         ];
     }
 }

@@ -3,8 +3,6 @@
 namespace App\Form;
 
 use App\Entity\Cliente;
-use App\Entity\Direccion;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -19,9 +17,7 @@ class ClienteType extends AbstractType
             ->add('apellido2')
             ->add('dni')
             ->add('referencia')            
-            ->add('direccion', EntityType::class, [
-                'class' => Direccion::class,
-                'choice_label' => 'id',
+            ->add('direccion', DireccionType::class, [
                 'required' => false,
             ])
         ;
