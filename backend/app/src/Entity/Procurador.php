@@ -10,7 +10,6 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Direccion;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
@@ -44,7 +43,6 @@ class Procurador
         max: 255,
         maxMessage: 'El valor no puede tener más de {{ limit }} caracteres'
     )]
-    #[Groups(['expediente:read'])]
     private ?string $nombre = null;
 
     #[ORM\Column(length: 255)]
@@ -53,7 +51,6 @@ class Procurador
         max: 255,
         maxMessage: 'El valor no puede tener más de {{ limit }} caracteres'
     )]
-    #[Groups(['expediente:read'])]
     private ?string $apellido1 = null;
 
     #[ORM\Column(length: 255)]
@@ -62,7 +59,6 @@ class Procurador
         max: 255,
         maxMessage: 'El valor no puede tener más de {{ limit }} caracteres'
     )]
-    #[Groups(['expediente:read'])]
     private ?string $apellido2 = null;
 
 
@@ -78,10 +74,10 @@ class Procurador
     #[Assert\Positive(message: 'El número de colegiado debe ser mayor que cero')]
     private ?int $numeroColegiado = null;
 
-    //Muchos procuradores pueden compartir una dirección
-    #[ORM\ManyToOne(targetEntity: Direccion::class, inversedBy: 'procuradores', cascade: ['persist'])]
-    #[ORM\JoinColumn(nullable: false)] // o true para opcional
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Direccion $direccion = null;
+
 
     /**
      * @var Collection<int, Expediente>

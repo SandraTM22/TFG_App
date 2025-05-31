@@ -66,14 +66,14 @@ class Direccion
     )]
     private ?string $pais = "España";
 
-    //Relacion con procurador
-    #[ORM\OneToMany(mappedBy: 'direccion', targetEntity: Procurador::class)]
-    private Collection $procuradores;
+    #[ORM\OneToOne(mappedBy: 'direccion', targetEntity: Procurador::class)]
+    private ?Procurador $procurador = null;
+
 
     #[ORM\OneToOne(mappedBy: 'direccion', targetEntity: Contrario::class)]
     private ?Contrario $contrario = null;
 
-    #[ORM\OneToOne(mappedBy: 'direccion', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'direccion', targetEntity: Juzgado::class)]
     private ?Juzgado $juzgado = null;
 
     /**
@@ -84,13 +84,6 @@ class Direccion
         targetEntity: Cliente::class
     )]
     private ?Cliente $cliente = null;
-
-
-    public function __construct()
-    {
-        $this->procuradores = new ArrayCollection();
-    }
-
 
     public function getId(): ?int
     {
@@ -169,28 +162,14 @@ class Direccion
         return $this;
     }
 
-    public function getProcuradores(): Collection
+    public function getProcurador(): ?Procurador
     {
-        return $this->procuradores;
+        return $this->procurador;
     }
 
-    public function addProcurador(Procurador $procurador): static
+    public function setProcurador(?Procurador $procurador): static
     {
-        if (!$this->procuradores->contains($procurador)) {
-            $this->procuradores->add($procurador);
-            $procurador->setDireccion($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProcurador(Procurador $procurador): static
-    {
-        if ($this->procuradores->removeElement($procurador)) {
-            if ($procurador->getDireccion() === $this) {
-                $procurador->setDireccion(null);
-            }
-        }
+        $this->procurador = $procurador;
 
         return $this;
     }
@@ -214,16 +193,6 @@ class Direccion
 
     public function setJuzgado(?Juzgado $juzgado): static
     {
-        // unset the owning side of the relation if necessary
-        if ($juzgado === null && $this->juzgado !== null) {
-            $this->juzgado->setDireccion(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($juzgado !== null && $juzgado->getDireccion() !== $this) {
-            $juzgado->setDireccion($this);
-        }
-
         $this->juzgado = $juzgado;
 
         return $this;
