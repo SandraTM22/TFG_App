@@ -12,6 +12,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { ErrorMessageComponent } from '../error-message/error-message.component';
+import { ToastService } from '../../services/toast.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-add-cliente',
@@ -31,7 +33,11 @@ export class FormularioClienteComponent {
 
   form: FormGroup;
 
-  constructor(private fb: FormBuilder, private clienteService: ClienteService) {
+  constructor(
+    private fb: FormBuilder,
+    private clienteService: ClienteService,
+    private toastService: ToastService
+  ) {
     this.form = this.fb.group({
       nombre: ['', Validators.required],
       apellido1: ['', Validators.required],
@@ -56,14 +62,41 @@ export class FormularioClienteComponent {
   }
 
   save() {
-    if (this.form.valid) {
-      this.clienteService.add(this.form.value).subscribe((cliente) => {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    this.clienteService.add(this.form.value).subscribe({
+      next: (cliente) => {
+        this.toastService.addToast(
+          'success',
+          'Cliente añadido correctamente',
+          3000
+        );
         this.clienteCreado.emit(cliente);
         this.form.reset();
-      });
-    } else {
-      this.form.markAllAsTouched();
-    }
+      },
+      error: (err: HttpErrorResponse) => {
+        // Si viene un 400 con { errors: { campo: [...mensajes] } }
+        if (err.status === 400 && err.error?.errors) {
+          const backendErrors = err.error.errors;
+          for (const campo in backendErrors) {
+            const mensajes = backendErrors[campo];
+            if (Array.isArray(mensajes)) {
+              mensajes.forEach((msg: string) => {
+                this.toastService.addToast('error', msg, 5000);
+              });
+            }
+          }
+        } else {
+          const message =
+            err.error?.message ||
+            'Error inesperado al crear el cliente. Inténtalo de nuevo.';
+          this.toastService.addToast('error', message, 5000);
+        }
+      },
+    });
   }
 
   cancelForm() {

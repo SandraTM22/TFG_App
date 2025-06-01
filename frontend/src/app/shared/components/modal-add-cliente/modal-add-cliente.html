@@ -59,6 +59,7 @@
             matInput
             min="0"
             type="number"
+            (wheel)="$event.preventDefault()"
             formControlName="numero"
             placeholder="Número"
           />
@@ -73,6 +74,7 @@
           <input
             matInput
             type="number"
+            (wheel)="$event.preventDefault()"
             formControlName="cp"
             placeholder="Código Postal"
           />
