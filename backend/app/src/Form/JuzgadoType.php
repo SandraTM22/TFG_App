@@ -2,9 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Direccion;
 use App\Entity\Juzgado;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -15,7 +13,7 @@ class JuzgadoType extends AbstractType
     {
         $builder
             ->add('nombre')
-            ->add('notas')
+            /* ->add('notas') */
             ->add('direccion', DireccionType::class);
         ;
     }

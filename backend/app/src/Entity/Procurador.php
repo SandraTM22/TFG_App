@@ -88,6 +88,7 @@ class Procurador
     public function __construct()
     {
         $this->expedientes = new ArrayCollection();
+        $this->direccion = new Direccion();
     }
 
     public function getId(): ?int
@@ -160,10 +161,9 @@ class Procurador
         return $this->direccion;
     }
 
-    public function setDireccion(?Direccion $direccion): static
+    public function setDireccion(?Direccion $direccion): self
     {
         $this->direccion = $direccion;
-
         return $this;
     }
 

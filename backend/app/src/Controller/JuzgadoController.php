@@ -6,11 +6,9 @@ use App\Entity\Juzgado;
 use App\Form\JuzgadoType;
 use App\Repository\JuzgadoRepository;
 use App\Service\JuzgadoAssembler;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/api/juzgado')]
@@ -27,7 +25,7 @@ final class JuzgadoController extends AbstractController
     {
         $juzgados = $this->repo->findAll();
         $data = array_map(
-            fn($juzgado) => $this->assembler->JuzgadoToArray($juzgado),
+            fn($juzgado) => $this->assembler->juzgadoToArray($juzgado),
             $juzgados
         );
         return $this->json($data);
@@ -39,20 +37,20 @@ final class JuzgadoController extends AbstractController
         return $this->handleForm($request, new Juzgado());
     }
 
-    #[Route('/{id}', name: 'juzgado_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'juzgado_show', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function show(Juzgado $juzgado): JsonResponse
     {
-        $juzgadoFind = $this->assembler->JuzgadoToArray($juzgado);
+        $juzgadoFind = $this->assembler->juzgadoToArray($juzgado);
         return $this->json($juzgadoFind);
     }
 
-    #[Route('/{id}', name: 'juzgado_edit', methods: ['PUT'])]
+    #[Route('/{id}', name: 'juzgado_edit', methods: ['PUT'], requirements: ['id' => '\d+'])]
     public function edit(Request $request, Juzgado $juzgado): JsonResponse
     {
         return $this->handleForm($request, $juzgado);
     }
 
-    #[Route('/{id}', name: 'juzgado_delete', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'juzgado_delete', methods: ['DELETE'], requirements: ['id' => '\d+'])]
     public function delete(Juzgado $juzgado): JsonResponse
     {
         $this->repo->delete($juzgado);
@@ -99,5 +97,18 @@ final class JuzgadoController extends AbstractController
         ];
 
         return $this->json($data); */
+    }
+
+    #[Route('/find', name: 'buscar_juzgado', methods: ['GET'])]
+    public function buscarJuzgado(Request $request): JsonResponse
+    {
+        $search = $request->query->get('search', '');
+        $juzgados = $this->repo->findByNombre($search);
+         $data = array_map(
+        fn($juzgado) => $this->assembler->juzgadoToArray($juzgado),
+        $juzgados
+    );
+
+        return $this->json($data, 200, []);
     }
 }

@@ -7,7 +7,9 @@ use App\Enum\EstadoCobro;
 use App\Enum\EstadoCostas;
 use App\Form\CostasType;
 use App\Repository\CostasRepository;
+use App\Repository\ExpedienteRepository;
 use App\Service\CostasAssembler;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,14 +21,16 @@ final class CostasController extends AbstractController
     public function __construct(
         public readonly CostasRepository $repo,
         public readonly CostasAssembler $assembler,
+        private readonly ExpedienteRepository $expedienteRepository,
+        private readonly EntityManagerInterface $entityManager
 
     ) {}
 
     #[Route('/custom', name: 'index_custom', methods: ['GET'])]
     public function indexCustome(): JsonResponse
     {
-        
-        $costas = $this->repo->findAllExpCli();             
+
+        $costas = $this->repo->findAllExpCli();
         $data = array_map(
             fn($costa) => $this->assembler->costasToArray($costa),
             $costas
@@ -36,8 +40,8 @@ final class CostasController extends AbstractController
 
     #[Route('', name: 'costas_index', methods: ['GET'])]
     public function index()
-    {        
-        $costas = $this->repo->findAll();       
+    {
+        $costas = $this->repo->findAll();
     }
 
     #[Route('', name: 'costas_new', methods: ['POST'])]
@@ -100,6 +104,36 @@ final class CostasController extends AbstractController
                 ]
             ], 400);
         }
+
+        // Lógica para buscar o crear el Expediente
+        if (!isset($data['autos']) || !isset($data['juzgado_id'])) {
+            return $this->json([
+                'errors' => ['autos/juzgado_id' => ['Faltan autos o id del juzgado']]
+            ], 400);
+        }
+
+        $autos = $data['autos'];
+        $juzgado = $this->entityManager->getRepository(\App\Entity\Juzgado::class)->find($data['juzgado_id']);
+
+        if (!$juzgado) {
+            return $this->json([
+                'errors' => ['juzgado_id' => ['Juzgado no encontrado']]
+            ], 400);
+        }
+
+        $expediente = $this->expedienteRepository->findOneBy([
+            'autos' => $autos,
+            'juzgado' => $juzgado,
+        ]);
+
+        if (!$expediente) {
+            $expediente = new \App\Entity\Expediente();
+            $expediente->setAutos($autos);
+            $expediente->setJuzgado($juzgado);
+            $this->entityManager->persist($expediente);
+        }
+
+        $costas->setExpediente($expediente);
 
         $inputMissing = $request->isMethod('POST');
         // POST, inputMissing = true (el Form lo detecta como faltante y salta la validación )

@@ -1,12 +1,12 @@
 <form [formGroup]="costaForm" (ngSubmit)="onSubmit()" class="grid gap-4">
   <mat-form-field appearance="fill" class="w-full mb-4">
-  <mat-label>Estado</mat-label>
-  <mat-select formControlName="estado">
-    <mat-option *ngFor="let estado of estadosList" [value]="estado.value">
-      {{ estado.value }}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
+    <mat-label>Estado</mat-label>
+    <mat-select formControlName="estado">
+      <mat-option *ngFor="let estado of estadosList" [value]="estado.value">
+        {{ estado.value }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
   <!-------------------CLIENTE-------------------->
   <mat-form-field appearance="fill">
     <mat-label>Cliente</mat-label>
@@ -16,10 +16,17 @@
       matInput
       [formControl]="clienteControl"
       [matAutocomplete]="autoCliente"
+      placeholder="Buscar cliente..."
     />
     <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayFn">
       <mat-option *ngFor="let cliente of filteredClientes" [value]="cliente">
         {{ cliente.nombre }} {{ cliente.apellido1 }} {{ cliente.apellido2 }}
+      </mat-option>
+      <mat-option
+        *ngIf="filteredClientes.length === 0 && clienteControl.value && !mostrarFormularioNuevoCliente"
+        disabled
+      >
+        Sin coincidencias
       </mat-option>
     </mat-autocomplete>
     <button
@@ -29,7 +36,7 @@
       aria-label="Crear cliente"
       (click)="abrirFormularioCliente()"
       class="cursor-pointer mx-2"
-    > 
+    >
       Crear nuevo
     </button>
   </mat-form-field>
@@ -42,54 +49,169 @@
   >
   </app-add-cliente>
 
-  <label class="block">
-    Autos:
-    <input type="text" formControlName="autos" class="input" />
-  </label>
+  <!---------------- AUTOS (patrón “número/4 dígitos”) --------------->
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Autos</mat-label>
+    <input
+      matInput
+      type="text"
+      formControlName="autos"
+      placeholder="12345/6789"
+    />
+    <mat-error *ngIf="costaForm.get('autos')?.hasError('required')">
+      El campo “Autos” es obligatorio.
+    </mat-error>
+    <mat-error *ngIf="costaForm.get('autos')?.hasError('pattern')">
+      El formato debe ser nnn/aaaa (ej: 123/2023)
+    </mat-error>
+  </mat-form-field>
 
-  <label class="block">
-    Juzgado:
-    <input type="text" formControlName="juzgado" class="input" />
-  </label>
+  <!---------------- JUZGADO --------------->
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Juzgado</mat-label>
+    <input
+      matInput
+      type="text"
+      [formControl]="juzgadoControl"
+      [matAutocomplete]="autoJuzgado"
+      placeholder="Buscar juzgado..."
+      (blur)="onJuzgadoBlur()"
+    />
+    <button
+      mat-icon-button
+      matSuffix
+      type="button"
+      aria-label="Crear juzgado"
+      (click)="abrirFormularioJuzgado()"
+      class="cursor-pointer mx-2"
+      *ngIf="!mostrarFormularioNuevoJuzgado"
+    >
+      Crear nuevo
+    </button>
 
-  <label class="block">
-    Procurador:
-    <input type="text" formControlName="procurador" class="input" />
-  </label>
+    <mat-autocomplete
+      #autoJuzgado="matAutocomplete"
+      [displayWith]="displayFnJuzgado"
+    >
+      <mat-option
+        *ngFor="let juzgado of filteredJuzgados"
+        [value]="juzgado"
+        (onSelectionChange)="onJuzgadoSelected(juzgado)"
+      >
+        {{ juzgado.nombre }}
+      </mat-option>
+       <mat-option 
+      *ngIf="filteredJuzgados.length === 0 && juzgadoControl.value && !mostrarFormularioNuevoJuzgado"
+      disabled
+    >
+      Sin coincidencias
+    </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <!-- Modal de Alta de Juzgado -->
+  <app-add-juzgado
+    *ngIf="mostrarFormularioNuevoJuzgado"
+    (juzgadoCreado)="juzgadoCreado($event)"
+    (cancelar)="mostrarFormularioNuevoJuzgado = false"
+  ></app-add-juzgado>
+
+  <!-------------------PROCURADOR-------------------->
+  <mat-form-field appearance="fill">
+    <mat-label>Procurador</mat-label>
+    <input
+      matInput
+      type="text"
+      [formControl]="procuradorControl"
+      [matAutocomplete]="autoProcurador"
+      placeholder="Buscar procurador..."
+      (blur)="onProcuradorBlur()"
+    />
+    <mat-autocomplete
+      #autoProcurador="matAutocomplete"
+      [displayWith]="displayFn"
+    >
+      <mat-option
+        *ngFor="let procurador of filteredProcuradores"
+        [value]="procurador"
+        (onSelectionChange)="onProcuradorSelected(procurador)"
+      >
+        {{ procurador.nombre }} {{ procurador.apellido1 }}
+        {{ procurador.apellido2 }}
+      </mat-option>
+       <mat-option 
+      *ngIf="filteredProcuradores.length === 0 && procuradorControl.value && !mostrarFormularioNuevoProcurador"
+      disabled
+    >
+      Sin coincidencias
+    </mat-option>
+    </mat-autocomplete>
+    <button
+      mat-icon-button
+      matSuffix
+      type="button"
+      *ngIf="!mostrarFormularioNuevoProcurador"
+      aria-label="Crear procurador"
+      (click)="abrirFormularioProcurador()"
+      class="cursor-pointer mx-2"
+    >
+      Crear nuevo
+    </button>
+  </mat-form-field>
+
+  <!-- Modal de Alta de Procurador -->
+  <app-add-procurador
+    *ngIf="mostrarFormularioNuevoProcurador"
+    (procuradorCreado)="procuradorCreado($event)"
+    (cancelar)="mostrarFormularioNuevoProcurador = false"
+  >
+  </app-add-procurador>
   <label class="block">
     Tipo de procedimiento:
     <input type="text" formControlName="procurador" class="input" />
   </label>
 
-   <!-------------------CONTRARIO-------------------->
+  <!-------------------CONTRARIO-------------------->
   <mat-form-field appearance="fill" class="w-full">
-  <mat-label>Contrario</mat-label>
-  <input
-    matInput
-    [formControl]="contrarioControl"
-    [matAutocomplete]="autoContrario"
-    [placeholder]="'Buscar contrario...'"
-  />
-  <button
-    *ngIf="!mostrarFormularioNuevoContrario"
-    mat-icon-button
-    matSuffix
-    type="button"
-    aria-label="Crear contrario"
-    (click)="abrirFormularioContrario()"
-    class="cursor-pointer mx-2"
-  >
-    Crear nuevo
-  </button>
+    <mat-label>Contrario</mat-label>
+    <input
+      matInput
+      [formControl]="contrarioControl"
+      [matAutocomplete]="autoContrario"
+      [placeholder]="'Buscar contrario...'"
+    />
+    <button
+      *ngIf="!mostrarFormularioNuevoContrario"
+      mat-icon-button
+      matSuffix
+      type="button"
+      aria-label="Crear contrario"
+      (click)="abrirFormularioContrario()"
+      class="cursor-pointer mx-2"
+    >
+      Crear nuevo
+    </button>
 
-  <mat-autocomplete #autoContrario="matAutocomplete" [displayWith]="displayFnContrario">
-    <mat-option *ngFor="let contrario of filteredContrarios" [value]="contrario">
-      {{ contrario.nombre }}      
+    <mat-autocomplete
+      #autoContrario="matAutocomplete"
+      [displayWith]="displayFnContrario"
+    >
+      <mat-option
+        *ngFor="let contrario of filteredContrarios"
+        [value]="contrario"
+      >
+        {{ contrario.nombre }}
+      </mat-option>
+       <mat-option 
+      *ngIf="filteredContrarios.length === 0 && contrarioControl.value && !mostrarFormularioNuevoContrario" 
+      disabled
+    >
+      Sin coincidencias
     </mat-option>
-  </mat-autocomplete>
-</mat-form-field>
+    </mat-autocomplete>
+  </mat-form-field>
 
-<!-- Modal de Alta de Contrario -->
+  <!-- Modal de Alta de Contrario -->
   <app-add-contrario
     *ngIf="mostrarFormularioNuevoContrario"
     (contrarioCreado)="contrarioCreado($event)"
@@ -97,11 +219,20 @@
   >
   </app-add-contrario>
 
-
-  <label class="block">
-    Importe:
-    <input type="number" formControlName="importe" class="input" />
-  </label>
+  <!---------------- IMPORTE --------------->
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Importe</mat-label>
+    <input
+      matInput
+      type="number"
+      formControlName="importe"
+      placeholder="0.00"
+      (wheel)="$event.preventDefault()"
+    />
+    <mat-error *ngIf="costaForm.get('importe')?.hasError('required')">
+      El importe es obligatorio.
+    </mat-error>
+  </mat-form-field>
 
   <app-btn type="submit" class="btn mx-auto text-white mt-4">Guardar</app-btn>
 </form>

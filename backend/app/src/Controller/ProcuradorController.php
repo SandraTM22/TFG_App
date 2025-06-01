@@ -37,20 +37,20 @@ final class ProcuradorController extends AbstractController
         return $this->handleForm($request, new Procurador);
     }
 
-    #[Route('/{id}', name: 'procurador_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'procurador_show', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function show(Procurador $procurador): JsonResponse
     {
         $procuradorFind = $this->assembler->procuradorToArray($procurador);
         return $this->json($procuradorFind);
     }
 
-    #[Route('/{id}', name: 'procurador_edit', methods: ['PUT'])]
+    #[Route('/{id}', name: 'procurador_edit', methods: ['PUT'], requirements: ['id' => '\d+'])]
     public function edit(Request $request, Procurador $procurador): JsonResponse
     {
         return $this->handleForm($request, $procurador);
     }
 
-    #[Route('/{id}', name: 'procurador_delete', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'procurador_delete', methods: ['DELETE'], requirements: ['id' => '\d+'])]
     public function delete(Request $request, Procurador $procurador): JsonResponse
     {
         $this->repo->delete($procurador);
@@ -89,5 +89,32 @@ final class ProcuradorController extends AbstractController
 
         $this->repo->save($procurador);
         return $this->json($this->assembler->procuradorToArray($procurador));
+    }
+
+    #[Route('/find', name: 'buscar_procurador', methods: ['GET'])]
+    public function buscarProcurador(Request $request): JsonResponse
+    {
+        $search = $request->query->get('search', '');
+        $procuradores = $this->repo->findByNombre($search);
+         $data = array_map(
+        fn($procurador) => $this->assembler->procuradorToArray($procurador),
+        $procuradores
+    );
+
+        return $this->json($data, 200, []);
+    }
+    #[Route('/exists', name: 'procurador_exists', methods: ['GET'])]
+    public function exists(ProcuradorRepository $repo, Request $request): JsonResponse
+    {
+        $colegio = $request->query->get('colegio');
+        $numero = $request->query->get('numero');
+
+        if (!$colegio || !$numero) {
+            return new JsonResponse(['error' => 'Faltan parámetros'], 400);
+        }
+
+        $exists = $repo->existsByColegioAndNumero($colegio, (int)$numero);
+
+        return new JsonResponse(['exists' => $exists]);
     }
 }

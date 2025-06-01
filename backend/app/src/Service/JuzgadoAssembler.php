@@ -26,10 +26,28 @@ class JuzgadoAssembler
 
     public function juzgadoToArray(Juzgado $juzgado): array
     {
+        // Mapear las notas del juzgado
+        $notasArray = [];
+        foreach ($juzgado->getNotas() as $nota) {
+            // Reutilizar NotaAssembler, pero pasándole 
+            // un flag extra para que solo genere datos superficiales.
+            $notasArray[] = [
+                'id'        => $nota->getId(),
+                'contenido' => $nota->getContenido(),
+                'fecha'     => $nota->getFecha()->format(\DateTime::ATOM),
+                // Usuario ligado a esta nota:
+                'usuario'   => $nota->getUsuario() ? [
+                    'id'       => $nota->getUsuario()->getId(),
+                    'name' => $nota->getUsuario()->getName(),
+                ] : null,
+            ];
+        }
+
         return [
             'id' => $juzgado->getId(),
             'nombre' => $juzgado->getNombre(),
-            'notas' => $juzgado->getNotas(),
+            // Añadimos el array de notas
+            'notas'         => $notasArray,
             'direccion' => $this->direccionToArray($juzgado->getDireccion()),
         ];
     }

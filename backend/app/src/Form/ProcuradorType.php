@@ -19,7 +19,9 @@ class ProcuradorType extends AbstractType
             ->add('apellido2')
             ->add('colegio')
             ->add('numeroColegiado')
-            ->add('direccion', DireccionType::class)
+            ->add('direccion', DireccionType::class, [
+                'required' => false,
+            ])
         ;
     }
 
@@ -27,7 +29,7 @@ class ProcuradorType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Procurador::class,
-            'csrf_protection' => false,//Token de momento deshabilitado
+            'csrf_protection' => false,
         ]);
     }
 }

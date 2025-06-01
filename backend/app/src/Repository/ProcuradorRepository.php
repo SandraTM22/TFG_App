@@ -19,13 +19,36 @@ class ProcuradorRepository extends ServiceEntityRepository
     {
         $em = $this->getEntityManager();
         $em->persist($procurador);
-        $em->flush();       
+        $em->flush();
     }
 
     public function delete(Procurador $procurador): void
     {
         $em = $this->getEntityManager();
         $em->remove($procurador);
-        $em->flush(); 
+        $em->flush();
+    }
+
+    public function findByNombre(string $term): array
+    {
+        return $this->createQueryBuilder('c')
+            ->where('LOWER(c.nombre) LIKE :term OR LOWER(c.apellido1) LIKE :term OR LOWER(c.apellido2) LIKE :term')
+            ->setParameter('term', '%' . strtolower($term) . '%')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function existsByColegioAndNumero(string $colegio, int $numero): bool
+    {
+        $qb = $this->createQueryBuilder('p')
+        ->select('COUNT(p.id)')
+        ->where('LOWER(p.colegio) = :colegio')
+        ->andWhere('p.numeroColegiado = :numero')
+        ->setParameter('colegio', mb_strtolower($colegio))
+        ->setParameter('numero', $numero);
+
+    $count = (int) $qb->getQuery()->getSingleScalarResult();
+    return $count > 0;
     }
 }

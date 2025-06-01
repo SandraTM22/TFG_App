@@ -21,19 +21,4 @@ export class ModalWrapperComponent {
   @Input() title = '';
   /** Evento que se emite cuando se quiere cerrar el modal */
   @Output() close = new EventEmitter<void>();
-
-  /**
-   * HostListener escucha clicks en el componente (en todo su host)
-   * Recibe el elemento donde se hizo click ($event.target)
-   */
-  /* @HostListener('click', ['$event.target']) */
-  /* onBackdropClick(target: HTMLElement) {
-    // Si el elemento clicado tiene la clase 'modal-backdrop' (fondo del modal)
-    if (target.classList.contains('modal-backdrop')) {
-      // Emitimos el evento 'close' para que el padre pueda cerrar el modal
-      this.close.emit();
-    }
-  } */
-
-
 }

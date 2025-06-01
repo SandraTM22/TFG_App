@@ -1,53 +1,52 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Contrario } from '../../interfaces/contrario';
-import { BtnComponent } from '../btn/btn.component';
+import { Juzgado } from '../../interfaces/juzgado';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { BtnComponent } from '../btn/btn.component';
 import { ErrorMessageComponent } from '../error-message/error-message.component';
-import { ContrarioService } from '../../services/contrario.service';
+import { JuzgadoService } from '../../services/juzgado.service';
 import { ToastService } from '../../services/toast.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
-  selector: 'app-add-contrario',
+  selector: 'app-add-juzgado',
+  templateUrl: './modal-add-juzgado.html',
+  standalone: true,
   imports: [
     ReactiveFormsModule,
-    BtnComponent,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule,
+    BtnComponent,
     ErrorMessageComponent,
   ],
-  templateUrl: './modal-add-contrario.html',
 })
-export class FormularioContrarioComponent {
-  @Output() contrarioCreado = new EventEmitter<Contrario>();
+export class FormularioJuzgadoComponent {
+  @Output() juzgadoCreado = new EventEmitter<Juzgado>();
   @Output() cancelar = new EventEmitter<void>();
 
   form: FormGroup;
 
   constructor(
     private fb: FormBuilder,
-    private contrarioService: ContrarioService,
-    private toastService : ToastService
+    private juzgadoService: JuzgadoService,
+    private toastService: ToastService
   ) {
     this.form = this.fb.group({
-      nombre: ['', Validators.required],
-      nif: [''],
+      nombre: ['', [Validators.required]],
+      // sub‐formulario “direccion”
       direccion: this.fb.group({
         calle: [''],
-        numero: [''],
-        cp: [''],
+        numero: [null, Validators.min(1)],
+        cp: ['', Validators.pattern(/^\d{5}$/)],
         localidad: [''],
-        provincia: ['', Validators.required],
-        pais: ['', Validators.required],
+        provincia: ['', [Validators.required]],
+        pais: ['España', [Validators.required]],
       }),
     });
   }
@@ -58,14 +57,14 @@ export class FormularioContrarioComponent {
       return;
     }
 
-    this.contrarioService.add(this.form.value).subscribe({
-      next: (contrario) => {
+    this.juzgadoService.add(this.form.value).subscribe({
+      next: (juzgado) => {
         this.toastService.addToast(
           'success',
-          'Contrario añadido correctamente',
+          'juzgado añadido correctamente',
           3000
         );
-        this.contrarioCreado.emit(contrario);
+        this.juzgadoCreado.emit(juzgado);
         this.form.reset();
       },
       error: (err: HttpErrorResponse) => {
@@ -83,7 +82,7 @@ export class FormularioContrarioComponent {
         } else {
           const message =
             err.error?.message ||
-            'Error inesperado al crear el contrario. Inténtalo de nuevo.';
+            'Error inesperado al crear el juzgado. Inténtalo de nuevo.';
           this.toastService.addToast('error', message, 5000);
         }
       },

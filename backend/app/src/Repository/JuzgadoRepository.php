@@ -29,4 +29,14 @@ class JuzgadoRepository extends ServiceEntityRepository
         $em->remove($juzgado);
         $em->flush(); 
     }
+
+    public function findByNombre(string $term): array
+    {
+        return $this->createQueryBuilder('c')
+            ->where('LOWER(c.nombre) LIKE :term')
+            ->setParameter('term', '%' . strtolower($term) . '%')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
 }
