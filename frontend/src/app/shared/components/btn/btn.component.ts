@@ -9,4 +9,5 @@ import { Component, Input } from '@angular/core';
 })
 export class BtnComponent {
   @Input() disabled = false; // Esto permite que el botón reciba [disabled]
+  @Input() type: 'button' | 'submit' | 'reset' = 'button'; 
 }
