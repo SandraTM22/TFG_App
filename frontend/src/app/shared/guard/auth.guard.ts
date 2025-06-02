@@ -13,19 +13,16 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   // Si no está autenticado, redirige al login 
   if (!authService.isAuthenticated()) {
-    console.log('No está autenticado. Redirigiendo al login.');
     router.navigate(['/']);
     return false;
   }
 
    // Si tiene roles definidos pero el usuario no los tiene -> no está autorizado   
-   if (expectedRoles && !authService.hasAnyRole(expectedRoles)) {
-    console.log('No tiene los roles adecuados. Redirigiendo a Unauthorized.');
+   if (expectedRoles && !authService.hasAnyRole(expectedRoles)) {    
     router.navigate(['/unauthorized']);
     return false;
   }
 
   //Si ha pasado todos los filtros, permitimos la navegación
-  console.log('Acceso permitido.');
   return true;
 };

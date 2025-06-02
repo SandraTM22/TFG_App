@@ -1,9 +1,23 @@
 <form [formGroup]="costaForm" (ngSubmit)="onSubmit()" class="grid gap-4">
+  <!-------------------ESTADO--------------->
   <mat-form-field appearance="fill" class="w-full mb-4">
     <mat-label>Estado</mat-label>
     <mat-select formControlName="estado">
       <mat-option *ngFor="let estado of estadosList" [value]="estado.value">
         {{ estado.value }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-------------------ESTAD COBRO---------->
+  <mat-form-field appearance="fill" class="w-full mb-4">
+    <mat-label>Estado Cobro</mat-label>
+    <mat-select formControlName="estadoCobro">
+      <mat-option
+        *ngFor="let estadoCobro of estadosCobroList"
+        [value]="estadoCobro.value"
+      >
+        {{ estadoCobro.value }}
       </mat-option>
     </mat-select>
   </mat-form-field>
@@ -23,7 +37,11 @@
         {{ cliente.nombre }} {{ cliente.apellido1 }} {{ cliente.apellido2 }}
       </mat-option>
       <mat-option
-        *ngIf="filteredClientes.length === 0 && clienteControl.value && !mostrarFormularioNuevoCliente"
+        *ngIf="
+          filteredClientes.length === 0 &&
+          clienteControl.value &&
+          !mostrarFormularioNuevoCliente
+        "
         disabled
       >
         Sin coincidencias
@@ -100,12 +118,16 @@
       >
         {{ juzgado.nombre }}
       </mat-option>
-       <mat-option 
-      *ngIf="filteredJuzgados.length === 0 && juzgadoControl.value && !mostrarFormularioNuevoJuzgado"
-      disabled
-    >
-      Sin coincidencias
-    </mat-option>
+      <mat-option
+        *ngIf="
+          filteredJuzgados.length === 0 &&
+          juzgadoControl.value &&
+          !mostrarFormularioNuevoJuzgado
+        "
+        disabled
+      >
+        Sin coincidencias
+      </mat-option>
     </mat-autocomplete>
   </mat-form-field>
 
@@ -139,12 +161,16 @@
         {{ procurador.nombre }} {{ procurador.apellido1 }}
         {{ procurador.apellido2 }}
       </mat-option>
-       <mat-option 
-      *ngIf="filteredProcuradores.length === 0 && procuradorControl.value && !mostrarFormularioNuevoProcurador"
-      disabled
-    >
-      Sin coincidencias
-    </mat-option>
+      <mat-option
+        *ngIf="
+          filteredProcuradores.length === 0 &&
+          procuradorControl.value &&
+          !mostrarFormularioNuevoProcurador
+        "
+        disabled
+      >
+        Sin coincidencias
+      </mat-option>
     </mat-autocomplete>
     <button
       mat-icon-button
@@ -166,9 +192,43 @@
     (cancelar)="mostrarFormularioNuevoProcurador = false"
   >
   </app-add-procurador>
+
+  <!---------------- FECHA TC ---------------->
+<mat-form-field appearance="fill" class="w-full mb-4">
+  <mat-label>Fecha TC</mat-label>
+  <input matInput [matDatepicker]="pickerFechaTC" formControlName="fechaTC" />
+  <mat-datepicker-toggle matSuffix [for]="pickerFechaTC"></mat-datepicker-toggle>
+  <mat-datepicker #pickerFechaTC></mat-datepicker>
+</mat-form-field>
+
+<!---------------- FECHA 15 TC ---------------->
+<mat-form-field appearance="fill" class="w-full mb-4">
+  <mat-label>Fecha 15 TC</mat-label>
+  <input matInput [matDatepicker]="pickerFecha15TC" formControlName="fecha15TC" />
+  <mat-datepicker-toggle matSuffix [for]="pickerFecha15TC"></mat-datepicker-toggle>
+  <mat-datepicker #pickerFecha15TC></mat-datepicker>
+</mat-form-field>
+
+<!---------------- FECHA DECRETO ---------------->
+<mat-form-field appearance="fill" class="w-full mb-4">
+  <mat-label>Fecha Decreto</mat-label>
+  <input matInput [matDatepicker]="pickerFechaDecreto" formControlName="fechaDecreto" />
+  <mat-datepicker-toggle matSuffix [for]="pickerFechaDecreto"></mat-datepicker-toggle>
+  <mat-datepicker #pickerFechaDecreto></mat-datepicker>
+</mat-form-field>
+
+<!---------------- FECHA 20 DECRETO ---------------->
+<mat-form-field appearance="fill" class="w-full mb-4">
+  <mat-label>Fecha 20 Decreto</mat-label>
+  <input matInput [matDatepicker]="pickerFecha20Decreto" formControlName="fecha20Decreto" />
+  <mat-datepicker-toggle matSuffix [for]="pickerFecha20Decreto"></mat-datepicker-toggle>
+  <mat-datepicker #pickerFecha20Decreto></mat-datepicker>
+</mat-form-field>
+
+  <!-------------------TIPO PROCEDIMIENTO-------------------->
   <label class="block">
     Tipo de procedimiento:
-    <input type="text" formControlName="procurador" class="input" />
+    <input type="text" formControlName="tipoProcedimiento" class="input" />
   </label>
 
   <!-------------------CONTRARIO-------------------->
@@ -202,12 +262,16 @@
       >
         {{ contrario.nombre }}
       </mat-option>
-       <mat-option 
-      *ngIf="filteredContrarios.length === 0 && contrarioControl.value && !mostrarFormularioNuevoContrario" 
-      disabled
-    >
-      Sin coincidencias
-    </mat-option>
+      <mat-option
+        *ngIf="
+          filteredContrarios.length === 0 &&
+          contrarioControl.value &&
+          !mostrarFormularioNuevoContrario
+        "
+        disabled
+      >
+        Sin coincidencias
+      </mat-option>
     </mat-autocomplete>
   </mat-form-field>
 
@@ -234,5 +298,10 @@
     </mat-error>
   </mat-form-field>
 
-  <app-btn type="submit" class="btn mx-auto text-white mt-4">Guardar</app-btn>
+  <app-btn
+    type="submit"
+    [disabled]="costaForm.invalid"
+    class="btn mx-auto text-white mt-4"
+    >Guardar</app-btn
+  >
 </form>

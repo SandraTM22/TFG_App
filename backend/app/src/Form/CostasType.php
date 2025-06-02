@@ -64,6 +64,7 @@ class CostasType extends AbstractType
         $resolver->setDefaults([
             'data_class'      => Costas::class,
             'csrf_protection' => false,
+            'allow_extra_fields' => true,
         ]);
     }
 }

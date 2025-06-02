@@ -63,7 +63,7 @@ export class FeeManagementComponent implements OnInit {
         this.costas = list;
         this.updatePaged();        
       },
-      error: (err) => console.error('Error fetching costas:', err),
+      error: (err) => console.error('Error al cargar las costas:', err),
     });
   }
 
@@ -89,9 +89,9 @@ export class FeeManagementComponent implements OnInit {
 
   }
 
-  onSaveCosta(nuevaCosta: Costa) {
-    this.costas.unshift(nuevaCosta); // Agrega al principio
+  onSaveCosta() {
     this.updatePaged();
+    this.costasService.refreshCostas();
     this.closeModal();
   }
 }

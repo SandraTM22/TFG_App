@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ExpedienteRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -54,12 +55,11 @@ class Expediente
     )]
     private ?string $restitucionEconomica = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: 'datetime_immutable')]
     #[Assert\NotNull(message: "La fecha no puede ser nula")]
-    private \DateTimeInterface $fechaCreacion;
+    private ?DateTimeImmutable $fechaCreacion = null;
 
-    #[ORM\Column(length: 150)]
-    #[Assert\NotNull(message: "La descripción no puede ser nula")]
+    #[ORM\Column(length: 150,  nullable: true)]
     #[Assert\Length(
         max: 150,
         maxMessage: 'El valor no puede tener más de {{ limit }} caracteres'
@@ -90,7 +90,7 @@ class Expediente
 
     public function __construct()
     {
-        $this->fechaCreacion = new \DateTime();
+        $this->fechaCreacion = new \DateTimeImmutable();
         $this->notas = new ArrayCollection();
         $this->documentos = new ArrayCollection();
         $this->costas = new ArrayCollection();
@@ -178,12 +178,12 @@ class Expediente
         return $this;
     }
 
-    public function getFechaCreacion(): \DateTimeInterface
+    public function getFechaCreacion(): ?DateTimeImmutable
     {
         return $this->fechaCreacion;
     }
 
-    public function setFechaCreacion(\DateTimeInterface $fechaCreacion): static
+    public function setFechaCreacion(?DateTimeImmutable $fechaCreacion): static
     {
         $this->fechaCreacion = $fechaCreacion;
         return $this;

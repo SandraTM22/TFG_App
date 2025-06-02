@@ -36,6 +36,7 @@ class CostasRepository extends ServiceEntityRepository
             ->addSelect('e')
             ->leftJoin('e.cliente', 'cl')
             ->addSelect('cl')
+            ->orderBy('c.id', 'DESC')
             ->getQuery()
             ->getResult();
     }

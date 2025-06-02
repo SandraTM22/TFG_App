@@ -8,7 +8,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   providedIn: 'root',
 })
 export class CostaService {
-  private apiUrl = 'http://localhost:8000/api/costas/custom'; //Apunta al backend(entrada de los datos)
+  private apiUrl = 'http://localhost:8000/api/costas'; //Apunta al backend(entrada de los datos)
 
   constructor(private authService: AuthService, private http: HttpClient) {}
 
@@ -17,9 +17,9 @@ export class CostaService {
   // el observable público al que se pueden subscribir los componentes
   costas$ = this.costasSubject.asObservable();
 
-  private refreshCostas() {
+  public refreshCostas() {
     this.http
-      .get<Costa[]>(this.apiUrl)
+      .get<Costa[]>(`${this.apiUrl}/custom`)
       .subscribe((costas) => this.costasSubject.next(costas));
   }
 
@@ -37,4 +37,9 @@ export class CostaService {
   getCostas(): Observable<Costa[]> {
     return this.costas$;
   }
+
+  add(costa: Costa): Observable<Costa> {
+      return this.http.post<Costa>(this.apiUrl, costa);
+    }
+    
 }

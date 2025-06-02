@@ -37,7 +37,7 @@ class CostasAssembler
         return [
             'id' => $costas->getId(),
             'estado' => $costas->getEstado()->value,
-            'fechaTC' => $costas->getFechaTC()->format(\DateTime::ATOM),
+            'fechaTC' => $costas->getFechaTC()?->format(\DateTime::ATOM),
             'fecha15TC' => $costas->getFecha15TC()?->format(\DateTime::ATOM),
             'fechaDecreto' => $costas->getFechaDecreto()?->format(\DateTime::ATOM),
             'fecha20Decreto' => $costas->getFecha20Decreto()?->format(\DateTime::ATOM),

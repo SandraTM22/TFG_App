@@ -17,13 +17,6 @@ import { debounceTime, switchMap } from 'rxjs';
 import { Contrario } from '../../../shared/interfaces/contrario';
 import { ContrarioService } from '../../../shared/services/contrario.service';
 import { FormularioClienteComponent } from '../../../shared/components/modal-add-cliente/modal-add-cliente';
-
-//Angular Material
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatIconModule } from '@angular/material/icon';
 import { FormularioContrarioComponent } from '../../../shared/components/modal-add-contrario/modal-add-contrario';
 import { Procurador } from '../../../shared/interfaces/procurador';
 import { ProcuradorService } from '../../../shared/services/procurador.service';
@@ -31,6 +24,17 @@ import { FormularioProcuradorComponent } from '../../../shared/components/modal-
 import { Juzgado } from '../../../shared/interfaces/juzgado';
 import { JuzgadoService } from '../../../shared/services/juzgado.service';
 import { FormularioJuzgadoComponent } from '../../../shared/components/modal-add-juzgado/modal-add-juzgado';
+import { EstadoCobro } from '../../../shared/interfaces/enum/estado-cobro.enum';
+import { CostaService } from '../../../shared/services/costa.service';
+
+//Angular Material
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-add-modal',
@@ -47,7 +51,9 @@ import { FormularioJuzgadoComponent } from '../../../shared/components/modal-add
     MatIconModule,
     FormularioContrarioComponent,
     FormularioProcuradorComponent,
-    FormularioJuzgadoComponent
+    FormularioJuzgadoComponent,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
   templateUrl: './add-modal.component.html',
   styleUrl: './add-modal.component.css',
@@ -57,6 +63,10 @@ export class AddModalComponent implements OnInit {
   costaForm: FormGroup;
   estadoCostas = EstadoCostas;
   estadosList = Object.entries(EstadoCostas).map(([key, value]) => ({
+    key,
+    value,
+  }));
+  estadosCobroList = Object.entries(EstadoCobro).map(([key, value]) => ({
     key,
     value,
   }));
@@ -92,15 +102,23 @@ export class AddModalComponent implements OnInit {
     private clienteService: ClienteService,
     private contrarioService: ContrarioService,
     private procuradorService: ProcuradorService,
-    private juzgadoService: JuzgadoService
+    private juzgadoService: JuzgadoService,
+    private costaService: CostaService
   ) {
     this.costaForm = this.fb.group({
       estado: [EstadoCostas.NO_FIRMES, Validators.required],
-      cliente: ['', Validators.required],
+      estadoCobro: [EstadoCobro.NO_COBRADAS, Validators.required],
+      cliente: this.clienteControl,
       autos: ['', [Validators.required, Validators.pattern(/^\d+\/\d{4}$/)]],
-      juzgado: ['', Validators.required],
-      procurador: ['', Validators.required],
+      juzgado: this.juzgadoControl,
+      procurador: this.procuradorControl,
       importe: ['', Validators.required],
+      tipoProcedimiento: [''],
+      contrario: this.contrarioControl,
+      fechaTC: [null],
+      fecha15TC: [null],
+      fechaDecreto: [null],
+      fecha20Decreto: [null],
     });
   }
 
@@ -173,9 +191,9 @@ export class AddModalComponent implements OnInit {
     return juzgado ? `${juzgado.nombre}` : '';
   }
 
-/********** Cuando el usuario hace “blur” sin seleccionar nada, borramos sugerencias para que no queden solapadas con el “Crear nuevo” **********/
+  /********** Cuando el usuario hace “blur” sin seleccionar nada, borramos sugerencias para que no queden solapadas con el “Crear nuevo” **********/
 
- onClienteBlur() {
+  onClienteBlur() {
     setTimeout(() => {
       this.filteredClientes = [];
     }, 200);
@@ -198,7 +216,7 @@ export class AddModalComponent implements OnInit {
 
   /********** Cuando el usuario selecciona una opción **********/
 
-   onClienteSelected(cliente: Cliente) {
+  onClienteSelected(cliente: Cliente) {
     this.clienteControl.setValue(cliente);
     this.mostrarFormularioNuevoCliente = false;
   }
@@ -215,7 +233,7 @@ export class AddModalComponent implements OnInit {
     this.mostrarFormularioNuevoJuzgado = false;
   }
 
-/********** Abrir formularios nuevos **********/
+  /********** Abrir formularios nuevos **********/
   abrirFormularioCliente() {
     this.mostrarFormularioNuevoCliente = true;
     this.filteredClientes = [];
@@ -251,29 +269,47 @@ export class AddModalComponent implements OnInit {
     this.mostrarFormularioNuevoJuzgado = false;
   }
 
-
   onSubmit() {
     if (this.costaForm.invalid) {
       this.costaForm.markAllAsTouched();
       return;
     }
-    console.log(this.costaForm.value)
-   /*  const nuevaCosta: Costa = {
-      estado: this.costaForm.value.estado,
-      autos: this.costaForm.value.autos,
-      importe: this.costaForm.value.importe,
-      // Incluir relaciones:
-      cliente: this.clienteControl.value!,
-      procurador: this.procuradorControl.value!,
-      contrario: this.contrarioControl.value || null,
-      juzgado: this.juzgadoControl.value!,
-      // … cualquier otro campo que necesite tu backend …
+
+    const formValues = this.costaForm.value;
+
+    // Construir el objeto Costa
+    const nuevaCosta: any = {
+      estado: formValues.estado,
+      estadoCobro: formValues.estadoCobro,
+      importe: formValues.importe,
+      notas: [],
+      fechaTC: formValues.fechaTC || undefined,
+      fecha15TC: formValues.fecha15TC || undefined,
+      fechaDecreto: formValues.fechaDecreto || undefined,
+      fecha20Decreto: formValues.fecha20Decreto || undefined,
+
+      autos: formValues.autos,
+      tipoProcedimiento: formValues.tipoProcedimiento || null,
+      fechaCreacion: new Date(),
+      // Pasar solo el ID de las relaciones,
+      cliente_id: formValues.cliente ? formValues.cliente.id : null,
+      juzgado_id: formValues.juzgado ? formValues.juzgado.id : null,
+      procurador_id: formValues.procurador ? formValues.procurador.id : null,
+      contrario_id: formValues.contrario ? formValues.contrario.id : null,
     };
-    this.save.emit(nuevaCosta);
-    this.costaForm.reset();
-    this.clienteControl.reset();
-    this.procuradorControl.reset();
-    this.contrarioControl.reset();
-    this.juzgadoControl.reset();
-  } */
-}}
+
+    this.costaService.add(nuevaCosta).subscribe(
+      (response) => {
+        this.save.emit(); // Notifica al padre que la costa se ha guardado
+        this.costaForm.reset(); // Limpia el formulario
+        this.clienteControl.reset(); // Limpia los controles de autocompletado
+        this.procuradorControl.reset();
+        this.contrarioControl.reset();
+        this.juzgadoControl.reset();
+      },
+      (error) => {
+        console.error('Error al guardar la Costa en el backend:', error);
+      }
+    );
+  }
+}

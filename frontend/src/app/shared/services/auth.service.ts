@@ -12,8 +12,7 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  login(email: string, password: string): Observable<any> {
-    console.log('Enviando datos al back desde auth:', email, password); // Asegurar que los datos se está enviando correctamente
+  login(email: string, password: string): Observable<any> {    
     return this.http.post<any>(this.apiUrl, { email, password },{ withCredentials: false });
   }
 

@@ -6,7 +6,7 @@ import { Nota } from "./nota";
 export interface Costa {
   id?: number;
   estado: EstadoCostas;
-  fechaTC?: string;        // ISO string fecha, por ejemplo: '2023-05-24'
+  fechaTC?: string;  
   fecha15TC?: string;
   fechaDecreto?: string;
   fecha20Decreto?: string;
