@@ -1,5 +1,5 @@
 <div class="transition duration-300">
-  <main class="p-4 min-h-2/4 w-full m-auto mt-10">
+  <main class="px-4 min-h-2/4 w-full m-auto mt-10">
     <div class="flex justify-between my-4 text-xl tracking-wide">
       <h2 class="font-extrabold uppercase text-[#052C13] drop-shadow-md">
         Costas
@@ -16,7 +16,7 @@
     </app-modal-wrapper>
 
     <!----------------------------- TABLA ------------------------------>
-    <div class="relative overflow-x-auto shadow-lg rounded-2xl mb-4 z-20">
+    <div class="relative overflow-x-auto shadow-lg rounded-2xl z-20 max-h-[665px] overflow-y-auto">
       <table class="able-auto text-sm text-left rtl:text-right min-w-full">
         <thead class="text-white font-bold bg-dg tracking-wide">
           <tr>
@@ -129,16 +129,15 @@
           </tr>
         </tbody>
       </table>
-
-      <mat-paginator
-        [length]="costas.length"
-        [pageSize]="pageSize"
-        [pageIndex]="pageIndex"
-        [pageSizeOptions]="[10, 15, 30]"
-        showFirstLastButtons
-        (page)="onPage($event)"
-      >
-      </mat-paginator>
     </div>
+    <mat-paginator
+      [length]="costas.length"
+      [pageSize]="pageSize"
+      [pageIndex]="pageIndex"
+      [pageSizeOptions]="[10, 15, 30]"
+      showFirstLastButtons
+      (page)="onPage($event)"
+    >
+    </mat-paginator>
   </main>
 </div>

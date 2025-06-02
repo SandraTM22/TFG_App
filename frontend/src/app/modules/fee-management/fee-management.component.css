@@ -4,3 +4,6 @@
   background-color: #052c13 !important;
 }
 
+::ng-deep .mat-mdc-paginator-page-size-label {
+  display: none !important;
+}

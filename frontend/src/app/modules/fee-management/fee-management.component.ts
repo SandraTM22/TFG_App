@@ -47,7 +47,7 @@ export class FeeManagementComponent implements OnInit {
   ];
 
   // Paginación manual
-  pageSize = 7;
+  pageSize = 10;
   pageIndex = 0;
   pagedCostas: Costa[] = [];
 

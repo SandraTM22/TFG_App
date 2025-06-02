@@ -40,6 +40,7 @@
         *ngIf="
           filteredClientes.length === 0 &&
           clienteControl.value &&
+          isClienteLoaded &&
           !mostrarFormularioNuevoCliente
         "
         disabled
@@ -122,6 +123,7 @@
         *ngIf="
           filteredJuzgados.length === 0 &&
           juzgadoControl.value &&
+          isJuzgadoLoaded &&
           !mostrarFormularioNuevoJuzgado
         "
         disabled
@@ -165,6 +167,7 @@
         *ngIf="
           filteredProcuradores.length === 0 &&
           procuradorControl.value &&
+          isProcuradorLoaded &&
           !mostrarFormularioNuevoProcurador
         "
         disabled
@@ -266,6 +269,7 @@
         *ngIf="
           filteredContrarios.length === 0 &&
           contrarioControl.value &&
+          isContrarioLoaded &&
           !mostrarFormularioNuevoContrario
         "
         disabled

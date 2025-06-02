@@ -97,6 +97,11 @@ export class AddModalComponent implements OnInit {
   filteredJuzgados: Juzgado[] = [];
   mostrarFormularioNuevoJuzgado = false;
 
+  isJuzgadoLoaded = false;
+  isProcuradorLoaded = false;
+  isClienteLoaded = false;
+  isContrarioLoaded = false;
+
   constructor(
     private fb: FormBuilder,
     private clienteService: ClienteService,
@@ -133,6 +138,7 @@ export class AddModalComponent implements OnInit {
       )
       .subscribe((clientes) => {
         this.filteredClientes = clientes;
+        this.isClienteLoaded = true;
       });
 
     // Búsqueda contrarios
@@ -143,7 +149,10 @@ export class AddModalComponent implements OnInit {
           typeof term === 'string' ? this.contrarioService.find(term) : []
         )
       )
-      .subscribe((contrarios) => (this.filteredContrarios = contrarios));
+      .subscribe((contrarios) => {
+        this.filteredContrarios = contrarios;
+        this.isContrarioLoaded = true;
+      });
 
     //Búsqueda procuradores
     this.procuradorControl.valueChanges
@@ -155,6 +164,7 @@ export class AddModalComponent implements OnInit {
       )
       .subscribe((procuradores) => {
         this.filteredProcuradores = procuradores;
+        this.isProcuradorLoaded = true;
       });
 
     //Búsqueda juzgados
@@ -167,6 +177,7 @@ export class AddModalComponent implements OnInit {
       )
       .subscribe((juzgs) => {
         this.filteredJuzgados = juzgs;
+        this.isJuzgadoLoaded = true;
       });
   }
 
