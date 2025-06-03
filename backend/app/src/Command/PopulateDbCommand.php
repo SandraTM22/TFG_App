@@ -53,25 +53,7 @@ class PopulateDbCommand extends Command
                 $this->em->persist($u);
                 $users[] = $u;
             }
-
-            // Usuario con ROLE_USER
-            $output->writeln('<info>Creando usuario estándar (ROLE_USER)...</info>');
-            $standard = new User();
-            $standard->setName('standard_user')
-                ->setEmail('standard@example.com')
-                ->setRoles(['ROLE_USER'])
-                ->setPassword(password_hash('userpass', PASSWORD_BCRYPT));
-            $this->em->persist($standard);
-
-            // Usuario con ROLE_USER_LIMITED
-            $output->writeln('<info>Creando usuario limitado (ROLE_USER_LIMITED)...</info>');
-            $limited = new User();
-            $limited->setName('limited_user')
-                ->setEmail('limited@example.com')
-                ->setRoles(['ROLE_USER_LIMITED'])
-                ->setPassword(password_hash('limitedpass', PASSWORD_BCRYPT));
-            $this->em->persist($limited);
-
+            
             // Procuradores con Direccion
             $output->writeln('<info>Creando procuradores...</info>');
             $procuradores = [];
@@ -155,7 +137,7 @@ class PopulateDbCommand extends Command
                 $this->em->persist($dir);
 
                 $j = new Juzgado();
-                $j->setNombre('Juzgado ' . $faker->city())
+                $j->setNombre($faker->city())
                     ->setDireccion($dir);
                 $this->em->persist($j);
                 $juzgados[] = $j;
@@ -170,7 +152,7 @@ class PopulateDbCommand extends Command
                     ->setContrario($faker->randomElement($contrarios))
                     ->setJuzgado($faker->randomElement($juzgados))
                     ->setProcurador($faker->randomElement($procuradores))
-                    ->setAutos($faker->bothify('??####/2025'))
+                    ->setAutos($faker->bothify('####/2025'))
                     ->setEstado($faker->randomElement(EstadoCostas::cases())->value)
                     ->setTipoProcedimiento($faker->word())
                     ->setRestitucionEconomica($faker->optional()->sentence())
@@ -224,7 +206,7 @@ class PopulateDbCommand extends Command
                     $costas[] = $c;
                 }
             }
-            
+
             $output->writeln('<info>Creando notas de costas...</info>');
             for ($i = 0; $i < 15; $i++) {
                 $n = new Nota();
