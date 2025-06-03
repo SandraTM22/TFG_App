@@ -1,0 +1,16 @@
+<form (ngSubmit)="save()" [formGroup]="form">
+  <label class="block text-sm font-medium text-gray-700 mb-2">Contenido</label>
+  <textarea
+    formControlName="contenido"
+    class="w-full border rounded p-2"
+    rows="4"
+    placeholder="Escribe la nota aquí"
+  ></textarea>
+
+  <div class="mt-4 flex justify-end gap-2">
+    <app-btn  class="opacity-70" (click)="cancel()" >Cancelar</app-btn>
+    <app-btn type="submit" >
+      {{ nota ? 'Actualizar' : 'Guardar' }}
+    </app-btn>
+  </div>
+</form>
