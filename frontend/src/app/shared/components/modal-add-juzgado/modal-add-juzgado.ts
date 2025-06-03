@@ -59,7 +59,7 @@ export class FormularioJuzgadoComponent {
 
     this.juzgadoService.add(this.form.value).subscribe({
       next: (juzgado) => {
-        this.toastService.addToast(
+        this.toastService.showToast(
           'success',
           'juzgado añadido correctamente',
           3000
@@ -75,7 +75,7 @@ export class FormularioJuzgadoComponent {
             const mensajes = backendErrors[campo];
             if (Array.isArray(mensajes)) {
               mensajes.forEach((msg: string) => {
-                this.toastService.addToast('error', msg, 5000);
+                this.toastService.showToast('error', msg, 5000);
               });
             }
           }
@@ -83,7 +83,7 @@ export class FormularioJuzgadoComponent {
           const message =
             err.error?.message ||
             'Error inesperado al crear el juzgado. Inténtalo de nuevo.';
-          this.toastService.addToast('error', message, 5000);
+          this.toastService.showToast('error', message, 5000);
         }
       },
     });

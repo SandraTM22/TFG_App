@@ -12,7 +12,7 @@ export class ToastService {
   //inicializamos una de las popiedades de toast
   private toastId = 0;
 
-  addToast(
+  showToast(
     type: 'success' | 'error' | 'info' | 'warning',
     message: string,
     duration: number = 3000

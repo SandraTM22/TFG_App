@@ -69,7 +69,7 @@ export class FormularioClienteComponent {
 
     this.clienteService.add(this.form.value).subscribe({
       next: (cliente) => {
-        this.toastService.addToast(
+        this.toastService.showToast(
           'success',
           'Cliente añadido correctamente',
           3000
@@ -85,7 +85,7 @@ export class FormularioClienteComponent {
             const mensajes = backendErrors[campo];
             if (Array.isArray(mensajes)) {
               mensajes.forEach((msg: string) => {
-                this.toastService.addToast('error', msg, 5000);
+                this.toastService.showToast('error', msg, 5000);
               });
             }
           }
@@ -93,7 +93,7 @@ export class FormularioClienteComponent {
           const message =
             err.error?.message ||
             'Error inesperado al crear el cliente. Inténtalo de nuevo.';
-          this.toastService.addToast('error', message, 5000);
+          this.toastService.showToast('error', message, 5000);
         }
       },
     });

@@ -128,12 +128,12 @@ export class UserManagementComponent {
       next: () => {
         // Refrescar la lista de usuarios, notificar al usuario y cerrar el modal
         this.reload();
-        this.toastService.addToast('info', 'Usuario modificado', 3000);
+        this.toastService.showToast('info', 'Usuario modificado', 3000);
         this.cancelEdit();
       },
       error: (err) => {
         console.error('Error al modificar usuario:', err);
-        this.toastService.addToast('error', 'Error al modificar usuario', 3000);
+        this.toastService.showToast('error', 'Error al modificar usuario', 3000);
       },
     });
   }
@@ -161,7 +161,7 @@ export class UserManagementComponent {
   deleteUser(id: number) {
     this.userService.deleteUser(id).subscribe(() => {
       this.reload();
-      this.toastService.addToast('error', 'Usuario eliminado', 3000);
+      this.toastService.showToast('error', 'Usuario eliminado', 3000);
     });
   }
 

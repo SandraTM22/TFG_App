@@ -7,7 +7,7 @@
       <app-btn (click)="openModal()">Alta costas</app-btn>
     </div>
     <app-modal-wrapper
-     *ngIf="showModal"
+      *ngIf="showModal"
       [visible]="showModal"
       title="Alta de Costas"
       (close)="closeModal()"
@@ -16,7 +16,9 @@
     </app-modal-wrapper>
 
     <!----------------------------- TABLA ------------------------------>
-    <div class="relative overflow-x-auto shadow-lg rounded-2xl z-20 max-h-[665px] overflow-y-auto">
+    <div
+      class="relative overflow-x-auto shadow-lg rounded-2xl z-20 max-h-[665px] overflow-y-auto"
+    >
       <table class="able-auto text-sm text-left rtl:text-right min-w-full">
         <thead class="text-white font-bold bg-dg tracking-wide">
           <tr>
@@ -38,13 +40,15 @@
         <tbody>
           <ng-container *ngFor="let costa of pagedCostas; let i = index">
             <!-- Fila principal -->
-            <tr
-              class="cursor-pointer hover:bg-gray-50 border-b border-gray-200"
-              (click)="
-                expandedElement = expandedElement === costa ? null : costa
-              "
-            >
-              <td class="px-4 py-4">{{ costa.estado }}</td>
+            <tr class="hover:bg-gray-50 border-b border-gray-200">
+              <td
+                class="px-4 py-4 text-dg font-semibold cursor-pointer hover:underline hover:text-green-700"
+                (click)="
+                  expandedElement = expandedElement === costa ? null : costa
+                "
+              >
+                {{ costa.estado }}
+              </td>
               <td
                 class="px-4 py-4 w-30 whitespace-nowrap overflow-hidden text-ellipsis"
               >
@@ -99,20 +103,77 @@
             <!-- Fila de notas (expandible) -->
             <tr *ngIf="expandedElement === costa" class="bg-gray-50">
               <td class="p-4" [attr.colspan]="displayedColumns.length">
-                <div *ngIf="costa.notas?.length; else noNotas">
-                  <h4 class="font-semibold text-dg mb-2">Notas:</h4>
-                  <ul class="list-disc list-inside">
-                    <li *ngFor="let nota of costa.notas">
-                      <strong>{{ nota.usuario.name }}:</strong>
-                      {{ nota.contenido }}
-                      <span class="text-xs text-gray-500">
-                        ({{ nota.fecha | date : "short" }})
-                      </span>
+                <div class="mb-2 flex justify-between items-center w-full">
+                  <h4 class="font-semibold text-dg">Notas:</h4>
+                  <button
+                    class="cursor-pointer"
+                    mat-icon-button
+                    (click)="onAddNota(costa)"
+                    matTooltip="Añadir nota"
+                  >
+                    <mat-icon class="text-2xl">add</mat-icon>
+                  </button>
+
+                </div>
+                <!-- Modal de formulario -->
+                <app-modal-wrapper
+                  [visible]="modalNotaVisible"
+                  (close)="closeModalNota()"
+                  [title]="notaSeleccionada ? 'Editar Nota' : 'Nueva Nota'"
+                >
+                <app-nota-form
+                [nota]="notaSeleccionada"
+                (guardada)="onNotaGuardada($event)"
+                (cancelada)="closeModalNota()"
+                [costaId]="costaSeleccionada?.id"
+                ></app-nota-form>
+              </app-modal-wrapper>
+                
+                <ng-container *ngIf="costa.notas?.length; else noNotas">
+                  <ul class="list-disc list-inside space-y-1">
+                    <li
+                      *ngFor="let nota of costa.notas"
+                      class="flex justify-between items-start"
+                    >
+                      <div>
+                        <strong>{{ nota.usuario.name }}:</strong>
+                        {{ nota.contenido }}
+                        <span class="text-xs text-gray-500">
+                          ({{ nota.fecha | date : "short" }})
+                        </span>
+                      </div>
+                      <div class="space-x-1 text-sm text-gray-600">
+                        <button
+                          (click)="onEditNota(nota)"
+                          matTooltip="Editar"
+                          class="cursor-pointer"
+                        >
+                          <mat-icon
+                            fontIcon="edit"
+                            class="text-blue-600 hover:text-blue-800"
+                            >edit</mat-icon
+                          >
+                        </button>
+                        <button
+                          (click)="onDeleteNota(nota, costa)"
+                          matTooltip="Eliminar"
+                          class="cursor-pointer"
+                        >
+                          <mat-icon
+                            fontIcon="delete"
+                            class="text-red-600 hover:text-red-800"
+                            >delete</mat-icon
+                          >
+                        </button>
+                      </div>
                     </li>
                   </ul>
-                </div>
+                </ng-container>
+
                 <ng-template #noNotas>
-                  <p class="italic text-gray-500">Sin notas registradas.</p>
+                  <p class="italic text-gray-500 text-sm">
+                    Sin notas registradas.
+                  </p>
                 </ng-template>
               </td>
             </tr>

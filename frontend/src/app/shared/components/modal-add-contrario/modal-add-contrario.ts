@@ -60,7 +60,7 @@ export class FormularioContrarioComponent {
 
     this.contrarioService.add(this.form.value).subscribe({
       next: (contrario) => {
-        this.toastService.addToast(
+        this.toastService.showToast(
           'success',
           'Contrario añadido correctamente',
           3000
@@ -76,7 +76,7 @@ export class FormularioContrarioComponent {
             const mensajes = backendErrors[campo];
             if (Array.isArray(mensajes)) {
               mensajes.forEach((msg: string) => {
-                this.toastService.addToast('error', msg, 5000);
+                this.toastService.showToast('error', msg, 5000);
               });
             }
           }
@@ -84,7 +84,7 @@ export class FormularioContrarioComponent {
           const message =
             err.error?.message ||
             'Error inesperado al crear el contrario. Inténtalo de nuevo.';
-          this.toastService.addToast('error', message, 5000);
+          this.toastService.showToast('error', message, 5000);
         }
       },
     });

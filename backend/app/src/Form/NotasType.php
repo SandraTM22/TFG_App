@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Costas;
 use App\Entity\Nota;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -14,7 +15,11 @@ class NotasType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('contenido');
+            ->add('contenido')
+            ->add('costa', EntityType::class, [
+                'class' => Costas::class,
+                'required' => false,
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

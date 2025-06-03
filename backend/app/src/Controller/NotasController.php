@@ -34,7 +34,7 @@ final class NotasController extends AbstractController
     #[Route('', name: 'notas_new', methods: ['POST'])]
     public function new(Request $request): JsonResponse
     {
-      // Crear la entidad y asignar usuario autenticado
+        // Crear la entidad y asignar usuario autenticado
         $user = $this->getUser();
         if (!$user) {
             return $this->json(['error' => 'Usuario no autenticado'], 401);
@@ -56,12 +56,18 @@ final class NotasController extends AbstractController
     #[Route('/{id}', name: 'notas_edit', methods: ['PUT'])]
     public function edit(Request $request, Nota $nota): JsonResponse
     {
+        if ($nota->getUsuario() !== $this->getUser()) {
+            return $this->json(['error' => 'No autorizado'], 403);
+        }
         return $this->handleForm($request, $nota);
     }
 
     #[Route('/{id}', name: 'notas_delete', methods: ['DELETE'])]
     public function delete(Nota $nota): JsonResponse
     {
+        if ($nota->getUsuario() !== $this->getUser()) {
+            return $this->json(['error' => 'No autorizado'], 403);
+        }
         $this->repo->delete($nota);
         return $this->json(['message' => 'Nota eliminada']);
     }

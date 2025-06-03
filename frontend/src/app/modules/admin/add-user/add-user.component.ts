@@ -76,7 +76,7 @@ export class AddUserComponent {
       next: () => {
         // Recargamos datos y avisamos
         this.loadUsers();
-        this.toastService.addToast(
+        this.toastService.showToast(
           'success',
           'Usuario añadido correctamente',
           3000
@@ -88,7 +88,7 @@ export class AddUserComponent {
       },
       error: (err) => {
         console.error('Error al crear usuario:', err);
-        this.toastService.addToast('error', 'Error al añadir usuario', 3000);
+        this.toastService.showToast('error', 'Error al añadir usuario', 3000);
       },
     });
   }

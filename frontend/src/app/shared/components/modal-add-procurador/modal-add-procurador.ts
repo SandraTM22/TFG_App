@@ -75,7 +75,7 @@ export class FormularioProcuradorComponent {
       .subscribe((exists) => {
         if (exists) {
           // Si ya existe, mostramos toast de error y no seguimos:
-          this.toastService.addToast(
+          this.toastService.showToast(
             'error',
             'Ya existe un procurador con ese colegio y número de colegiado.',
             3000
@@ -86,7 +86,7 @@ export class FormularioProcuradorComponent {
         // Si no existe, se guarad el procurador:
         const nuevo: Procurador = this.form.value;
         this.procuradorService.add(nuevo).subscribe((procurador) => {
-          this.toastService.addToast(
+          this.toastService.showToast(
             'success',
             'Procurador añadido correctamente',
             3000
