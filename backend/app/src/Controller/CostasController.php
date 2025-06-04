@@ -111,26 +111,58 @@ final class CostasController extends AbstractController
             ], 400);
         }
 
-        // Lógica para buscar o crear el Expediente
-        if (!isset($data['autos']) || !isset($data['juzgado_id']) || !isset($data['cliente_id'])) { // ¡Añade cliente_id!
+        //Validar que venga el bloque "expediente"
+        if (!isset($data['expediente']) || !is_array($data['expediente'])) {
             return $this->json([
-                'errors' => ['expediente' => ['Faltan autos, id del juzgado o id del cliente.']]
+                'errors' => ['expediente' => ['Debe enviarse un objeto expediente válido.']]
+            ], 400);
+        }
+        $expData = $data['expediente'];
+
+        //Validar dentro de expediente:
+        if (
+            !isset($expData['autos']) ||
+            !isset($expData['juzgado']) ||
+            !isset($expData['cliente']['id'])
+        ) {
+            return $this->json([
+                'errors' => [
+                    'expediente' => ['Faltan autos, juzgado o id del cliente dentro de expediente.']
+                ]
             ], 400);
         }
 
-        $autos = $data['autos'] ?? null;
-        $juzgadoId = $data['juzgado_id'] ?? null;
-        $clienteId = $data['cliente_id'];
-        $procuradorId = $data['procurador_id'] ?? null;
-        $contrarioId = $data['contrario_id'] ?? null;
-        $tipoProcedimiento = $data['tipoProcedimiento'] ?? null;
-        $fechaCreacionString = $data['fechaCreacion'] ?? null;
+        $autos = $expData['autos'] ?? null;
+        /* $juzgadoId = $expData['juzgado_id'] ?? null; */
+        $juzgadoNombre = $expData['juzgado'];
+        $clienteId    = $expData['cliente']['id'];
+        $procuradorId = isset($expData['procurador']['id']) ? $expData['procurador']['id'] : null;
+        /*  $contrarioId = $expData['contrario_id'] ?? null; */
+        $contrarioNombre = $expData['contrario'] ?? null;
+        $tipoProcedimiento = $expData['tipoProcedimiento'] ?? null;
+        $fechaCreacionString = $expData['fechaCreacion'] ?? null;
 
         // Buscar las entidades de relación por sus IDs
-        $juzgado = $this->entityManager->getRepository(Juzgado::class)->find($juzgadoId);
-        $cliente = $this->entityManager->getRepository(Cliente::class)->find($clienteId);
-        $procurador = $procuradorId ? $this->entityManager->getRepository(Procurador::class)->find($procuradorId) : null;
-        $contrario = $contrarioId ? $this->entityManager->getRepository(Contrario::class)->find($contrarioId) : null;
+        /*    $juzgado = $this->entityManager->getRepository(Juzgado::class)->find($expData['juzgado']['id']); */
+        /* $contrario = $contrarioId ? $this->entityManager->getRepository(Contrario::class)->find($contrarioId) : null; */
+        $cliente    = $this->entityManager->getRepository(Cliente::class)->find($clienteId);
+        $juzgado    = $this->entityManager->getRepository(Juzgado::class)
+            ->findOneBy(['nombre' => $juzgadoNombre]);
+        $procurador = $procuradorId
+            ? $this->entityManager->getRepository(Procurador::class)->find($procuradorId)
+            : null;
+
+        // Verificar que las entidades existan (especialmente cliente, juzgado)
+        if (!$cliente) {
+            return $this->json([
+                'errors' => ['expediente' => ['Cliente con id ' . $clienteId . ' no existe.']]
+            ], 400);
+        }
+        if (!$juzgado) {
+            return $this->json([
+                'errors' => ['expediente' => ['Juzgado "' . $juzgadoNombre . '" no existe.']]
+            ], 400);
+        }
 
         // Buscar o crear el Expediente
         $expediente = $this->expedienteRepository->findOneBy([
@@ -144,15 +176,20 @@ final class CostasController extends AbstractController
             $expediente->setAutos($autos);
             $expediente->setJuzgado($juzgado);
 
-            // --- ¡ASIGNACIÓN CRÍTICA AQUÍ! ---
+
             $expediente->setCliente($cliente); // <-- ¡Aquí se asigna el cliente!
 
             // Asigna las otras relaciones si existen y son válidas
             if ($procurador) {
                 $expediente->setProcurador($procurador);
             }
-            if ($contrario) {
-                $expediente->setContrario($contrario);
+            if ($contrarioNombre) {
+                // Si Contrario también es una entidad, búscala primero:
+                $contrarioEntity = $this->entityManager->getRepository(Contrario::class)
+                    ->findOneBy(['nombre' => $contrarioNombre]);
+                if ($contrarioEntity) {
+                    $expediente->setContrario($contrarioEntity);
+                }
             }
 
             // Asigna los otros campos del Expediente que vienen del frontend
