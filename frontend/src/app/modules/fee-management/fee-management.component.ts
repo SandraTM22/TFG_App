@@ -20,6 +20,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { CostaPayload } from '../../shared/interfaces/costaPayload';
 
 @Component({
   selector: 'app-fee-management',
@@ -68,8 +69,9 @@ export class FeeManagementComponent implements OnInit {
   pageIndex = 0;
   pagedCostas: Costa[] = [];
 
-  //AddModal
+  //Para mostrar/ocultar el modal de alta/edición
   showModal = false;
+  costaEnEdicion: Costa | null = null; // costa a editar
 
   //Notas
   modalNotaVisible = false;
@@ -105,54 +107,98 @@ export class FeeManagementComponent implements OnInit {
     this.pagedCostas = this.costas.slice(start, start + this.pageSize);
   }
 
-  /*******************MODAL AÑADIR************************/
+  /*******************AÑADIR************************/
   openModal() {
     this.showModal = true;
   }
 
   closeModal() {
+    this.costaEnEdicion = null;
     this.showModal = false;
   }
 
-  onSaveCosta() {
-    this.updatePaged();
-    this.costasService.refreshCostas();
-    this.closeModal();
-  }
-
-  onDeleteCosta(costa: Costa) {
-  // Diálogo de confirmación
-  const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-    width: '350px',
-    data: <ConfirmDialogData>{
-      title: 'Eliminar costa',
-      message: `¿Seguro que quieres eliminar?`,
-      confirmText: 'Eliminar',
-      cancelText: 'Cancelar',
-    },
-  });
-
-  dialogRef.afterClosed().subscribe((result: boolean) => {
-    if (result) {
-      this.costasService.deleteCosta(costa.id!).subscribe({
-        next: () => {
-          // Elimina la costa del array local
-          const idx = this.costas.findIndex((c) => c.id === costa.id);
-          if (idx >= 0) {
-            this.costas.splice(idx, 1);
-            this.updatePaged(); // recalcula pagedCostas tras el borrado
-          }
-          this.toastService.showToast('success', 'Costa eliminada');
+  /**
+   * Este método se suscribe al evento (save) que emitirá el modal con la costa editada.
+   * Si costaEnEdicion != null, hacemos PUT /api/costas/{id}, sino POST (alta).
+   */
+  onSaveCosta(payload: CostaPayload): void {
+    if (this.costaEnEdicion) {
+      //MODO EDICIÓN: la costaEnEdicion tiene un id, llamamos a PUT
+      this.costasService
+        .updateCosta(payload.id!, payload)
+        .subscribe({
+          next: (updatedCosta) => {
+            // Reemplazamos en el array
+            const idx = this.costas.findIndex((c) => c.id === updatedCosta.id);
+            if (idx >= 0) {
+              this.costas[idx] = updatedCosta;
+              this.updatePaged();
+            }
+            this.toastService.showToast('success', 'Costa actualizada');
+            this.closeModal();
+          },
+          error: (err) => {
+            console.error(err);
+            this.toastService.showToast('error', 'Error al actualizar costa');
+          },
+        });
+    } else {
+      //MODO ALTA: (en este caso “costaEnEdicion” sería null; POST)
+      this.costasService.add(payload).subscribe({
+        next: (newCosta) => {
+          /* this.costasService.refreshCostas(); */
+          this.costas.unshift(newCosta);
+          this.updatePaged();
+          this.toastService.showToast('success', 'Costa creada');
+          this.closeModal();
         },
         error: (err) => {
           console.error(err);
-          this.toastService.showToast('error', 'Error al eliminar la costa');
+          this.toastService.showToast('error', 'Error al crear costa');
         },
       });
     }
-    // Si result es false, el usuario ha cancelado; no hacemos nada
-  });
-}
+  }
+
+  onDeleteCosta(costa: Costa) {
+    // Diálogo de confirmación
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: <ConfirmDialogData>{
+        title: 'Eliminar costa',
+        message: `¿Seguro que quieres eliminar?`,
+        confirmText: 'Eliminar',
+        cancelText: 'Cancelar',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.costasService.deleteCosta(costa.id!).subscribe({
+          next: () => {
+            // Elimina la costa del array local
+            const idx = this.costas.findIndex((c) => c.id === costa.id);
+            if (idx >= 0) {
+              this.costas.splice(idx, 1);
+              this.updatePaged(); // recalcula pagedCostas tras el borrado
+            }
+            this.toastService.showToast('success', 'Costa eliminada');
+          },
+          error: (err) => {
+            console.error(err);
+            this.toastService.showToast('error', 'Error al eliminar la costa');
+          },
+        });
+      }
+      // Si result es false, el usuario ha cancelado; no hacemos nada
+    });
+  }
+  /*******************EDITAR************************/
+  onEditCosta(costa: Costa): void {
+    // CopiaR la costa entera para no mutar el objeto en el array
+    this.costaEnEdicion = { ...costa };
+    this.showModal = true;
+  }
 
   /*******************NOTAS************************/
 
@@ -160,7 +206,6 @@ export class FeeManagementComponent implements OnInit {
     this.modalNotaVisible = true;
     this.notaSeleccionada = null;
     this.costaSeleccionada = costa;
-    console.log(costa);
   }
 
   onEditNota(nota: Nota) {

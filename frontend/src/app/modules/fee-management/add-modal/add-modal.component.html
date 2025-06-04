@@ -302,10 +302,23 @@
     </mat-error>
   </mat-form-field>
 
-  <app-btn
-    type="submit"
-    [disabled]="costaForm.invalid"
-    class="btn mx-auto text-white mt-4"
-    >Guardar</app-btn
-  >
+  <!-- Botones Cancelar / Guardar -->
+  <div class="mt-4 flex justify-end space-x-2">
+    <app-btn
+    class="opacity-50"
+      mat-button
+      type="button"
+      (click)="save.emit(); resetForm()"
+    >
+      Cancelar
+    </app-btn>
+    <app-btn
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="costaForm.invalid"
+    >
+      {{ costaToEdit ? 'Actualizar' : 'Crear' }}
+    </app-btn>
+  </div>
 </form>

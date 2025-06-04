@@ -6,13 +6,17 @@
       </h2>
       <app-btn (click)="openModal()">Alta costas</app-btn>
     </div>
+
     <app-modal-wrapper
       *ngIf="showModal"
       [visible]="showModal"
-      title="Alta de Costas"
+      [title]="costaEnEdicion ? 'Editar Costa' : 'Alta de Costas'"
       (close)="closeModal()"
     >
-      <app-add-modal (save)="onSaveCosta()"></app-add-modal>
+      <app-add-modal
+        [costaToEdit]="costaEnEdicion"
+        (save)="onSaveCosta($event)"
+      ></app-add-modal>
     </app-modal-wrapper>
 
     <!----------------------------- TABLA ------------------------------>
@@ -91,9 +95,13 @@
               <td
                 class="px-3 py-4 space-x-2 inline-flex items-center justify-center"
               >
-                <a class="cursor-pointer edit" routerLink="">
-                  <mat-icon matTooltip="Editar">edit</mat-icon>
-                </a>
+                <button
+                  (click)="onEditCosta(costa)"
+                  class="cursor-pointer"
+                  matTooltip="Editar"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
                 <button
                   (click)="onDeleteCosta(costa)"
                   matTooltip="Eliminar"

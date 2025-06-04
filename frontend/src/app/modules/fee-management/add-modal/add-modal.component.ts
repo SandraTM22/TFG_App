@@ -1,4 +1,11 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { Costa } from '../../../shared/interfaces/costa';
 import {
   FormBuilder,
@@ -26,6 +33,8 @@ import { JuzgadoService } from '../../../shared/services/juzgado.service';
 import { FormularioJuzgadoComponent } from '../../../shared/components/modal-add-juzgado/modal-add-juzgado';
 import { EstadoCobro } from '../../../shared/interfaces/enum/estado-cobro.enum';
 import { CostaService } from '../../../shared/services/costa.service';
+import { ToastService } from '../../../shared/services/toast.service';
+import { CostaPayload } from '../../../shared/interfaces/costaPayload';
 
 //Angular Material
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -35,7 +44,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-add-modal',
@@ -60,7 +68,9 @@ import { ToastService } from '../../../shared/services/toast.service';
   styleUrl: './add-modal.component.css',
 })
 export class AddModalComponent implements OnInit {
-  @Output() save = new EventEmitter<Costa>();
+  @Output() save = new EventEmitter<CostaPayload>();
+  @Input() costaToEdit: Costa | null = null;
+
   costaForm: FormGroup;
   estadoCostas = EstadoCostas;
   estadosList = Object.entries(EstadoCostas).map(([key, value]) => ({
@@ -181,6 +191,23 @@ export class AddModalComponent implements OnInit {
         this.filteredJuzgados = juzgs;
         this.isJuzgadoLoaded = true;
       });
+
+    //Si al inicializar ya hay una `costaToEdit`, rellenamos el formulario:
+    if (this.costaToEdit) {
+      this.fillFormWithCosta(this.costaToEdit);
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    //Si el @Input() costaToEdit cambia (al pulsar "Editar" en el padre),
+    //    parcheamos el form con los nuevos valores.
+    if (changes['costaToEdit'] && !changes['costaToEdit'].firstChange) {
+      if (this.costaToEdit) {
+        this.fillFormWithCosta(this.costaToEdit);
+      } else {
+        this.resetForm();
+      }
+    }
   }
 
   /********** Métodos displayForAutocomplete **********/
@@ -288,10 +315,10 @@ export class AddModalComponent implements OnInit {
       return;
     }
 
-    const formValues = this.costaForm.value;
+    const fv = this.costaForm.value;
 
     // Construir el objeto Costa
-    const nuevaCosta: any = {
+    /*  const nuevaCosta: any = {
       estado: formValues.estado,
       estadoCobro: formValues.estadoCobro,
       importe: formValues.importe,
@@ -319,19 +346,97 @@ export class AddModalComponent implements OnInit {
         this.procuradorControl.reset();
         this.contrarioControl.reset();
         this.juzgadoControl.reset();
-         this.toastService.showToast(
+        this.toastService.showToast(
           'success',
           'Costa añadida correctamente',
           3000
         );
       },
       () => {
-         this.toastService.showToast(
+        this.toastService.showToast(
           'error',
           'Error al guardar la Costa en el backend',
           3000
         );
       }
-    );
+    ); */
+
+    const payload: CostaPayload = {
+    // Si venimos en EDICIÓN, copiamos el id de la costa original
+    id: this.costaToEdit?.id,
+
+    estado: fv.estado,
+    fechaTC: fv.fechaTC ? fv.fechaTC.toISOString().split('T')[0] : undefined,
+    fecha15TC: fv.fecha15TC ? fv.fecha15TC.toISOString().split('T')[0] : undefined,
+    fechaDecreto: fv.fechaDecreto ? fv.fechaDecreto.toISOString().split('T')[0] : undefined,
+    fecha20Decreto: fv.fecha20Decreto ? fv.fecha20Decreto.toISOString().split('T')[0] : undefined,
+
+    importe: fv.importe,
+    estadoCobro: fv.estadoCobro,
+
+    // Nodo expediente: solo los campos mínimos
+    expediente: {
+      // Si estamos editando un expediente existente, incluimos su id:
+      id: this.costaToEdit?.expediente?.id,
+
+      autos: fv.autos,
+      cliente: fv.cliente ? { id: fv.cliente.id } : null,
+      procurador: fv.procurador ? { id: fv.procurador.id } : null,
+      juzgado: fv.juzgado ? fv.juzgado.nombre : null,
+      contrario: fv.contrario ? fv.contrario.nombre : null,
+      tipoProcedimiento: fv.tipoProcedimiento ?? null,
+    },
+
+    notas: this.costaToEdit?.notas ?? [],
+  };
+
+    this.save.emit(payload);
+  }
+
+  private fillFormWithCosta(c: Costa) {
+    this.costaForm.patchValue({
+      estado: c.estado,
+      estadoCobro: c.estadoCobro,
+      cliente: c.expediente?.cliente ? { ...c.expediente.cliente } : null,
+      autos: c.expediente?.autos ?? '',
+      juzgado: c.expediente?.juzgado
+        ? { id: c.expediente.id, nombre: c.expediente.juzgado }
+        : null,
+      procurador: c.expediente?.procurador
+        ? { ...c.expediente.procurador }
+        : null,
+      importe: c.importe,
+      tipoProcedimiento: c.expediente?.tipoProcedimiento ?? '',
+      contrario: c.expediente?.contrario
+        ? { id: c.expediente.id, nombre: c.expediente.contrario }
+        : null,
+      fechaTC: c.fechaTC ? new Date(c.fechaTC) : null,
+      fecha15TC: c.fecha15TC ? new Date(c.fecha15TC) : null,
+      fechaDecreto: c.fechaDecreto ? new Date(c.fechaDecreto) : null,
+      fecha20Decreto: c.fecha20Decreto ? new Date(c.fecha20Decreto) : null,
+    });
+  }
+
+  /*** Resetear el form a valores por defecto (modo “Alta”) ***/
+  public resetForm() {
+    this.costaForm.reset({
+      estado: EstadoCostas.NO_FIRMES,
+      estadoCobro: EstadoCobro.NO_COBRADAS,
+      cliente: null,
+      autos: '',
+      juzgado: null,
+      procurador: null,
+      importe: '',
+      tipoProcedimiento: '',
+      contrario: null,
+      fechaTC: null,
+      fecha15TC: null,
+      fechaDecreto: null,
+      fecha20Decreto: null,
+    });
+    this.clienteControl.reset();
+    this.procuradorControl.reset();
+    this.contrarioControl.reset();
+    this.juzgadoControl.reset();
   }
 }
