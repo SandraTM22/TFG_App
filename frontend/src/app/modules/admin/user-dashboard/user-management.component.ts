@@ -8,6 +8,8 @@ import { AddUserComponent } from '../add-user/add-user.component';
 import { ToastService } from '../../../shared/services/toast.service';
 import { BtnComponent } from '../../../shared/components/btn/btn.component';
 import { ModalWrapperComponent } from '../../../shared/components/modal-wrapper/modal-wrapper/modal-wrapper.component';
+import { PageEvent, MatPaginatorModule } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-user-management',
@@ -19,15 +21,15 @@ import { ModalWrapperComponent } from '../../../shared/components/modal-wrapper/
     AddUserComponent,
     BtnComponent,
     ModalWrapperComponent,
-    FormsModule
+    MatPaginatorModule,
+    MatIconModule,
   ],
   templateUrl: './user-management.component.html',
+  styleUrl: './user-management.component.css',
 })
 export class UserManagementComponent {
   // Lista total de usuarios obtenida del backend
   users: User[] = [];
-  // Lista filtrada
-  filteredUsers: User[] = [];
   // índice de la fila en edición (o null)
   currentEditRow: number | null = null;
   // referencia al usuario que estamos editando
@@ -35,6 +37,11 @@ export class UserManagementComponent {
 
   // Flag para mostrar/ocultar el formulario de añadir usuario
   showAddUser = false;
+
+  //Paginator
+  pageSize = 10;
+  pageIndex = 0;
+  pagedUsers: User[] = [];
 
   //Con este decorador el padre accede a una instancia del componente hijo
   @ViewChild(AddUserComponent) addUserComponent!: AddUserComponent;
@@ -51,8 +58,9 @@ export class UserManagementComponent {
     // subscripción al observable para mantener actualizada la lista de usuarios
     this.userService.users$.subscribe((list) => {
       this.users = list;
-      this.filteredUsers = list;
     });
+
+    this.loadAllUsers();
   }
 
   /**
@@ -74,7 +82,6 @@ export class UserManagementComponent {
     this.userService.getUsers().subscribe(
       (users) => {
         this.users = users;
-        this.filteredUsers = users; // Para que se actualice cuando se añade un nuevo user
       },
       (error) => console.error('Error fetching users:', error)
     );
@@ -126,14 +133,16 @@ export class UserManagementComponent {
     if (!updated) return;
     this.userService.updateUser(updated).subscribe({
       next: () => {
-        // Refrescar la lista de usuarios, notificar al usuario y cerrar el modal
-        this.reload();
         this.toastService.showToast('info', 'Usuario modificado', 3000);
         this.cancelEdit();
       },
       error: (err) => {
         console.error('Error al modificar usuario:', err);
-        this.toastService.showToast('error', 'Error al modificar usuario', 3000);
+        this.toastService.showToast(
+          'error',
+          'Error al modificar usuario',
+          3000
+        );
       },
     });
   }
@@ -147,12 +156,12 @@ export class UserManagementComponent {
   }
 
   /* *
-  * Cambia el valor del bool "active" y lo guarda en la bbdd
-  */
- toggleUserActive(user:User){
-  const updatedUser: User = { ...user, active: !user.active };
-  this.saveEdit(updatedUser);
- }
+   * Cambia el valor del bool "active" y lo guarda en la bbdd
+   */
+  toggleUserActive(user: User) {
+    const updatedUser: User = { ...user, active: !user.active };
+    this.saveEdit(updatedUser);
+  }
 
   /* **************************************** BORRADO DE USUARIO ************************************* */
   /**
@@ -160,17 +169,35 @@ export class UserManagementComponent {
    */
   deleteUser(id: number) {
     this.userService.deleteUser(id).subscribe(() => {
-      this.reload();
+      const idx = this.users.findIndex((x) => x.id === id);
+      if (idx >= 0) {
+        this.users.splice(idx, 1);
+        this.updatePaged();
+      }
       this.toastService.showToast('error', 'Usuario eliminado', 3000);
     });
   }
 
-  /**
-   * Vuelve a cargar los usuarios desde el backend
-   */
-  private reload() {
-    this.userService.getUsers().subscribe((list) => {
-      this.filteredUsers = [...list];
+  loadAllUsers(): void {
+    this.userService.getUsers().subscribe({
+      next: (list) => {
+        this.users = list;
+        this.updatePaged();
+      },
+      error: (err) => {
+        console.error('Error al cargar usuarios:', err);
+      },
     });
+  }
+
+  onPage(event: PageEvent) {
+    this.pageSize = event.pageSize;
+    this.pageIndex = event.pageIndex;
+    this.updatePaged();
+  }
+
+  private updatePaged() {
+    const start = this.pageIndex * this.pageSize;
+    this.pagedUsers = this.users.slice(start, start + this.pageSize);
   }
 }
