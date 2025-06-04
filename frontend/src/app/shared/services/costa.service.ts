@@ -3,6 +3,7 @@ import { BehaviorSubject, map, Observable } from 'rxjs';
 import { Costa } from '../interfaces/costa';
 import { AuthService } from './auth.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { CostaPayload } from '../interfaces/costaPayload';
 
 @Injectable({
   providedIn: 'root',
@@ -38,11 +39,11 @@ export class CostaService {
     return this.costas$;
   }
 
-  add(costa: Costa): Observable<Costa> {
+  add(costa: CostaPayload): Observable<Costa> {
     return this.http.post<Costa>(this.apiUrl, costa);
   }
 
-  updateCosta(id: number, payload: Omit<Costa, 'id'>): Observable<Costa> {
+  updateCosta(id: number, payload: CostaPayload): Observable<Costa> {
     return this.http.put<Costa>(`${this.apiUrl}/${id}`, payload);
   }
 
