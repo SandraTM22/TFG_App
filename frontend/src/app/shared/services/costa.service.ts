@@ -39,7 +39,14 @@ export class CostaService {
   }
 
   add(costa: Costa): Observable<Costa> {
-      return this.http.post<Costa>(this.apiUrl, costa);
-    }
-    
+    return this.http.post<Costa>(this.apiUrl, costa);
+  }
+
+  updateCosta(id: number, payload: Omit<Costa, 'id'>): Observable<Costa> {
+    return this.http.put<Costa>(`${this.apiUrl}/${id}`, payload);
+  }
+
+  deleteCosta(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

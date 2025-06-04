@@ -91,12 +91,16 @@
               <td
                 class="px-3 py-4 space-x-2 inline-flex items-center justify-center"
               >
-                <a class="pointer edit" routerLink="">
-                  <mat-icon matTooltip="Edit fee">edit</mat-icon>
+                <a class="cursor-pointer edit" routerLink="">
+                  <mat-icon matTooltip="Editar">edit</mat-icon>
                 </a>
-                <a class="pointer delete">
-                  <mat-icon matTooltip="Delete fee">delete</mat-icon>
-                </a>
+                <button
+                  (click)="onDeleteCosta(costa)"
+                  matTooltip="Eliminar"
+                  class="cursor-pointer"
+                >
+                  <mat-icon fontIcon="delete">delete</mat-icon>
+                </button>
               </td>
             </tr>
 
@@ -113,7 +117,6 @@
                   >
                     <mat-icon class="text-2xl">add</mat-icon>
                   </button>
-
                 </div>
                 <!-- Modal de formulario -->
                 <app-modal-wrapper
@@ -121,14 +124,14 @@
                   (close)="closeModalNota()"
                   [title]="notaSeleccionada ? 'Editar Nota' : 'Nueva Nota'"
                 >
-                <app-nota-form
-                [nota]="notaSeleccionada"
-                (guardada)="onNotaGuardada($event)"
-                (cancelada)="closeModalNota()"
-                [costaId]="costaSeleccionada?.id"
-                ></app-nota-form>
-              </app-modal-wrapper>
-                
+                  <app-nota-form
+                    [nota]="notaSeleccionada"
+                    (guardada)="onNotaGuardada($event)"
+                    (cancelada)="closeModalNota()"
+                    [costaId]="costaSeleccionada?.id"
+                  ></app-nota-form>
+                </app-modal-wrapper>
+
                 <ng-container *ngIf="costa.notas?.length; else noNotas">
                   <ul class="list-disc list-inside space-y-1">
                     <li

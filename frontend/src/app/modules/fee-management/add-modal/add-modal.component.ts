@@ -35,6 +35,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-add-modal',
@@ -108,7 +109,8 @@ export class AddModalComponent implements OnInit {
     private contrarioService: ContrarioService,
     private procuradorService: ProcuradorService,
     private juzgadoService: JuzgadoService,
-    private costaService: CostaService
+    private costaService: CostaService,
+    private toastService: ToastService
   ) {
     this.costaForm = this.fb.group({
       estado: [EstadoCostas.NO_FIRMES, Validators.required],
@@ -310,16 +312,25 @@ export class AddModalComponent implements OnInit {
     };
 
     this.costaService.add(nuevaCosta).subscribe(
-      (response) => {
+      () => {
         this.save.emit(); // Notifica al padre que la costa se ha guardado
         this.costaForm.reset(); // Limpia el formulario
         this.clienteControl.reset(); // Limpia los controles de autocompletado
         this.procuradorControl.reset();
         this.contrarioControl.reset();
         this.juzgadoControl.reset();
+         this.toastService.showToast(
+          'success',
+          'Costa añadida correctamente',
+          3000
+        );
       },
-      (error) => {
-        console.error('Error al guardar la Costa en el backend:', error);
+      () => {
+         this.toastService.showToast(
+          'error',
+          'Error al guardar la Costa en el backend',
+          3000
+        );
       }
     );
   }

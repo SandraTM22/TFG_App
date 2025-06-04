@@ -36,7 +36,6 @@ import { MatDialog } from '@angular/material/dialog';
     NotaFormComponent,
     MatDialogModule,
     MatButtonModule,
-    ConfirmDialogComponent,
   ],
   templateUrl: './fee-management.component.html',
   styleUrl: './fee-management.component.css',
@@ -120,6 +119,40 @@ export class FeeManagementComponent implements OnInit {
     this.costasService.refreshCostas();
     this.closeModal();
   }
+
+  onDeleteCosta(costa: Costa) {
+  // Diálogo de confirmación
+  const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+    width: '350px',
+    data: <ConfirmDialogData>{
+      title: 'Eliminar costa',
+      message: `¿Seguro que quieres eliminar?`,
+      confirmText: 'Eliminar',
+      cancelText: 'Cancelar',
+    },
+  });
+
+  dialogRef.afterClosed().subscribe((result: boolean) => {
+    if (result) {
+      this.costasService.deleteCosta(costa.id!).subscribe({
+        next: () => {
+          // Elimina la costa del array local
+          const idx = this.costas.findIndex((c) => c.id === costa.id);
+          if (idx >= 0) {
+            this.costas.splice(idx, 1);
+            this.updatePaged(); // recalcula pagedCostas tras el borrado
+          }
+          this.toastService.showToast('success', 'Costa eliminada');
+        },
+        error: (err) => {
+          console.error(err);
+          this.toastService.showToast('error', 'Error al eliminar la costa');
+        },
+      });
+    }
+    // Si result es false, el usuario ha cancelado; no hacemos nada
+  });
+}
 
   /*******************NOTAS************************/
 
