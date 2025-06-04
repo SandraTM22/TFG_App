@@ -70,6 +70,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 export class AddModalComponent implements OnInit {
   @Output() save = new EventEmitter<CostaPayload>();
   @Input() costaToEdit: Costa | null = null;
+  @Output() cancel = new EventEmitter<void>();
 
   costaForm: FormGroup;
   estadoCostas = EstadoCostas;
