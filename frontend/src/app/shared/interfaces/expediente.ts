@@ -15,7 +15,7 @@ export interface Expediente {
   estado?: string | null;
   tipoProcedimiento?: string | null;
   restitucionEconomica?: string | null;
-  fechaCreacion: Date;
+  fechaCreacion?: Date;
   descripcion?: string | null;
   cliente?: Cliente | null;
   notas?: Nota[];        // opcional, puedes definir mejor o usar any[]
