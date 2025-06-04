@@ -9,7 +9,7 @@ import { NotFoundComponent } from './modules/not-found/not-found.component';
 
 export const routes: Routes = [
   { path: '', component: LoginPageComponent },  
-  { path: 'home', component: HomePageComponent, canActivate: [authGuard] },
+  /* { path: 'home', component: HomePageComponent, canActivate: [authGuard] }, */ //CFutura vista expedientes
   {
     path: 'admin/users',
     component: UserManagementComponent,

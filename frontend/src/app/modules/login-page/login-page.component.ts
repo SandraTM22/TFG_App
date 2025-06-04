@@ -38,8 +38,8 @@ export class LoginPageComponent {
 
   ngOnInit(): void {
     const token = localStorage.getItem('authToken');
-    if (token && !this.authService.isTokenExpired(token)) {
-      this.router.navigate(['home']);
+    if (token && !this.authService.isTokenExpired(token)) {      
+      this.router.navigate(['costas']);
     }
     this.buildForm();
   }
@@ -59,7 +59,7 @@ export class LoginPageComponent {
     this.authService.login(value.email, value.password).subscribe({
       next: (response) => {
         this.authService.saveToken(response.token);
-        this.router.navigate(['home']);
+        this.router.navigate(['costas']);
       },
       error: (error) => {
         console.error(error);
