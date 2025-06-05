@@ -1,4 +1,4 @@
-import { Component, NgModule, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { UserService } from '../../../shared/services/user.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { User } from '../../../shared/interfaces/user';
@@ -8,8 +8,15 @@ import { AddUserComponent } from '../add-user/add-user.component';
 import { ToastService } from '../../../shared/services/toast.service';
 import { BtnComponent } from '../../../shared/components/btn/btn.component';
 import { ModalWrapperComponent } from '../../../shared/components/modal-wrapper/modal-wrapper/modal-wrapper.component';
+
+//Angular material
 import { PageEvent, MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-user-management',
@@ -23,6 +30,11 @@ import { MatIconModule } from '@angular/material/icon';
     ModalWrapperComponent,
     MatPaginatorModule,
     MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatTooltipModule,
   ],
   templateUrl: './user-management.component.html',
   styleUrl: './user-management.component.css',
@@ -30,6 +42,8 @@ import { MatIconModule } from '@angular/material/icon';
 export class UserManagementComponent {
   // Lista total de usuarios obtenida del backend
   users: User[] = [];
+  // Lista para la página actual (después de filtrar y paginar)
+  pagedUsers: User[] = [];
   // índice de la fila en edición (o null)
   currentEditRow: number | null = null;
   // referencia al usuario que estamos editando
@@ -41,7 +55,10 @@ export class UserManagementComponent {
   //Paginator
   pageSize = 10;
   pageIndex = 0;
-  pagedUsers: User[] = [];
+
+  // Filtro
+  filterField: 'name' | 'email' | '' = '';
+  filterValue = '';
 
   //Con este decorador el padre accede a una instancia del componente hijo
   @ViewChild(AddUserComponent) addUserComponent!: AddUserComponent;
@@ -58,6 +75,7 @@ export class UserManagementComponent {
     // subscripción al observable para mantener actualizada la lista de usuarios
     this.userService.users$.subscribe((list) => {
       this.users = list;
+      this.updatePaged();
     });
 
     this.loadAllUsers();
@@ -178,6 +196,7 @@ export class UserManagementComponent {
     });
   }
 
+  /* **************************************** CARGA Y PAGINACIÓN DATOS ************************************* */
   loadAllUsers(): void {
     this.userService.getUsers().subscribe({
       next: (list) => {
@@ -196,8 +215,44 @@ export class UserManagementComponent {
     this.updatePaged();
   }
 
-  private updatePaged() {
+  updatePaged() {
+    let filtered = this.users;
+
+    // Si hay algún campo seleccionado y texto escrito, filtramos:
+    if (this.filterField && this.filterValue.trim().length) {
+      const texto = this.filterValue.toLowerCase();
+      filtered = this.users.filter((u) => {
+        if (this.filterField === 'name') {
+          return u.name.toLowerCase().includes(texto);
+        }
+        if (this.filterField === 'email') {
+          return u.email.toLowerCase().includes(texto);
+        }
+        return true;
+      });
+    }
     const start = this.pageIndex * this.pageSize;
-    this.pagedUsers = this.users.slice(start, start + this.pageSize);
+    this.pagedUsers = filtered.slice(start, start + this.pageSize);
+  }
+
+  /* **************************************** FILTRO ************************************* */
+  /**
+   * Cuando el <mat-select> cambia de valor, reiniciamos filterValue y la paginación
+   */
+  onFilterFieldChange(field: 'name' | 'email' | ''): void {
+    this.filterField = field;
+    this.filterValue = '';
+    this.pageIndex = 0;
+    this.updatePaged();
+  }
+
+  /**
+   * Resetea el filtro completamente
+   */
+  clearFilter(): void {
+    this.filterField = '';
+    this.filterValue = '';
+    this.pageIndex = 0;
+    this.updatePaged();
   }
 }

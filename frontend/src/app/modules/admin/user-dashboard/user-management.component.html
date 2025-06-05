@@ -17,9 +17,63 @@
       <app-add-user #addUser (userAdded)="onUserAdded()"></app-add-user>
     </app-modal-wrapper>
 
+    <!-- -----------------------FILTRO USUARIOS------------------------------ -->
+    <div class="flex items-center mt-4 space-x-4 w-3/5 mx-auto">
+      <!-- Selector de campo: Nombre / Email -->
+      <mat-form-field
+        appearance="fill"
+        class="w-40"
+        style="--mdc-filled-text-field-container-color: #fff"
+      >
+        <mat-label>Filtrar por:</mat-label>
+        <mat-select
+          [(value)]="filterField"
+          (selectionChange)="onFilterFieldChange($event.value)"
+        >
+          <mat-option value="name">Nombre</mat-option>
+          <mat-option value="email">Email</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Input de texto para buscar -->
+      <mat-form-field
+        appearance="fill"
+        class="flex-grow"
+        style="--mdc-filled-text-field-container-color: #fff"
+      >
+        <mat-label
+          >Buscar
+          {{
+            filterField === "name"
+              ? "Nombre"
+              : filterField === "email"
+              ? "Email"
+              : ""
+          }}</mat-label
+        >
+        <input
+          matInput
+          [(ngModel)]="filterValue"
+          placeholder="Escribe para filtrar"
+          (ngModelChange)="updatePaged()"
+          [disabled]="!filterField"
+        />
+      </mat-form-field>
+
+      <!-- Botón de limpiar filtro -->
+      <button
+        mat-icon-button
+        class="hover:bg-gray-200 rounded-full transition"
+        aria-label="Limpiar filtro"
+        (click)="clearFilter()"
+        *ngIf="filterField"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
     <!-- -----------------------USERS LIST------------------------------ -->
     <div
-      class="relative overflow-x-auto shadow-lg rounded-2xl z-20 max-h-[665px] overflow-y-auto w-3/5 mx-auto"
+      class="relative overflow-x-auto shadow-lg rounded-2xl z-20 max-h-[600px] overflow-y-auto w-3/5 mx-auto"
     >
       <table class="table-fixed text-sm text-left rtl:text-right min-w-full">
         <thead class="text-white font-bold bg-dg tracking-wide">
@@ -37,7 +91,7 @@
             <!-- Fila de datos -->
             <tr class="hover:bg-gray-50 border-b border-gray-200">
               <td class="px-6 py-4">{{ user.name }}</td>
-              <td class="px-6 py-4">{{ user.email }}</td>             
+              <td class="px-6 py-4">{{ user.email }}</td>
               <td class="px-6 py-4">
                 <span *ngFor="let role of user.roles; let last = last">
                   {{ getRoleDisplayName(role) }}<span *ngIf="!last">, </span>
