@@ -229,10 +229,13 @@
 </mat-form-field>
 
   <!-------------------TIPO PROCEDIMIENTO-------------------->
-  <label class="block">
-    Tipo de procedimiento:
-    <input type="text" formControlName="tipoProcedimiento" class="input" />
-  </label>
+<mat-form-field appearance="fill" class="w-full">
+  <mat-label>Tipo de procedimiento</mat-label>
+  <input matInput formControlName="tipoProcedimiento" />
+  <mat-error *ngIf="costaForm.get('tipoProcedimiento')?.hasError('required')">
+    El tipo de procedimiento es obligatorio
+  </mat-error>
+</mat-form-field>
 
   <!-------------------CONTRARIO-------------------->
   <mat-form-field appearance="fill" class="w-full">

@@ -131,7 +131,7 @@ export class AddModalComponent implements OnInit {
       juzgado: this.juzgadoControl,
       procurador: this.procuradorControl,
       importe: ['', Validators.required],
-      tipoProcedimiento: [''],
+      tipoProcedimiento: ['', Validators.required],
       contrario: this.contrarioControl,
       fechaTC: [null],
       fecha15TC: [null],
