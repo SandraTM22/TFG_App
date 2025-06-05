@@ -13,6 +13,7 @@ import {
   ConfirmDialogComponent,
   ConfirmDialogData,
 } from '../../shared/components/confirm-dialog/confirm-dialog.component';
+import { CostaPayload } from '../../shared/interfaces/costaPayload';
 //Angular Material
 import { PageEvent, MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,7 +21,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { CostaPayload } from '../../shared/interfaces/costaPayload';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { EstadoCostas } from '../../shared/interfaces/enum/estado-costas.enum';
+import { EstadoCobro } from '../../shared/interfaces/enum/estado-cobro.enum';
 
 @Component({
   selector: 'app-fee-management',
@@ -29,6 +36,7 @@ import { CostaPayload } from '../../shared/interfaces/costaPayload';
     BtnComponent,
     NgIf,
     CommonModule,
+    FormsModule,
     MatPaginatorModule,
     MatIconModule,
     ModalWrapperComponent,
@@ -37,6 +45,10 @@ import { CostaPayload } from '../../shared/interfaces/costaPayload';
     NotaFormComponent,
     MatDialogModule,
     MatButtonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatInputModule,
   ],
   templateUrl: './fee-management.component.html',
   styleUrl: './fee-management.component.css',
@@ -78,6 +90,12 @@ export class FeeManagementComponent implements OnInit {
   notaSeleccionada: Nota | null = null;
   costaSeleccionada: Costa | null = null;
 
+  //Filtro
+  filterField: string = '';
+  filterValue = ''; // texto a buscar
+  estadoEnum: string[] = Object.values(EstadoCostas);
+  estadoCobroEnum: string[] = Object.values(EstadoCobro);
+
   constructor(
     private costasService: CostaService,
     private notasService: NotasService,
@@ -102,9 +120,50 @@ export class FeeManagementComponent implements OnInit {
     this.updatePaged();
   }
 
-  private updatePaged() {
+  public updatePaged() {
+    let filtradas = this.costas;
+
+    // Si estamos filtrando por "estado" y hay un valor seleccionado:
+    if (this.filterField === 'estado' && this.filterValue) {
+      filtradas = this.costas.filter((c) => c.estado === this.filterValue);
+    } else if (this.filterField === 'estadoCobro' && this.filterValue) {
+      filtradas = this.costas.filter((c) => c.estadoCobro === this.filterValue);
+    } else if (this.filterField && this.filterValue.trim().length) {
+      const texto = this.filterValue.toLowerCase();
+      filtradas = this.costas.filter((c) => {
+        switch (this.filterField) {
+          case 'cliente':
+            // asumamos que el nombre completo del cliente está en c.expediente.cliente
+            const cliente = c.expediente?.cliente;
+            const nombreCompleto = `${cliente?.nombre || ''} ${
+              cliente?.apellido1 || ''
+            } ${cliente?.apellido2 || ''}`.toLowerCase();
+            return nombreCompleto.includes(texto);
+          case 'autos':
+            return (c.expediente?.autos || '').toLowerCase().includes(texto);
+          /* case 'juzgado':
+          return (c.expediente?.juzgado || '').toLowerCase().includes(texto); */
+          case 'procurador':
+            const proc = c.expediente?.procurador;
+            const nombreProc = `${proc?.nombre || ''} ${
+              proc?.apellido1 || ''
+            }`.toLowerCase();
+            return nombreProc.includes(texto);
+          case 'procedimiento':
+            return (c.expediente?.tipoProcedimiento || '')
+              .toLowerCase()
+              .includes(texto);
+          /*  case 'contrario':
+          return (c.expediente?.contrario || '').toLowerCase().includes(texto); */
+          default:
+            return true;
+        }
+      });
+    }
+
     const start = this.pageIndex * this.pageSize;
-    this.pagedCostas = this.costas.slice(start, start + this.pageSize);
+    const end = start + this.pageSize;
+    this.pagedCostas = filtradas.slice(start, end);
   }
 
   /*******************AÑADIR************************/
@@ -124,24 +183,22 @@ export class FeeManagementComponent implements OnInit {
   onSaveCosta(payload: CostaPayload): void {
     if (this.costaEnEdicion) {
       //MODO EDICIÓN: la costaEnEdicion tiene un id, llamamos a PUT
-      this.costasService
-        .updateCosta(payload.id!, payload)
-        .subscribe({
-          next: (updatedCosta) => {
-            // Reemplazamos en el array
-            const idx = this.costas.findIndex((c) => c.id === updatedCosta.id);
-            if (idx >= 0) {
-              this.costas[idx] = updatedCosta;
-              this.updatePaged();
-            }
-            this.toastService.showToast('success', 'Costa actualizada');
-            this.closeModal();
-          },
-          error: (err) => {
-            console.error(err);
-            this.toastService.showToast('error', 'Error al actualizar costa');
-          },
-        });
+      this.costasService.updateCosta(payload.id!, payload).subscribe({
+        next: (updatedCosta) => {
+          // Reemplazamos en el array
+          const idx = this.costas.findIndex((c) => c.id === updatedCosta.id);
+          if (idx >= 0) {
+            this.costas[idx] = updatedCosta;
+            this.updatePaged();
+          }
+          this.toastService.showToast('success', 'Costa actualizada');
+          this.closeModal();
+        },
+        error: (err) => {
+          console.error(err);
+          this.toastService.showToast('error', 'Error al actualizar costa');
+        },
+      });
     } else {
       //MODO ALTA: (en este caso “costaEnEdicion” sería null; POST)
       this.costasService.add(payload).subscribe({
@@ -264,5 +321,24 @@ export class FeeManagementComponent implements OnInit {
     }
 
     this.closeModalNota();
+  }
+
+  /*******************Filtro************************/
+  /**
+   *  Maneja el cambio de tipo de filtro
+   */
+  onFilterFieldChange(field: string) {
+    this.filterField = field;
+    this.filterValue = '';
+    this.updatePaged();
+  }
+
+  /**
+   *  Resetea el filtro
+   */
+  clearFilter() {
+    this.filterField = '';
+    this.filterValue = '';
+    this.updatePaged();
   }
 }
