@@ -14,6 +14,8 @@ import {
   ConfirmDialogData,
 } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { CostaPayload } from '../../shared/interfaces/costaPayload';
+import { EstadoCostas } from '../../shared/interfaces/enum/estado-costas.enum';
+import { EstadoCobro } from '../../shared/interfaces/enum/estado-cobro.enum';
 //Angular Material
 import { PageEvent, MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,8 +28,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
-import { EstadoCostas } from '../../shared/interfaces/enum/estado-costas.enum';
-import { EstadoCobro } from '../../shared/interfaces/enum/estado-cobro.enum';
+import { ExportButtonsComponent } from '../../shared/components/export-buttons/export-costas-buttons.component';
 
 @Component({
   selector: 'app-fee-management',
@@ -49,6 +50,7 @@ import { EstadoCobro } from '../../shared/interfaces/enum/estado-cobro.enum';
     MatSelectModule,
     MatDatepickerModule,
     MatInputModule,
+    ExportButtonsComponent
   ],
   templateUrl: './fee-management.component.html',
   styleUrl: './fee-management.component.css',

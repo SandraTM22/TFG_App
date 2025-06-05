@@ -20,7 +20,8 @@
       ></app-add-modal>
     </app-modal-wrapper>
 
-    <!-- filtros: selector de campo + texto -->
+  <div class="flex items-center mt-4 mx-auto justify-between">
+      <!-- filtros: selector de campo + texto -->
     <div class="flex items-center space-x-4 w-2/5">
       <mat-form-field
         appearance="fill"
@@ -106,6 +107,14 @@
       </button>
     </div>
 
+    
+      <app-export-buttons
+        [filteredCostas]="pagedCostas"
+        [sortField]="sortField"
+        [sortDir]="sortDir"
+      ></app-export-buttons>
+  </div>
+    
     <!----------------------------- TABLA ------------------------------>
     <div
       class="relative overflow-x-auto shadow-lg rounded-2xl z-20 max-h-[640px] overflow-y-auto"
