@@ -96,6 +96,11 @@ export class FeeManagementComponent implements OnInit {
   estadoEnum: string[] = Object.values(EstadoCostas);
   estadoCobroEnum: string[] = Object.values(EstadoCobro);
 
+  //Short
+  sortField: 'fechaTC' | 'fecha15TC' | 'fechaDecreto' | 'fecha20Decreto' | '' =
+    '';
+  sortDir: 'asc' | 'desc' = 'asc';
+
   constructor(
     private costasService: CostaService,
     private notasService: NotasService,
@@ -130,6 +135,7 @@ export class FeeManagementComponent implements OnInit {
       filtradas = this.costas.filter((c) => c.estadoCobro === this.filterValue);
     } else if (this.filterField && this.filterValue.trim().length) {
       const texto = this.filterValue.toLowerCase();
+
       filtradas = this.costas.filter((c) => {
         switch (this.filterField) {
           case 'cliente':
@@ -158,6 +164,38 @@ export class FeeManagementComponent implements OnInit {
           default:
             return true;
         }
+      });
+    }
+    //  ORDENAR si sortField está definido (solo fechas)
+    if (this.sortField) {
+      filtradas.sort((a, b) => {
+        let valA: Date;
+        let valB: Date;
+
+        switch (this.sortField) {
+          case 'fechaTC':
+            valA = a.fechaTC ? new Date(a.fechaTC) : new Date(0);
+            valB = b.fechaTC ? new Date(b.fechaTC) : new Date(0);
+            break;
+          case 'fecha15TC':
+            valA = a.fecha15TC ? new Date(a.fecha15TC) : new Date(0);
+            valB = b.fecha15TC ? new Date(b.fecha15TC) : new Date(0);
+            break;
+          case 'fechaDecreto':
+            valA = a.fechaDecreto ? new Date(a.fechaDecreto) : new Date(0);
+            valB = b.fechaDecreto ? new Date(b.fechaDecreto) : new Date(0);
+            break;
+          case 'fecha20Decreto':
+            valA = a.fecha20Decreto ? new Date(a.fecha20Decreto) : new Date(0);
+            valB = b.fecha20Decreto ? new Date(b.fecha20Decreto) : new Date(0);
+            break;
+          default:
+            return 0;
+        }
+
+        if (valA < valB) return this.sortDir === 'asc' ? -1 : 1;
+        if (valA > valB) return this.sortDir === 'asc' ? 1 : -1;
+        return 0;
       });
     }
 
@@ -339,6 +377,24 @@ export class FeeManagementComponent implements OnInit {
   clearFilter() {
     this.filterField = '';
     this.filterValue = '';
+    this.updatePaged();
+  }
+
+  /*******************Short************************/
+  /**
+   * Alterna el sorting en la columna de fecha que se haga clic.
+   */
+  toggleSort(
+    field: 'fechaTC' | 'fecha15TC' | 'fechaDecreto' | 'fecha20Decreto'
+  ): void {
+    if (this.sortField === field) {
+      // Si ya está ordenado por ese campo, invertimos
+      this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      // Cambiamos a nuevo campo, dirección ascendente por defecto
+      this.sortField = field;
+      this.sortDir = 'asc';
+    }
     this.updatePaged();
   }
 }

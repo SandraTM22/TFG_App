@@ -78,7 +78,11 @@
         </ng-container>
         <!-- Texto libre -->
         <ng-container *ngSwitchDefault>
-          <mat-form-field appearance="fill" class="flex-grow" style="--mdc-filled-text-field-container-color: #fff">
+          <mat-form-field
+            appearance="fill"
+            class="flex-grow"
+            style="--mdc-filled-text-field-container-color: #fff"
+          >
             <mat-label>Buscar {{ filterField }}</mat-label>
             <input
               matInput
@@ -104,7 +108,7 @@
 
     <!----------------------------- TABLA ------------------------------>
     <div
-      class="relative overflow-x-auto shadow-lg rounded-2xl z-20 max-h-[645px] overflow-y-auto"
+      class="relative overflow-x-auto shadow-lg rounded-2xl z-20 max-h-[640px] overflow-y-auto"
     >
       <table class="able-auto text-sm text-left rtl:text-right min-w-full">
         <thead class="text-white font-bold bg-dg tracking-wide">
@@ -114,10 +118,77 @@
             <th class="px-6 py-3">Autos</th>
             <th class="px-6 py-3">Juzgado</th>
             <th class="px-6 py-3">Procurador</th>
-            <th class="px-6 py-3">Tasación</th>
-            <th class="px-6 py-3">+15 días</th>
-            <th class="px-6 py-3">Decreto</th>
-            <th class="px-6 py-3">+20 días</th>
+            <th
+              class="px-6 py-3 cursor-pointer select-none"
+              (click)="toggleSort('fechaTC')"
+            >
+              <span class="inline-flex items-center space-x-1">
+                <span>Tasación</span>
+                <mat-icon class="text-base">
+                  {{
+                    sortField === "fechaTC"
+                      ? sortDir === "asc"
+                        ? "arrow_upward"
+                        : "arrow_downward"
+                      : "unfold_more"
+                  }}
+                </mat-icon>
+              </span>
+            </th>
+
+            <th
+              class="px-6 py-3 cursor-pointer select-none"
+              (click)="toggleSort('fecha15TC')"
+            >
+              <span class="inline-flex items-center space-x-1">
+                <span>+15 dias</span>
+                <mat-icon class="text-base">
+                  {{
+                    sortField === "fecha15TC"
+                      ? sortDir === "asc"
+                        ? "arrow_upward"
+                        : "arrow_downward"
+                      : "unfold_more"
+                  }}
+                </mat-icon>
+              </span>
+            </th>
+
+            <th
+              class="px-6 py-3 cursor-pointer select-none"
+              (click)="toggleSort('fechaDecreto')"
+            >
+              <span class="inline-flex items-center space-x-1">
+                <span>Decreto</span>
+                <mat-icon class="text-base">
+                  {{
+                    sortField === "fechaDecreto"
+                      ? sortDir === "asc"
+                        ? "arrow_upward"
+                        : "arrow_downward"
+                      : "unfold_more"
+                  }}
+                </mat-icon>
+              </span>
+            </th>
+
+            <th
+              class="px-6 py-3 cursor-pointer select-none"
+              (click)="toggleSort('fecha20Decreto')"
+            >
+              <span class="inline-flex items-center space-x-1">
+                <span>+20 dias</span>
+                <mat-icon class="text-base">
+                  {{
+                    sortField === "fecha20Decreto"
+                      ? sortDir === "asc"
+                        ? "arrow_upward"
+                        : "arrow_downward"
+                      : "unfold_more"
+                  }}
+                </mat-icon>
+              </span>
+            </th>
             <th class="px-6 py-3">Procedimiento</th>
             <th class="px-6 py-3">Contrario</th>
             <th class="px-6 py-3">Importe</th>

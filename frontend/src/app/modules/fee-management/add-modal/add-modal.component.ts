@@ -318,50 +318,6 @@ export class AddModalComponent implements OnInit {
 
     const fv = this.costaForm.value;
 
-    // Construir el objeto Costa
-    /*  const nuevaCosta: any = {
-      estado: formValues.estado,
-      estadoCobro: formValues.estadoCobro,
-      importe: formValues.importe,
-      notas: [],
-      fechaTC: formValues.fechaTC || undefined,
-      fecha15TC: formValues.fecha15TC || undefined,
-      fechaDecreto: formValues.fechaDecreto || undefined,
-      fecha20Decreto: formValues.fecha20Decreto || undefined,
-
-      autos: formValues.autos,
-      tipoProcedimiento: formValues.tipoProcedimiento || null,
-      fechaCreacion: new Date(),
-      // Pasar solo el ID de las relaciones,
-      cliente_id: formValues.cliente ? formValues.cliente.id : null,
-      juzgado_id: formValues.juzgado ? formValues.juzgado.id : null,
-      procurador_id: formValues.procurador ? formValues.procurador.id : null,
-      contrario_id: formValues.contrario ? formValues.contrario.id : null,
-    };
-
-    this.costaService.add(nuevaCosta).subscribe(
-      () => {
-        this.save.emit(); // Notifica al padre que la costa se ha guardado
-        this.costaForm.reset(); // Limpia el formulario
-        this.clienteControl.reset(); // Limpia los controles de autocompletado
-        this.procuradorControl.reset();
-        this.contrarioControl.reset();
-        this.juzgadoControl.reset();
-        this.toastService.showToast(
-          'success',
-          'Costa añadida correctamente',
-          3000
-        );
-      },
-      () => {
-        this.toastService.showToast(
-          'error',
-          'Error al guardar la Costa en el backend',
-          3000
-        );
-      }
-    ); */
-
     const payload: CostaPayload = {
     // Si venimos en EDICIÓN, copiamos el id de la costa original
     id: this.costaToEdit?.id,
