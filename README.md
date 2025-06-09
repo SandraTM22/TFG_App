@@ -55,7 +55,7 @@ En el ámbito de la gestión de expedientes judiciales, es fundamental contar co
     docker compose exec backend php bin/console doctrine:migrations:migrate --no-interaction
 
     # Crear usuario admin (solo la primera vez)
-    docker compose exec backend php bin/console app:create-admin-user
+    docker compose exec backend php bin/console app:create-default-users
 
     # Poblar con datos de prueba (usuarios, clientes, expedientes, etc.)
     docker compose exec backend php bin/console app:populate-db
